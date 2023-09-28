@@ -1,5 +1,5 @@
+from __future__ import annotations
 from typing import List, Optional
-
 from sqlalchemy import create_engine
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import registry, DeclarativeBase, Mapped, mapped_column, relationship
@@ -38,7 +38,6 @@ class Principle(Base):
     )
 
     workstations: Mapped[List["WorkstationPrinciple"]] = relationship(back_populates="principle")
-
    
 class Wisdom(Base):
     __tablename__ = "wisdom"
@@ -151,7 +150,7 @@ class RecipeSkill(Base): # Association table
     recipe: Mapped[Recipe] = relationship(back_populates="skills")
     skill: Mapped[Skill] = relationship(back_populates="recipes")
 
-# is this necessary? 
+# is this necessary?  maybe enum instead
 # class WorkstationType(Base):
 #     __tablename__ = "workstation_type"
     
@@ -175,10 +174,10 @@ class Workstation(Base):
     # workstation_type_id: Mapped[int] = mapped_column(ForeignKey("workstation_type.id"))
     # workstation_type: Mapped[WorkstationType] = relationship(back_populates="workstations")
 
-    wisdom_id: Mapped[int] = mapped_column(ForeignKey("wisdom.id"))
+    wisdom_id: Mapped[Optional[int]] = mapped_column(ForeignKey("wisdom.id"))
     evolves: Mapped[Wisdom] = relationship()
 
-    principles: Mapped[List["WorkstationPrinciple"]] = relationship(back_populates="workstation")
+    principles: Mapped[List[WorkstationPrinciple]] = relationship(back_populates="workstation")
 
 class WorkstationPrinciple(Base): # Association Table
     __tablename__ = "workstation_principle"
