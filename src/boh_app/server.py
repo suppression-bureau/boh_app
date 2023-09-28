@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from sqlalchemy.orm import Session
 
-from database import engine, Base, Aspect
-from data.load_data import load_all
+from .database import engine, Base, Aspect
+from .data.load_data import load_all
 
 
 app = FastAPI()

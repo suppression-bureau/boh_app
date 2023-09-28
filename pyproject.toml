@@ -40,6 +40,9 @@ test = ["pytest", "pytest-cov"]
 
 [tool.hatch.envs.default]
 python = "3.11"
+[tool.hatch.envs.default.scripts]
+server = "uvicorn boh_app.server:app --reload"
+
 [tool.hatch.envs.test]
 features = ["test"]
 [tool.hatch.envs.test.scripts]

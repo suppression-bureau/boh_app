@@ -1,9 +1,14 @@
 import json
-from database import engine, Base, Aspect, Principle, Wisdom
+from pathlib import Path
+
 from sqlalchemy.orm import Session
+
+from ..database import engine, Base, Aspect, Principle, Wisdom
+
+HERE = Path(__file__).parent
             
 def get_data(name: str):
-    with open(f'data/{name}.json') as a:
+    with (HERE / f'{name}.json').open() as a:
         data = json.load(a)
         return data
 
