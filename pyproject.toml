@@ -1,7 +1,50 @@
-[build-system]
-requires = [
-    "setuptools>=30.3.0",
+[project]
+name = "boh-app"
+version = "0.0.0"
+license = "MIT"
+description = "Companion app for Book of Hours"
+readme = "README.rst"
+authors = [
+    { name = "Desiree D.", email = "ded8393@gmail.com" },
 ]
+urls.Homepage = "https://github.com/ded8393/boh_app"
+#urls.Documentation = "https://boh_app.readthedocs.io/",
+#urls.Changelog = "https://boh_app.readthedocs.io/en/latest/changelog.html",
+urls.Issues = "https://github.com/ded8393/boh_app/issues"
+classifiers = [
+    # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Unix",
+    "Operating System :: POSIX",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Utilities",
+]
+keywords = []
+requires-python =  ">=3.11"
+dependencies = [
+    "sqlalchemy",
+    "fastapi",
+    "uvicorn",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov"]
+
+[tool.hatch.envs.default]
+python = "3.11"
+[tool.hatch.envs.test]
+features = ["test"]
+[tool.hatch.envs.test.scripts]
+run = "pytest -vv {args}"
+cov = "pytest --cov --cov-report=term --cov-report=xml -vv {args}"
 
 [tool.ruff.per-file-ignores]
 "ci/*" = ["S"]
@@ -50,3 +93,26 @@ force-single-line = true
 [tool.black]
 line-length = 140
 target-version = ["py37"]
+
+[tool.pytest.ini_options]
+norecursedirs = ["migrations"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--doctest-modules",
+    "--doctest-glob=\\*.rst",
+    "--tb=short",
+    "--pyargs",
+]
+filterwarnings = [
+    "error", # warnings as errors
+    # You can add exclusions, some examples:
+    # ignore:'boh_app' defines default_app_config:PendingDeprecationWarning::
+    # ignore:The {{% if:::
+    # ignore:Coverage disabled via --no-cov switch!
+]
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
