@@ -30,13 +30,18 @@ classifiers = [
 keywords = []
 requires-python =  ">=3.11"
 dependencies = [
-    "sqlalchemy",
-    "fastapi",
-    "uvicorn",
+    "sqlalchemy>=2",
+    "fastapi",  # router
+    "uvicorn",  # server
+    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@unpin",  # sqlchemy schema to graphql
+    "ariadne",  # graphql API endpoint
 ]
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.envs.default]
 python = "3.11"

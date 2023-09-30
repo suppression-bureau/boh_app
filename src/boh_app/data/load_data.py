@@ -3,24 +3,24 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
-from ..database import engine, Base, Aspect, Principle, Wisdom
+from ..database import Base, Aspect, Principle, Wisdom
 
 HERE = Path(__file__).parent
-            
+
 def get_data(name: str):
     with (HERE / f'{name}.json').open() as a:
         data = json.load(a)
         return data
 
-def add_data(data: json, _class: Base):
-    for item_data in data:
-        with Session(engine) as session:
+def add_data(data: json, _class: Base, *, session: Session):
+    with session.begin():
+        for item_data in data:
             item = _class(**item_data)
             session.add(item)
-            session.commit()
+        session.commit()
 
-def load_all():
-    add_data(get_data("aspect"), Aspect)
-    add_data(get_data("principle"), Principle)
-    add_data(get_data("wisdom"), Wisdom)
+def load_all(session: Session):
+    add_data(get_data("aspect"), Aspect, session=session)
+    add_data(get_data("principle"), Principle, session=session)
+    add_data(get_data("wisdom"), Wisdom, session=session)
 
