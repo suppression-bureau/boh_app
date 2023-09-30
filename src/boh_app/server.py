@@ -1,7 +1,7 @@
 from ariadne.asgi import GraphQL
 from fastapi import FastAPI
-from sqlalchemy.orm import sessionmaker
 from graphql_sqlalchemy import build_schema
+from sqlalchemy.orm import sessionmaker
 
 from .data.load_data import load_all
 from .database import Aspect
@@ -34,4 +34,4 @@ async def get_all_aspect():
         return data
 
 
-app.mount("/graphql", GraphQL(build_schema(Base), context_value=dict(session=session)))
+app.mount("/graphql", GraphQL(build_schema(Base), context_value={"session": session}))

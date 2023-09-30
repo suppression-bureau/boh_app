@@ -29,4 +29,3 @@ def load_all(session: Session):
     add_data(get_data("aspect"), Aspect, session=session)
     add_data(get_data("principle"), Principle, session=session)
     add_data(get_data("wisdom"), Wisdom, session=session)
-
