@@ -88,6 +88,7 @@ select = [
     "UP", # pyupgrade
     "W", # pycodestyle warnings
 ]
+unfixable = ["F401"]
 src = ["src", "tests"]
 target-version = "py37"
 

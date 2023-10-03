@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import Column, ForeignKey, Table, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
 reg = registry()
@@ -63,7 +63,7 @@ class Aspect(Base, NameMixin):
     __tablename__ = "aspect"
 
     items: Mapped[list[Item]] = relationship(back_populates="aspects", secondary=item_aspect_association)
-    assistants: Mapped[list[Assistant]] = relationship(back_populates="aspects", secondary=assistant_aspect_association)
+    assistants: Mapped[list[Assistant]] = relationship(back_populates="accepted_aspects", secondary=assistant_aspect_association)
 
 
 class Principle(Base, NameMixin):
@@ -81,7 +81,7 @@ class Principle(Base, NameMixin):
 
 class PrincipleCount(Base, IdMixin):
     __tablename__ = "principle_count"
-    __table_args__ = (UniqueConstraint("principle_id", "count"),)
+    # __table_args__ = (UniqueConstraint("principle_id", "count"),) Doesn't work with data loader, IntegrityError
 
     principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     principle: Mapped[Principle] = relationship()
@@ -197,7 +197,7 @@ class Assistant(Base, NameMixin):
     __tablename__ = "assistant"
 
     season: Mapped[str | None]
-    aspects: Mapped[list[Aspect]] = relationship(back_populates="assistants", secondary=assistant_aspect_association)
+    accepted_aspects: Mapped[list[Aspect]] = relationship(back_populates="assistants", secondary=assistant_aspect_association)
     base_principles: Mapped[list[PrincipleCount]] = relationship(
         back_populates="assistants", secondary=assistant_principle_count_association
     )

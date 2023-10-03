@@ -50,5 +50,167 @@
         "count": 2
       }
     ]
+  },
+  {
+    "id": "Miner",
+    "season": "spring",
+    "base_principles": [
+      {
+        "principle_id": "scale",
+        "count": 2
+      },
+      {
+        "principle_id": "forge",
+        "count": 2
+      },
+      {
+        "principle_id": "moon",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "id": "Barber",
+    "season": "summer",
+    "base_principles": [
+      {
+        "principle_id": "moth",
+        "count": 2
+      },
+      {
+        "principle_id": "rose",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "id": "Orchard Keeper",
+    "season": "fall",
+    "base_principles": [
+      {
+        "principle_id": "nectar",
+        "count": 2
+      },
+      {
+        "principle_id": "heart",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "id": "Fisherman",
+    "season": "winter",
+    "base_principles": [
+      {
+        "principle_id": "moon",
+        "count": 2
+      },
+      {
+        "principle_id": "sky",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "id": "Consulting Engineer",
+    "base_principles": [
+      {
+        "principle_id": "forge",
+        "count": 4
+      },
+      {
+        "principle_id": "sky",
+        "count": 4
+      },
+      {
+        "principle_id": "lantern",
+        "count": 4
+      }
+    ]
+  },
+  {
+    "id": "Fugitive",
+    "base_principles": [
+      {
+        "principle_id": "edge",
+        "count": 4
+      },
+      {
+        "principle_id": "scale",
+        "count": 4
+      },
+      {
+        "principle_id": "heart",
+        "count": 4
+      }
+    ]
+  },
+  {
+    "id": "Elegiac Poet",
+    "base_principles": [
+      {
+        "principle_id": "winter",
+        "count": 4
+      },
+      {
+        "principle_id": "sky",
+        "count": 4
+      },
+      {
+        "principle_id": "moth",
+        "count": 4
+      }
+    ]
+  },
+  {
+    "id": "Musician",
+    "base_principles": [
+      {
+        "principle_id": "rose",
+        "count": 4
+      },
+      {
+        "principle_id": "sky",
+        "count": 4
+      },
+      {
+        "principle_id": "nectar",
+        "count": 4
+      }
+    ]
+  },
+  {
+    "id": "Unusual Nun",
+    "base_principles": [
+      {
+        "principle_id": "knock",
+        "count": 4
+      },
+      {
+        "principle_id": "moon",
+        "count": 4
+      },
+      {
+        "principle_id": "grail",
+        "count": 4
+      }
+    ]
+  },
+  {
+    "id": "Surrealist Painter",
+    "base_principles": [
+      {
+        "principle_id": "grail",
+        "count": 4
+      },
+      {
+        "principle_id": "moth",
+        "count": 4
+      },
+      {
+        "principle_id": "rose",
+        "count": 4
+      }
+    ]
   }
 ]
