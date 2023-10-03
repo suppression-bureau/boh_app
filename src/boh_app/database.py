@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, create_engine
+from sqlalchemy import Column, ForeignKey, Table, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
 reg = registry()
@@ -8,10 +8,24 @@ reg = registry()
 
 class Base(DeclarativeBase):
     registry = reg
-    pass
 
 
 engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
+
+
+item_aspect_association = Table(
+    "item_aspect",
+    Base.metadata,
+    Column("aspect_id", ForeignKey("aspect.id")),
+    Column("item_id", ForeignKey("item.id")),
+)
+
+workstation_principle_association = Table(
+    "workstation_principle",
+    Base.metadata,
+    Column("workstation_id", ForeignKey("workstation.id")),
+    Column("principle_id", ForeignKey("principle.id")),
+)
 
 
 class Aspect(Base):
@@ -20,7 +34,7 @@ class Aspect(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    items: Mapped[list[ItemAspect]] = relationship(back_populates="aspect")
+    items: Mapped[list[Item]] = relationship(back_populates="aspect", secondary=item_aspect_association)
 
     def __repr__(self) -> str:
         return f"Type(id={self.id!r}, name={self.name!r})"
@@ -39,7 +53,7 @@ class Principle(Base):
         back_populates="secondary_principle", primaryjoin="Skill.secondary_principle_id==Principle.id"
     )
 
-    workstations: Mapped[list[WorkstationPrinciple]] = relationship(back_populates="principle")
+    workstations: Mapped[list[Workstation]] = relationship(back_populates="principle", secondary=workstation_principle_association)
 
 
 class Wisdom(Base):
@@ -47,6 +61,14 @@ class Wisdom(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
+
+
+recipe_skill_association = Table(
+    "recipe_skill",
+    Base.metadata,
+    Column("recipe_id", ForeignKey("recipe.id")),
+    Column("skill_id", ForeignKey("skill.id")),
+)
 
 
 class Skill(Base):
@@ -67,17 +89,7 @@ class Skill(Base):
     wisdom_2_id: Mapped[int] = mapped_column(ForeignKey("wisdom.id"))
     wisdom_2: Mapped[Wisdom] = relationship(foreign_keys=[wisdom_2_id])
 
-    recipes: Mapped[list[RecipeSkill]] = relationship(back_populates="skill")
-
-
-class ItemAspect(Base):  # Association Table
-    __tablename__ = "item_aspect"
-
-    aspect_id: Mapped[int] = mapped_column(ForeignKey("aspect.id"), primary_key=True)
-    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"), primary_key=True)
-
-    aspect: Mapped[Aspect] = relationship(back_populates="items")
-    item: Mapped[Item] = relationship(back_populates="aspects")
+    recipes: Mapped[list[Recipe]] = relationship(back_populates="skill", secondary=recipe_skill_association)
 
 
 class Item(Base):
@@ -86,7 +98,7 @@ class Item(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    aspects: Mapped[list[ItemAspect]] = relationship(back_populates="item")
+    aspects: Mapped[list[Aspect]] = relationship(back_populates="item", secondary=item_aspect_association)
 
     # principles
     edge: Mapped[int | None]
@@ -134,17 +146,7 @@ class Recipe(Base):
 
     principle_amount: Mapped[int]
 
-    skills: Mapped[list[RecipeSkill]] = relationship(back_populates="recipe")
-
-
-class RecipeSkill(Base):  # Association table
-    __tablename__ = "recipe_skill"
-
-    recipe_id: Mapped[int] = mapped_column(ForeignKey("recipe.id"), primary_key=True)
-    skill_id: Mapped[int] = mapped_column(ForeignKey("skill.id"), primary_key=True)
-
-    recipe: Mapped[Recipe] = relationship(back_populates="skills")
-    skill: Mapped[Skill] = relationship(back_populates="recipes")
+    skills: Mapped[list[Skill]] = relationship(back_populates="recipe", secondary=recipe_skill_association)
 
 
 # is this necessary?  maybe enum instead
@@ -176,17 +178,7 @@ class Workstation(Base):
     wisdom_id: Mapped[int | None] = mapped_column(ForeignKey("wisdom.id"))
     evolves: Mapped[Wisdom | None] = relationship()
 
-    principles: Mapped[list[WorkstationPrinciple]] = relationship(back_populates="workstation")
-
-
-class WorkstationPrinciple(Base):  # Association Table
-    __tablename__ = "workstation_principle"
-
-    workstation_id: Mapped[int] = mapped_column(ForeignKey("workstation.id"), primary_key=True)
-    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"), primary_key=True)
-
-    workstation: Mapped[Workstation] = relationship(back_populates="principles")
-    principle: Mapped[Principle] = relationship(back_populates="workstations")
+    principles: Mapped[list[Principle]] = relationship(back_populates="workstation", secondary=workstation_principle_association)
 
 
 class Assistant(Base):
