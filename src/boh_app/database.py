@@ -8,7 +8,14 @@ reg = registry()
 
 class Base(DeclarativeBase):
     registry = reg
+
+
+class IdMixin:
     id: Mapped[int] = mapped_column(primary_key=True)
+
+
+class NameMixin:
+    id: Mapped[str] = mapped_column(primary_key=True)
 
 
 engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
@@ -50,22 +57,15 @@ assistant_principle_count_association = Table(
 )
 
 
-class Aspect(Base):
+class Aspect(Base, NameMixin):
     __tablename__ = "aspect"
-
-    name: Mapped[str]
 
     items: Mapped[list[Item]] = relationship(back_populates="aspects", secondary=item_aspect_association)
     assistants: Mapped[list[Assistant]] = relationship(back_populates="aspects", secondary=assistant_aspect_association)
 
-    def __repr__(self) -> str:
-        return f"Type(id={self.id!r}, name={self.name!r})"
 
-
-class Principle(Base):
+class Principle(Base, NameMixin):
     __tablename__ = "principle"
-
-    name: Mapped[str]
 
     primary_skills: Mapped[list[Skill]] = relationship(
         back_populates="primary_principle", primaryjoin="Skill.primary_principle_id==Principle.id"
@@ -77,7 +77,7 @@ class Principle(Base):
     workstations: Mapped[list[Workstation]] = relationship(back_populates="principles", secondary=workstation_principle_association)
 
 
-class PrincipleCount(Base):
+class PrincipleCount(Base, IdMixin):
     __tablename__ = "principle_count"
     __table_args__ = (UniqueConstraint("principle_id", "count"),)
 
@@ -89,16 +89,12 @@ class PrincipleCount(Base):
     assistants: Mapped[list[Assistant]] = relationship(back_populates="base_principles", secondary=assistant_principle_count_association)
 
 
-class Wisdom(Base):
+class Wisdom(Base, NameMixin):
     __tablename__ = "wisdom"
 
-    name: Mapped[str]
 
-
-class Skill(Base):
+class Skill(Base, NameMixin):
     __tablename__ = "skill"
-
-    name: Mapped[str]
 
     primary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     primary_principle: Mapped[Principle] = relationship(back_populates="primary_skills", foreign_keys=[primary_principle_id])
@@ -115,10 +111,8 @@ class Skill(Base):
     recipes: Mapped[list[Recipe]] = relationship(back_populates="skills", secondary=recipe_skill_association)
 
 
-class Item(Base):
+class Item(Base, NameMixin):
     __tablename__ = "item"
-
-    name: Mapped[str]
 
     aspects: Mapped[list[Aspect]] = relationship(back_populates="items", secondary=item_aspect_association)
 
@@ -143,7 +137,7 @@ class Item(Base):
     product_recipe: Mapped[list[Recipe]] = relationship(back_populates="source", primaryjoin="Item.id==Recipe.source_id")
 
 
-class SkillLevel(Base):
+class SkillLevel(Base, IdMixin):
     __tablename__ = "skill_level"
 
     skill_id: Mapped[int] = mapped_column(ForeignKey("skill.id"))
@@ -151,7 +145,7 @@ class SkillLevel(Base):
     level: Mapped[int]
 
 
-class Recipe(Base):
+class Recipe(Base, IdMixin):
     __tablename__ = "recipe"
 
     product_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
@@ -177,7 +171,7 @@ class Recipe(Base):
 #     workstations: Mapped[List["Workstation"]] = relationship(back_populates="workstation_type")
 
 
-class WorkstationSlot(Base):
+class WorkstationSlot(Base, IdMixin):
     __tablename__ = "workstation_slot"
 
     name: Mapped[str]
@@ -185,10 +179,8 @@ class WorkstationSlot(Base):
     accepts: Mapped[list[Aspect]] = relationship()
 
 
-class Workstation(Base):
+class Workstation(Base, NameMixin):
     __tablename__ = "workstation"
-
-    name: Mapped[str]
 
     # workstation_type_id: Mapped[int] = mapped_column(ForeignKey("workstation_type.id"))
     # workstation_type: Mapped[WorkstationType] = relationship(back_populates="workstations")
@@ -199,10 +191,9 @@ class Workstation(Base):
     principles: Mapped[list[Principle]] = relationship(back_populates="workstations", secondary=workstation_principle_association)
 
 
-class Assistant(Base):
+class Assistant(Base, NameMixin):
     __tablename__ = "assistant"
 
-    name: Mapped[str]
     season: Mapped[str | None]
     aspects: Mapped[list[Aspect]] = relationship(back_populates="assistants", secondary=assistant_aspect_association)
     base_principles: Mapped[list[PrincipleCount]] = relationship(
