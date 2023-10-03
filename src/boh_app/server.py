@@ -1,12 +1,10 @@
-from ariadne.asgi import GraphQL
 from fastapi import FastAPI
-from graphql_sqlalchemy import build_schema
 from sqlalchemy import event
-from sqlalchemy.orm import mapper
+from sqlalchemy.orm import configure_mappers, mapper
 
 from .data.load_data import load_all
 from .database import Session, engine
-from .models import Base
+from .models import Base, get_model_by_name
 from .serializers import setup_schema
 
 app = FastAPI()
@@ -14,15 +12,11 @@ app = FastAPI()
 
 def start_database():
     session = Session()
-    event.listen(mapper, "after_configured", setup_schema(Base, session))
+    event.listen(mapper, "after_configured", lambda: setup_schema(Base, session))
     Base.metadata.create_all(bind=engine)
+    configure_mappers()
     load_all(session)
     return session
-
-
-def get_model_by_name(name: str):
-    registry = Base.registry._class_registry
-    return registry.get(name.capitalize())
 
 
 session = start_database()
@@ -51,4 +45,4 @@ async def get_by_id(table: str, id: str | int):
         return resp
 
 
-app.mount("/graphql", GraphQL(build_schema(Base), context_value={"session": session}))
+# app.mount("/graphql", GraphQL(build_schema(Base), context_value={"session": session}))

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from ..database import Session
-from ..models import Aspect, Base, Principle, Wisdom
+from ..models import Base, get_model_by_name
 
 HERE = Path(__file__).parent
 
@@ -14,14 +14,15 @@ def get_data(name: str):
 
 
 def add_data(data: json, _class: Base, *, session: Session):
+    serializer = _class.__marshmallow__(many=True)
     with session.begin():
-        for item_data in data:
-            item = _class(**item_data)
+        items = serializer.load(data, session=session)
+        for item in items:
             session.add(item)
         session.commit()
 
 
 def load_all(session: Session):
-    add_data(get_data("aspect"), Aspect, session=session)
-    add_data(get_data("principle"), Principle, session=session)
-    add_data(get_data("wisdom"), Wisdom, session=session)
+    names = ["aspect", "principle", "wisdom"]
+    for name in names:
+        add_data(get_data(name), get_model_by_name(name), session=session)

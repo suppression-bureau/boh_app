@@ -6,21 +6,18 @@ from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema
 
 
 def setup_schema(Base, session):
-    # Create a function which incorporates the Base and session information
-    def setup_schema_fn():
-        for class_ in Base.registry._class_registry.values():
-            if hasattr(class_, "__tablename__"):
-                if class_.__name__.endswith("Schema"):
-                    raise ModelConversionError("For safety, setup_schema can not be used when a" "Model class ends with 'Schema'")
+    for class_ in Base.registry._class_registry.values():
+        if hasattr(class_, "__tablename__"):
+            if class_.__name__.endswith("Schema"):
+                raise ModelConversionError("For safety, setup_schema can not be used when a" "Model class ends with 'Schema'")
 
-                class Meta:
-                    model = class_
-                    sqla_session = session
+            class Meta:
+                model = class_
+                sqla_session = session
+                load_instance = True
 
-                schema_class_name = "%sSchema" % class_.__name__
+            schema_class_name = "%sSchema" % class_.__name__
 
-                schema_class = type(schema_class_name, (SQLAlchemyAutoSchema,), {"Meta": Meta})
+            schema_class = type(schema_class_name, (SQLAlchemyAutoSchema,), {"Meta": Meta})
 
-                class_.__marshmallow__ = schema_class
-
-    return setup_schema_fn
+            class_.__marshmallow__ = schema_class

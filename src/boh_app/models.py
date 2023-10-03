@@ -10,6 +10,11 @@ class Base(DeclarativeBase):
     registry = reg
 
 
+def get_model_by_name(name: str):
+    registry = Base.registry._class_registry
+    return registry.get(name.capitalize())
+
+
 class IdMixin:
     id: Mapped[int] = mapped_column(primary_key=True)
 
