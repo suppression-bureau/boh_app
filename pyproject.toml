@@ -33,7 +33,7 @@ dependencies = [
     "sqlalchemy>=2",
     "fastapi",  # router
     "uvicorn",  # server
-    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@unpin",  # sqlchemy schema to graphql
+    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@fixes",  # sqlchemy schema to graphql
     "ariadne",  # graphql API endpoint
 ]
 
