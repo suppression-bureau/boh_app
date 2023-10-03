@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import Column, ForeignKey, Table, create_engine
+from sqlalchemy import Column, ForeignKey, Table, UniqueConstraint, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
 reg = registry()
@@ -35,6 +35,20 @@ recipe_skill_association = Table(
     Column("skill_id", ForeignKey("skill.id")),
 )
 
+assistant_aspect_association = Table(
+    "assistant_aspect",
+    Base.metadata,
+    Column("assistant_id", ForeignKey("assistant.id")),
+    Column("aspect_id", ForeignKey("aspect.id")),
+)
+
+assistant_principle_count_association = Table(
+    "assistant_principle_count",
+    Base.metadata,
+    Column("assistant_id", ForeignKey("assistant.id")),
+    Column("principle_count_id", ForeignKey("principle_count.id")),
+)
+
 
 class Aspect(Base):
     __tablename__ = "aspect"
@@ -42,6 +56,7 @@ class Aspect(Base):
     name: Mapped[str]
 
     items: Mapped[list[Item]] = relationship(back_populates="aspects", secondary=item_aspect_association)
+    assistants: Mapped[list[Assistant]] = relationship(back_populates="aspects", secondary=assistant_aspect_association)
 
     def __repr__(self) -> str:
         return f"Type(id={self.id!r}, name={self.name!r})"
@@ -60,6 +75,18 @@ class Principle(Base):
     )
 
     workstations: Mapped[list[Workstation]] = relationship(back_populates="principles", secondary=workstation_principle_association)
+
+
+class PrincipleCount(Base):
+    __tablename__ = "principle_count"
+    __table_args__ = (UniqueConstraint("principle_id", "count"),)
+
+    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
+    principle: Mapped[Principle] = relationship()
+
+    count: Mapped[int]
+
+    assistants: Mapped[list[Assistant]] = relationship(back_populates="base_principles", secondary=assistant_principle_count_association)
 
 
 class Wisdom(Base):
@@ -174,3 +201,10 @@ class Workstation(Base):
 
 class Assistant(Base):
     __tablename__ = "assistant"
+
+    name: Mapped[str]
+    season: Mapped[str | None]
+    aspects: Mapped[list[Aspect]] = relationship(back_populates="assistants", secondary=assistant_aspect_association)
+    base_principles: Mapped[list[PrincipleCount]] = relationship(
+        back_populates="assistants", secondary=assistant_principle_count_association
+    )
