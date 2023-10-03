@@ -14,6 +14,7 @@ def setup_schema(Base, session):
             class Meta:
                 model = class_
                 sqla_session = session
+                include_relationships = True
                 load_instance = True
 
             schema_class_name = "%sSchema" % class_.__name__

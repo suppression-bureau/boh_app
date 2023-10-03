@@ -15,6 +15,7 @@ def get_data(name: str):
 
 def add_data(data: json, _class: Base, *, session: Session):
     serializer = _class.__marshmallow__(many=True)
+    print(serializer._declared_fields.keys())
     with session.begin():
         items = serializer.load(data, session=session)
         for item in items:
@@ -23,6 +24,6 @@ def add_data(data: json, _class: Base, *, session: Session):
 
 
 def load_all(session: Session):
-    names = ["aspect", "principle", "wisdom"]
+    names = ["aspect", "principle", "wisdom", "assistant"]
     for name in names:
         add_data(get_data(name), get_model_by_name(name), session=session)

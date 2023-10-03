@@ -1,0 +1,54 @@
+[
+  {
+    "id": "Coffinmaker",
+    "base_principles": [
+      {
+        "principle_id": "sky",
+        "count": 1
+      },
+      {
+        "principle_id": "winter",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "id": "Midwife",
+    "base_principles": [
+      {
+        "principle_id": "grail",
+        "count": 2
+      },
+      {
+        "principle_id": "heart",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "id": "Smithy",
+    "base_principles": [
+      {
+        "principle_id": "edge",
+        "count": 1
+      },
+      {
+        "principle_id": "forge",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "id": "Rector",
+    "base_principles": [
+      {
+        "principle_id": "knock",
+        "count": 1
+      },
+      {
+        "principle_id": "lantern",
+        "count": 2
+      }
+    ]
+  }
+]

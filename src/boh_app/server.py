@@ -1,4 +1,6 @@
+from ariadne.asgi import GraphQL
 from fastapi import FastAPI
+from graphql_sqlalchemy import build_schema
 from sqlalchemy import event
 from sqlalchemy.orm import configure_mappers, mapper
 
@@ -14,7 +16,7 @@ def start_database():
     session = Session()
     event.listen(mapper, "after_configured", lambda: setup_schema(Base, session))
     Base.metadata.create_all(bind=engine)
-    configure_mappers()
+    configure_mappers()  # call to trigger listened to event ^
     load_all(session)
     return session
 
@@ -30,9 +32,10 @@ async def root():
 @app.get("/{table}")
 async def get_all(table: str):
     model = get_model_by_name(table)
+    serializer = model.__marshmallow__(many=True)
     with session.begin():
         data = session.query(model).all()
-        resp = [model.__marshmallow__().dump(d) for d in data]
+        resp = serializer.dump(data)
         return resp
 
 
@@ -45,4 +48,4 @@ async def get_by_id(table: str, id: str | int):
         return resp
 
 
-# app.mount("/graphql", GraphQL(build_schema(Base), context_value={"session": session}))
+app.mount("/graphql", GraphQL(build_schema(Base), context_value={"session": session}))
