@@ -28,6 +28,13 @@ workstation_principle_association = Table(
     Column("principle_id", ForeignKey("principle.id")),
 )
 
+recipe_skill_association = Table(
+    "recipe_skill",
+    Base.metadata,
+    Column("recipe_id", ForeignKey("recipe.id")),
+    Column("skill_id", ForeignKey("skill.id")),
+)
+
 
 class Aspect(Base):
     __tablename__ = "aspect"
@@ -59,14 +66,6 @@ class Wisdom(Base):
     __tablename__ = "wisdom"
 
     name: Mapped[str]
-
-
-recipe_skill_association = Table(
-    "recipe_skill",
-    Base.metadata,
-    Column("recipe_id", ForeignKey("recipe.id")),
-    Column("skill_id", ForeignKey("skill.id")),
-)
 
 
 class Skill(Base):
