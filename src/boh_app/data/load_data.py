@@ -1,9 +1,8 @@
 import json
 from pathlib import Path
 
-from sqlalchemy.orm import Session
-
-from ..database import Aspect, Base, Principle, Wisdom
+from ..database import Session
+from ..models import Aspect, Base, Principle, Wisdom
 
 HERE = Path(__file__).parent
 

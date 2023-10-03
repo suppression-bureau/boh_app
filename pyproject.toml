@@ -35,6 +35,7 @@ dependencies = [
     "uvicorn",  # server
     "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@fixes",  # sqlchemy schema to graphql
     "ariadne",  # graphql API endpoint
+    "marshmallow-sqlalchemy"
 ]
 
 [project.optional-dependencies]
