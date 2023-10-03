@@ -96,7 +96,6 @@ mark-parentheses = false
 
 [tool.ruff.isort]
 forced-separate = ["conftest"]
-force-single-line = true
 
 [tool.black]
 line-length = 140

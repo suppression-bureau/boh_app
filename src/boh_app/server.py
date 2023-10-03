@@ -4,9 +4,7 @@ from graphql_sqlalchemy import build_schema
 from sqlalchemy.orm import sessionmaker
 
 from .data.load_data import load_all
-from .database import Aspect
-from .database import Base
-from .database import engine
+from .database import Aspect, Base, engine
 
 app = FastAPI()
 

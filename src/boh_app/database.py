@@ -1,12 +1,7 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey
-from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import registry
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey, create_engine
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
 reg = registry()
 
@@ -192,3 +187,7 @@ class WorkstationPrinciple(Base):  # Association Table
 
     workstation: Mapped[Workstation] = relationship(back_populates="principles")
     principle: Mapped[Principle] = relationship(back_populates="workstations")
+
+
+class Assistant(Base):
+    __tablename__ = "assistant"

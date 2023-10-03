@@ -3,10 +3,7 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
-from ..database import Aspect
-from ..database import Base
-from ..database import Principle
-from ..database import Wisdom
+from ..database import Aspect, Base, Principle, Wisdom
 
 HERE = Path(__file__).parent
 
