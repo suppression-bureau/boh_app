@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
@@ -197,7 +199,7 @@ class Workstation(Base, NameMixin):
 class Assistant(Base, NameMixin):
     __tablename__ = "assistant"
 
-    base_aspects = frozenset(["sustenance", "beverage", "memory", "tool", "device"])
+    base_aspects: ClassVar = frozenset(["sustenance", "beverage", "memory", "tool", "device"])
 
     season: Mapped[str | None]
     special_aspects: Mapped[list[Aspect]] = relationship(back_populates="assistants", secondary=assistant_aspect_association)
@@ -206,5 +208,5 @@ class Assistant(Base, NameMixin):
     )
 
     @hybrid_property
-    def accepted_aspects(self):
-        self.accepted_aspects = self.special_aspects.append({"id": a} for a in self.base_aspects)
+    def accepted_aspects(self) -> list[Aspect]:
+        return [self.special_aspects, *(Aspect(id=a) for a in self.base_aspects)]
