@@ -1,6 +1,7 @@
 [
   {
     "id": "Coffinmaker",
+    "special_aspects": [{ "id": "wood" }],
     "base_principles": [
       {
         "principle_id": "sky",
@@ -14,6 +15,7 @@
   },
   {
     "id": "Midwife",
+    "special_aspects": [{ "id": "fabric" }],
     "base_principles": [
       {
         "principle_id": "grail",
@@ -30,7 +32,7 @@
     "base_principles": [
       {
         "principle_id": "edge",
-        "count": 1
+        "count": 2
       },
       {
         "principle_id": "forge",
@@ -40,6 +42,7 @@
   },
   {
     "id": "Rector",
+    "special_aspects": [{ "id": "candle" }],
     "base_principles": [
       {
         "principle_id": "knock",
@@ -113,6 +116,7 @@
   },
   {
     "id": "Consulting Engineer",
+    "special_aspects": [{ "id": "fuel" }],
     "base_principles": [
       {
         "principle_id": "forge",
@@ -147,6 +151,7 @@
   },
   {
     "id": "Elegiac Poet",
+    "special_aspects": [{ "id": "flower" }],
     "base_principles": [
       {
         "principle_id": "winter",
@@ -198,6 +203,7 @@
   },
   {
     "id": "Surrealist Painter",
+    "special_aspects": [{ "id": "pigment" }],
     "base_principles": [
       {
         "principle_id": "grail",

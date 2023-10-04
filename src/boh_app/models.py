@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from sqlalchemy import Column, ForeignKey, Table
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
 reg = registry()
@@ -63,7 +64,7 @@ class Aspect(Base, NameMixin):
     __tablename__ = "aspect"
 
     items: Mapped[list[Item]] = relationship(back_populates="aspects", secondary=item_aspect_association)
-    assistants: Mapped[list[Assistant]] = relationship(back_populates="accepted_aspects", secondary=assistant_aspect_association)
+    assistants: Mapped[list[Assistant]] = relationship(back_populates="special_aspects", secondary=assistant_aspect_association)
 
 
 class Principle(Base, NameMixin):
@@ -196,8 +197,14 @@ class Workstation(Base, NameMixin):
 class Assistant(Base, NameMixin):
     __tablename__ = "assistant"
 
+    base_aspects = frozenset(["sustenance", "beverage", "memory", "tool", "device"])
+
     season: Mapped[str | None]
-    accepted_aspects: Mapped[list[Aspect]] = relationship(back_populates="assistants", secondary=assistant_aspect_association)
+    special_aspects: Mapped[list[Aspect]] = relationship(back_populates="assistants", secondary=assistant_aspect_association)
     base_principles: Mapped[list[PrincipleCount]] = relationship(
         back_populates="assistants", secondary=assistant_principle_count_association
     )
+
+    @hybrid_property
+    def accepted_aspects(self):
+        self.accepted_aspects = self.special_aspects.append({"id": a} for a in self.base_aspects)
