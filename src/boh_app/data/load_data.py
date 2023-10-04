@@ -14,7 +14,8 @@ def get_data(name: str):
 
 
 def add_data(data: json, _class: Base, *, session: Session):
-    serializer = _class.__marshmallow__(many=True)
+    # transient because otherwise it warns when trying to get instance with id=None
+    serializer = _class.__marshmallow__(many=True, transient=True)
     with session.begin():
         items = serializer.load(data, session=session)
         for item in items:

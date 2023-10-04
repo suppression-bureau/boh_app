@@ -104,7 +104,7 @@ line-length = 140
 target-version = ["py37"]
 
 [tool.pytest.ini_options]
-norecursedirs = ["migrations"]
+norecursedirs = ["migrations", "src"]
 addopts = [
     "-ra",
     "--strict-markers",

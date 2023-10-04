@@ -1,8 +1,7 @@
 from ariadne.asgi import GraphQL
 from fastapi import FastAPI
 from graphql_sqlalchemy import build_schema
-from sqlalchemy import event
-from sqlalchemy.orm import configure_mappers, mapper
+from sqlalchemy.orm import configure_mappers
 
 from .data.load_data import load_all
 from .database import Session, engine
@@ -14,10 +13,10 @@ app = FastAPI()
 
 def start_database():
     session = Session()
-    event.listen(mapper, "after_configured", lambda: setup_schema(Base, session))
     Base.metadata.create_all(bind=engine)
-    configure_mappers()  # call to trigger listened to event ^
-    load_all(session)
+    configure_mappers()
+    setup_schema(Base, session)  # depends on mappers being configured
+    load_all(session)  # depends on schema being setup
     return session
 
 
