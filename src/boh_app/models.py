@@ -199,6 +199,8 @@ class Workstation(Base, NameMixin):
 class Assistant(Base, NameMixin):
     __tablename__ = "assistant"
 
+    _additional_fields = ("accepted_aspects",)
+
     base_aspects: ClassVar = frozenset(["sustenance", "beverage", "memory", "tool", "device"])
 
     season: Mapped[str | None]
@@ -209,4 +211,4 @@ class Assistant(Base, NameMixin):
 
     @hybrid_property
     def accepted_aspects(self) -> list[Aspect]:
-        return [self.special_aspects, *(Aspect(id=a) for a in self.base_aspects)]
+        return [*self.special_aspects, *(Aspect(id=a) for a in self.base_aspects)]
