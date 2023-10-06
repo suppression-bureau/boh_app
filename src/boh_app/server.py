@@ -1,26 +1,27 @@
 from ariadne.asgi import GraphQL
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from graphql_sqlalchemy import build_schema
-from sqlalchemy.orm import configure_mappers
+from sqlalchemy.orm import Session, configure_mappers
 
 from .data.load_data import load_all
-from .database import Session, engine
+from .database import SessionLocal, engine
 from .models import Base, get_model_by_name
 from .serializers import setup_schema
 
 app = FastAPI()
 
 
-def start_database():
-    session = Session()
+def get_sess():
     Base.metadata.create_all(bind=engine)
     configure_mappers()
+
+    session = SessionLocal()
     setup_schema(Base, session)  # depends on mappers being configured
     load_all(session)  # depends on schema being setup
-    return session
-
-
-session = start_database()
+    try:
+        yield session
+    except Exception:
+        session.close()
 
 
 @app.get("/")
@@ -29,7 +30,7 @@ async def root():
 
 
 @app.get("/{table}")
-async def get_all(table: str):
+def get_all(table: str, session: Session = Depends(get_sess)):
     model = get_model_by_name(table)
     serializer = model.__marshmallow__(many=True)
     with session.begin():
@@ -39,7 +40,7 @@ async def get_all(table: str):
 
 
 @app.get("/{table}/{id}")
-async def get_by_id(table: str, id: str | int):
+def get_by_id(table: str, id: str | int, session: Session = Depends(get_sess)):
     model = get_model_by_name(table)
     with session.begin():
         data = session.query(model).get(id)
@@ -47,4 +48,4 @@ async def get_by_id(table: str, id: str | int):
         return resp
 
 
-app.mount("/graphql", GraphQL(build_schema(Base), context_value={"session": session}))
+app.mount("/graphql", GraphQL(build_schema(Base)))  # , context_value={"session": session}))

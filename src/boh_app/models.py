@@ -1,21 +1,27 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar, cast
 
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
+
+if TYPE_CHECKING:
+    from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 reg = registry()
 
 
 class Base(DeclarativeBase):
     registry = reg
+    # added in serializers.py
+    __marshmallow__: ClassVar[type[SQLAlchemyAutoSchema]]
 
 
-def get_model_by_name(name: str):
+def get_model_by_name(name: str) -> type[Base]:
     registry = Base.registry._class_registry
-    return registry.get(name.capitalize())
+    model = registry[name.capitalize()]
+    return cast(type[Base], model)
 
 
 class IdMixin:

@@ -11,11 +11,20 @@
       "module": "uvicorn",
       "args": ["boh_app.server:app", "--reload"],
       "jinja": true,
-      "justMyCode": false,
       "console": "internalConsole",
+      "justMyCode": false,
       "env": {
         "DEBUG": "1",
       },
+    },
+    {
+      "name": "Python: Test",
+      "type": "python",
+      "purpose": ["debug-test"],
+      "request": "launch",
+      "program": "${file}",
+      "console": "internalConsole",
+      "justMyCode": false,
     },
   ],
 }

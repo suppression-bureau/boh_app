@@ -39,7 +39,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest", "pytest-cov"]
+test = ["pytest", "pytest-cov", "httpx"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -85,6 +85,7 @@ select = [
     "RSE", # flake8-raise
     "RUF", # ruff-specific rules
     "S", # flake8-bandit
+    "TCH", # typecheck
     "UP", # pyupgrade
     "W", # pycodestyle warnings
 ]
@@ -99,6 +100,10 @@ mark-parentheses = false
 [tool.ruff.isort]
 forced-separate = ["conftest"]
 
+[tool.ruff.flake8-bugbear]
+# Allow default arguments like, e.g., `data: List[str] = fastapi.Query(None)`.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
+
 [tool.black]
 line-length = 140
 target-version = ["py37"]
@@ -108,6 +113,7 @@ norecursedirs = ["migrations", "src"]
 addopts = [
     "-ra",
     "--strict-markers",
+    "--import-mode=importlib",
     "--doctest-modules",
     "--doctest-glob=\\*.rst",
     "--tb=short",
