@@ -53,13 +53,6 @@ recipe_skill_association = Table(
     Column("skill_id", ForeignKey("skill.id")),
 )
 
-assistant_aspect_association = Table(
-    "assistant_aspect",
-    Base.metadata,
-    Column("assistant_id", ForeignKey("assistant.id")),
-    Column("aspect_id", ForeignKey("aspect.id")),
-)
-
 assistant_principle_count_association = Table(
     "assistant_principle_count",
     Base.metadata,
@@ -72,7 +65,7 @@ class Aspect(Base, NameMixin):
     __tablename__ = "aspect"
 
     items: Mapped[list[Item]] = relationship(back_populates="aspects", secondary=item_aspect_association)
-    assistants: Mapped[list[Assistant]] = relationship(back_populates="special_aspects", secondary=assistant_aspect_association)
+    assistants: Mapped[list[Assistant]] = relationship(back_populates="special_aspect")
 
 
 class Principle(Base, NameMixin):
@@ -210,11 +203,12 @@ class Assistant(Base, NameMixin):
     base_aspects: ClassVar = frozenset(["sustenance", "beverage", "memory", "tool", "device"])
 
     season: Mapped[str | None]
-    special_aspects: Mapped[list[Aspect]] = relationship(back_populates="assistants", secondary=assistant_aspect_association)
+    aspect_id = mapped_column(ForeignKey("aspect.id"))
+    special_aspect: Mapped[Aspect] = relationship(back_populates="assistants")
     base_principles: Mapped[list[PrincipleCount]] = relationship(
         back_populates="assistants", secondary=assistant_principle_count_association
     )
 
     @hybrid_property
     def accepted_aspects(self) -> list[Aspect]:
-        return [*self.special_aspects, *(Aspect(id=a) for a in self.base_aspects)]
+        return [self.special_aspect, *(Aspect(id=a) for a in self.base_aspects)]
