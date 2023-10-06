@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, ClassVar, cast
 
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, object_session, registry, relationship
 
 if TYPE_CHECKING:
     from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -211,4 +211,7 @@ class Assistant(Base, NameMixin):
 
     @hybrid_property
     def accepted_aspects(self) -> list[Aspect]:
-        return [self.special_aspect, *(Aspect(id=a) for a in self.base_aspects)]
+        db_session = object_session(self)
+        assert db_session
+        base_aspects = db_session.query(Aspect).filter(Aspect.id.in_(self.base_aspects)).all()
+        return [self.special_aspect, *base_aspects]
