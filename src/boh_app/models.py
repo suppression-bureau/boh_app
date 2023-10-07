@@ -101,17 +101,26 @@ class Wisdom(Base, NameMixin):
 class Skill(Base, NameMixin):
     __tablename__ = "skill"
 
+    @classmethod
+    def _additional_fields(cls):
+        return {"wisdoms": Nested(Wisdom.__marshmallow__, many=True)}
+
     primary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     primary_principle: Mapped[Principle] = relationship(back_populates="primary_skills", foreign_keys=[primary_principle_id])
 
     secondary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     secondary_principle: Mapped[Principle] = relationship(back_populates="secondary_skills", foreign_keys=[secondary_principle_id])
 
+    # could also just make wisdoms MANYTOMANY? numerical assignment is arbitrary
     wisdom_1_id: Mapped[int] = mapped_column(ForeignKey("wisdom.id"))
     wisdom_1: Mapped[Wisdom] = relationship(foreign_keys=[wisdom_1_id])
 
     wisdom_2_id: Mapped[int] = mapped_column(ForeignKey("wisdom.id"))
     wisdom_2: Mapped[Wisdom] = relationship(foreign_keys=[wisdom_2_id])
+
+    @hybrid_property
+    def wisdoms(self) -> list[Wisdom]:
+        return [self.wisdom_1, self.wisdom_2]
 
     recipes: Mapped[list[Recipe]] = relationship(back_populates="skills", secondary=recipe_skill_association)
 
