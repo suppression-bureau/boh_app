@@ -19,7 +19,7 @@ def get_data(name: str):
 
 def add_data(data: Any, _class: type[Base], *, session: Session):
     # set transient=True to avoid warning when trying to get instance with id=None
-    # i.e. with priniciple_count
+    # i.e. with priniciple_count when UQ exists
     serializer = _class.__marshmallow__(many=True, transient=False)
     with session.begin():
         with warnings.catch_warnings():
@@ -31,7 +31,7 @@ def add_data(data: Any, _class: type[Base], *, session: Session):
 
 
 def load_all(session: Session) -> None:
-    # TODO: make glob
-    names = ["aspect", "principle", "wisdom", "assistant", "skill"]
+    data_file_paths = HERE.glob("*.json")
+    names = [f.stem for f in data_file_paths]
     for name in names:
         add_data(get_data(name), get_model_by_name(name), session=session)
