@@ -17,8 +17,5 @@ __pycache__/
 coverage.xml
 htmlcov
 
-# IDE project files
-/.vscode/
-
-# Sphinx
-/docs/_build/
+# Front end
+/front/node_modules

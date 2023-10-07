@@ -1,0 +1,947 @@
+[
+  {
+    "id": "Anbary & Lapidary",
+    "primary_principle": {
+      "id": "sky"
+    },
+    "secondary_principle": {
+      "id": "forge"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "Applebright Euphonies",
+    "primary_principle": {
+      "id": "sky"
+    },
+    "secondary_principle": {
+      "id": "grail"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Illumination"
+    }
+  },
+  {
+    "id": "Auroral Contemplations",
+    "primary_principle": {
+      "id": "lantern"
+    },
+    "secondary_principle": {
+      "id": "edge"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Bells & Brazieries",
+    "primary_principle": {
+      "id": "forge"
+    },
+    "secondary_principle": {
+      "id": "sky"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "Coil & Chasm",
+    "primary_principle": {
+      "id": "scale"
+    },
+    "secondary_principle": {
+      "id": "nectar"
+    },
+    "wisdom_1": {
+      "id": "Nyctodromy"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Desires & Dissolutions",
+    "primary_principle": {
+      "id": "grail"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Horomachistry"
+    }
+  },
+  {
+    "id": "Disciplines of the Hammer",
+    "primary_principle": {
+      "id": "edge"
+    },
+    "secondary_principle": {
+      "id": "forge"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Disciplines of the Scar",
+    "primary_principle": {
+      "id": "edge"
+    },
+    "secondary_principle": {
+      "id": "lantern"
+    },
+    "wisdom_1": {
+      "id": "Hushery"
+    },
+    "wisdom_2": {
+      "id": "Illumination"
+    }
+  },
+  {
+    "id": "Door & Wall",
+    "primary_principle": {
+      "id": "knock"
+    },
+    "secondary_principle": {
+      "id": "forge"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Drums & Dances",
+    "primary_principle": {
+      "id": "heart"
+    },
+    "secondary_principle": {
+      "id": "nectar"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Horomachistry"
+    }
+  },
+  {
+    "id": "Edicts Inviolable",
+    "primary_principle": {
+      "id": "heart"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Edicts Liminal",
+    "primary_principle": {
+      "id": "moth"
+    },
+    "secondary_principle": {
+      "id": "knock"
+    },
+    "wisdom_1": {
+      "id": "Nyctodromy"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Edicts Martial",
+    "primary_principle": {
+      "id": "moon"
+    },
+    "secondary_principle": {
+      "id": "edge"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Illumination"
+    }
+  },
+  {
+    "id": "Furs & Feathers",
+    "primary_principle": {
+      "id": "sky"
+    },
+    "secondary_principle": {
+      "id": "scale"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Glassblowing & Vesselcrafting",
+    "primary_principle": {
+      "id": "knock"
+    },
+    "secondary_principle": {
+      "id": "sky"
+    },
+    "wisdom_1": {
+      "id": "Hushery"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "Glaziery & Lightsmithing",
+    "primary_principle": {
+      "id": "lantern"
+    },
+    "secondary_principle": {
+      "id": "sky"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "The Great Signs & the Great Scars",
+    "primary_principle": {
+      "id": "grail"
+    },
+    "secondary_principle": {
+      "id": "knock"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Hushery"
+    }
+  },
+  {
+    "id": "Herbs & Infusions",
+    "primary_principle": {
+      "id": "heart"
+    },
+    "secondary_principle": {
+      "id": "nectar"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Hill & Hollow",
+    "primary_principle": {
+      "id": "moon"
+    },
+    "secondary_principle": {
+      "id": "scale"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Horns & Ivories",
+    "primary_principle": {
+      "id": "scale"
+    },
+    "secondary_principle": {
+      "id": "knock"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Inks of Containment",
+    "primary_principle": {
+      "id": "winter"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Inks of Power",
+    "primary_principle": {
+      "id": "rose"
+    },
+    "secondary_principle": {
+      "id": "scale"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Inks of Revelation",
+    "primary_principle": {
+      "id": "lantern"
+    },
+    "secondary_principle": {
+      "id": "moth"
+    },
+    "wisdom_1": {
+      "id": "Hushery"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "Insects & Nectars",
+    "primary_principle": {
+      "id": "nectar"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Leaves & Thorns",
+    "primary_principle": {
+      "id": "nectar"
+    },
+    "secondary_principle": {
+      "id": "grail"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "The Bosk"
+    }
+  },
+  {
+    "id": "Lockworks & Clockworks",
+    "primary_principle": {
+      "id": "knock"
+    },
+    "secondary_principle": {
+      "id": "sky"
+    },
+    "wisdom_1": {
+      "id": "Ithastry"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Maggephene Mysteries",
+    "primary_principle": {
+      "id": "moon"
+    },
+    "secondary_principle": {
+      "id": "heart"
+    },
+    "wisdom_1": {
+      "id": "Hushery"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Meniscate Reflections",
+    "primary_principle": {
+      "id": "forge"
+    },
+    "secondary_principle": {
+      "id": "edge"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Orchids & Narcotics",
+    "primary_principle": {
+      "id": "grail"
+    },
+    "secondary_principle": {
+      "id": "nectar"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Ouranoscopy",
+    "primary_principle": {
+      "id": "sky"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Hushery"
+    }
+  },
+  {
+    "id": "Path & Pilgrim",
+    "primary_principle": {
+      "id": "rose"
+    },
+    "secondary_principle": {
+      "id": "scale"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Pearl & Tide",
+    "primary_principle": {
+      "id": "rose"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Pentiments & Precursors",
+    "primary_principle": {
+      "id": "scale"
+    },
+    "secondary_principle": {
+      "id": "grail"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Preliminal Meter",
+    "primary_principle": {
+      "id": "knock"
+    },
+    "secondary_principle": {
+      "id": "rose"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "Purifications & Exaltations",
+    "primary_principle": {
+      "id": "sky"
+    },
+    "secondary_principle": {
+      "id": "lantern"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "Putrefactions & Calcinations",
+    "primary_principle": {
+      "id": "winter"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Ithastry"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Pyroglyphics",
+    "primary_principle": {
+      "id": "forge"
+    },
+    "secondary_principle": {
+      "id": "lantern"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "Quenchings & Quellings",
+    "primary_principle": {
+      "id": "winter"
+    },
+    "secondary_principle": {
+      "id": "heart"
+    },
+    "wisdom_1": {
+      "id": "Hushery"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Ragged Crossroads",
+    "primary_principle": {
+      "id": "edge"
+    },
+    "secondary_principle": {
+      "id": "winter"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Resurgences & Emergences",
+    "primary_principle": {
+      "id": "moth"
+    },
+    "secondary_principle": {
+      "id": "grail"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Rhyme & Remembrance",
+    "primary_principle": {
+      "id": "winter"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Rites of the Roots",
+    "primary_principle": {
+      "id": "nectar"
+    },
+    "secondary_principle": {
+      "id": "moth"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Sacra Limiae",
+    "primary_principle": {
+      "id": "moth"
+    },
+    "secondary_principle": {
+      "id": "sky"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Hushery"
+    }
+  },
+  {
+    "id": "Sacra Solis Invicti",
+    "primary_principle": {
+      "id": "lantern"
+    },
+    "secondary_principle": {
+      "id": "sky"
+    },
+    "wisdom_1": {
+      "id": "Horomachistry"
+    },
+    "wisdom_2": {
+      "id": "Illumination"
+    }
+  },
+  {
+    "id": "Sand Stories",
+    "primary_principle": {
+      "id": "rose"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Sea Stories",
+    "primary_principle": {
+      "id": "moon"
+    },
+    "secondary_principle": {
+      "id": "grail"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Serpents & Venoms",
+    "primary_principle": {
+      "id": "scale"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Hushery"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Sharps",
+    "primary_principle": {
+      "id": "edge"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Hushery"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Sickle & Eclipse",
+    "primary_principle": {
+      "id": "edge"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Nyctodromy"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Sights & Sensations",
+    "primary_principle": {
+      "id": "sky"
+    },
+    "secondary_principle": {
+      "id": "winter"
+    },
+    "wisdom_1": {
+      "id": "Hushery"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Sky Stories",
+    "primary_principle": {
+      "id": "sky"
+    },
+    "secondary_principle": {
+      "id": "rose"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Horomachistry"
+    }
+  },
+  {
+    "id": "Snow Stories",
+    "primary_principle": {
+      "id": "winter"
+    },
+    "secondary_principle": {
+      "id": "moon"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Hushery"
+    }
+  },
+  {
+    "id": "Solutions & Separations",
+    "primary_principle": {
+      "id": "moth"
+    },
+    "secondary_principle": {
+      "id": "knock"
+    },
+    "wisdom_1": {
+      "id": "Ithastry"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  },
+  {
+    "id": "Spices & Savours",
+    "primary_principle": {
+      "id": "nectar"
+    },
+    "secondary_principle": {
+      "id": "forge"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "Stitching & Binding",
+    "primary_principle": {
+      "id": "sky"
+    },
+    "secondary_principle": {
+      "id": "heart"
+    },
+    "wisdom_1": {
+      "id": "Ithastry"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Stone Stories",
+    "primary_principle": {
+      "id": "scale"
+    },
+    "secondary_principle": {
+      "id": "nectar"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Strings & Songs",
+    "primary_principle": {
+      "id": "sky"
+    },
+    "secondary_principle": {
+      "id": "heart"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Surgeries & Exsanguinations",
+    "primary_principle": {
+      "id": "heart"
+    },
+    "secondary_principle": {
+      "id": "knock"
+    },
+    "wisdom_1": {
+      "id": "Hushery"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Transformations & Liberations",
+    "primary_principle": {
+      "id": "forge"
+    },
+    "secondary_principle": {
+      "id": "moth"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Ithastry"
+    }
+  },
+  {
+    "id": "Tridesma Hiera",
+    "primary_principle": {
+      "id": "moon"
+    },
+    "secondary_principle": {
+      "id": "grail"
+    },
+    "wisdom_1": {
+      "id": "The Bosk"
+    },
+    "wisdom_2": {
+      "id": "Preservation"
+    }
+  },
+  {
+    "id": "Watchman's Paradoxes",
+    "primary_principle": {
+      "id": "lantern"
+    },
+    "secondary_principle": {
+      "id": "sky"
+    },
+    "wisdom_1": {
+      "id": "Illumination"
+    },
+    "wisdom_2": {
+      "id": "Nyctodromy"
+    }
+  },
+  {
+    "id": "Weaving & Knotworking",
+    "primary_principle": {
+      "id": "heart"
+    },
+    "secondary_principle": {
+      "id": "moth"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "The Bosk"
+    }
+  },
+  {
+    "id": "Wolf Stories",
+    "primary_principle": {
+      "id": "moon"
+    },
+    "secondary_principle": {
+      "id": "scale"
+    },
+    "wisdom_1": {
+      "id": "Birdsong"
+    },
+    "wisdom_2": {
+      "id": "Skolekosophy"
+    }
+  }
+]

@@ -30,16 +30,26 @@ classifiers = [
 keywords = []
 requires-python =  ">=3.11"
 dependencies = [
-    "sqlalchemy",
-    "fastapi",
-    "uvicorn",
+    "sqlalchemy>=2",
+    "fastapi",  # router
+    "uvicorn",  # server
+    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@fixes",  # sqlchemy schema to graphql
+    "ariadne",  # graphql API endpoint
+    "marshmallow-sqlalchemy",
+    "platformdirs",
 ]
 
 [project.optional-dependencies]
-test = ["pytest", "pytest-cov"]
+test = ["pytest", "pytest-cov", "httpx"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.envs.default]
 python = "3.11"
+[tool.hatch.envs.default.scripts]
+server = "uvicorn boh_app.server:app --reload"
+
 [tool.hatch.envs.test]
 features = ["test"]
 [tool.hatch.envs.test.scripts]
@@ -76,9 +86,11 @@ select = [
     "RSE", # flake8-raise
     "RUF", # ruff-specific rules
     "S", # flake8-bandit
+    "TCH", # typecheck
     "UP", # pyupgrade
     "W", # pycodestyle warnings
 ]
+unfixable = ["F401"]
 src = ["src", "tests"]
 target-version = "py37"
 
@@ -88,17 +100,21 @@ mark-parentheses = false
 
 [tool.ruff.isort]
 forced-separate = ["conftest"]
-force-single-line = true
+
+[tool.ruff.flake8-bugbear]
+# Allow default arguments like, e.g., `data: List[str] = fastapi.Query(None)`.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
 
 [tool.black]
 line-length = 140
 target-version = ["py37"]
 
 [tool.pytest.ini_options]
-norecursedirs = ["migrations"]
+norecursedirs = ["migrations", "src"]
 addopts = [
     "-ra",
     "--strict-markers",
+    "--import-mode=importlib",
     "--doctest-modules",
     "--doctest-glob=\\*.rst",
     "--tb=short",
