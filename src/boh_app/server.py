@@ -23,7 +23,7 @@ def get_sess():
     session = SessionLocal()
     try:
         yield session
-    except Exception:
+    finally:
         session.close()
 
 
