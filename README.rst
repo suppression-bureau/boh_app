@@ -7,17 +7,12 @@ Overview
 .. list-table::
     :stub-columns: 1
 
-    * - docs
-      - |docs|
     * - tests
       - |
         | |codecov|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
-.. |docs| image:: https://readthedocs.org/projects/boh_app/badge/?style=flat
-    :target: https://boh_app.readthedocs.io/
-    :alt: Documentation Status
 
 .. |codecov| image:: https://codecov.io/gh/ded8393/boh_app/branch/main/graphs/badge.svg?branch=main
     :alt: Coverage Status
