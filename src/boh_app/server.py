@@ -56,4 +56,5 @@ def get_by_id(table: str, id: str | int, session: Session = Depends(get_sess)):
         return resp
 
 
-app.mount("/graphql", GraphQL(build_schema(Base), context_value={"session": SessionLocal()}))
+gql_schema = build_schema(Base)
+app.mount("/graphql", GraphQL(gql_schema, context_value={"session": SessionLocal()}))
