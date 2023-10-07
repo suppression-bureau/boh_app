@@ -8,20 +8,28 @@ from .database import SessionLocal, engine
 from .models import Base, get_model_by_name
 from .serializers import setup_schema
 
-app = FastAPI()
 
-
-def get_sess():
+def init_db():
     Base.metadata.create_all(bind=engine)
     configure_mappers()
 
     session = SessionLocal()
     setup_schema(Base, session)  # depends on mappers being configured
     load_all(session)  # depends on schema being setup
+    session.close()
+
+
+def get_sess():
+    session = SessionLocal()
     try:
         yield session
     except Exception:
         session.close()
+
+
+init_db()
+
+app = FastAPI()
 
 
 @app.get("/")
