@@ -44,7 +44,7 @@ test = ["pytest", "pytest-cov", "httpx"]
 allow-direct-references = true
 
 [tool.hatch.envs.default]
-python = "3.11"
+python = "3.12"
 [tool.hatch.envs.default.scripts]
 server = "uvicorn boh_app.server:app --reload"
 
@@ -87,7 +87,6 @@ select = [
 ]
 unfixable = ["F401"]
 src = ["src", "tests"]
-target-version = "py37"
 
 [tool.ruff.flake8-pytest-style]
 fixture-parentheses = false
@@ -97,12 +96,11 @@ mark-parentheses = false
 forced-separate = ["conftest"]
 
 [tool.ruff.flake8-bugbear]
-# Allow default arguments like, e.g., `data: List[str] = fastapi.Query(None)`.
+# Allow default arguments like, e.g., `data: list[str] = fastapi.Query(None)`.
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
 
 [tool.black]
 line-length = 140
-target-version = ["py37"]
 
 [tool.pytest.ini_options]
 norecursedirs = ["migrations", "src"]
@@ -117,10 +115,7 @@ addopts = [
 ]
 filterwarnings = [
     "error", # warnings as errors
-    # You can add exclusions, some examples:
-    # ignore:'boh_app' defines default_app_config:PendingDeprecationWarning::
-    # ignore:The {{% if:::
-    # ignore:Coverage disabled via --no-cov switch!
+    "ignore:'typing.ByteString' is deprecated:DeprecationWarning:graphql",
 ]
 
 
