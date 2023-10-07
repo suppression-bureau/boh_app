@@ -31,6 +31,7 @@ def add_data(data: Any, _class: type[Base], *, session: Session):
 
 
 def load_all(session: Session) -> None:
-    names = ["aspect", "principle", "wisdom", "assistant"]
+    # TODO: make glob
+    names = ["aspect", "principle", "wisdom", "assistant", "skill"]
     for name in names:
         add_data(get_data(name), get_model_by_name(name), session=session)
