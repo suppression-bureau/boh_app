@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, cast
 
+from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, object_session, registry, relationship
@@ -198,7 +199,9 @@ class Workstation(Base, NameMixin):
 class Assistant(Base, NameMixin):
     __tablename__ = "assistant"
 
-    _additional_fields = ("accepted_aspects",)
+    @classmethod
+    def _additional_fields(cls):
+        return {"accepted_aspects": Nested(Aspect.__marshmallow__, many=True)}
 
     base_aspects: ClassVar = frozenset(["sustenance", "beverage", "memory", "tool", "device"])
 
