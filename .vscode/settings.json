@@ -1,8 +1,8 @@
 {
-  "[python][json][jsonc][yaml]": {
+  "[python][typescript][typescriptreact][json][jsonc][yaml]": {
     "editor.formatOnSave": true,
   },
-  "[json][jsonc][yaml]": {
+  "[typescript][typescriptreact][json][jsonc][yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[python]": {
@@ -18,4 +18,10 @@
   "python.testing.pytestArgs": [],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true,
+  },
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
 }
