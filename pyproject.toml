@@ -44,7 +44,7 @@ test = ["pytest", "pytest-cov", "httpx"]
 allow-direct-references = true
 
 [tool.hatch.envs.default]
-python = "3.11"
+python = "3.12"
 [tool.hatch.envs.default.scripts]
 server = "uvicorn boh_app.server:app --reload"
 
@@ -115,10 +115,7 @@ addopts = [
 ]
 filterwarnings = [
     "error", # warnings as errors
-    # You can add exclusions, some examples:
-    # ignore:'boh_app' defines default_app_config:PendingDeprecationWarning::
-    # ignore:The {{% if:::
-    # ignore:Coverage disabled via --no-cov switch!
+    "ignore:'typing.ByteString' is deprecated:DeprecationWarning:graphql",
 ]
 
 
