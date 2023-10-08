@@ -12,10 +12,10 @@ __pycache__/
 /dist/
 
 # Unit test / coverage reports
-.coverage
-.coverage.*
-coverage.xml
-htmlcov
+/.coverage
+/.coverage.*
+/coverage.xml
+/htmlcov
 
 # Front end
 /.pnp.*

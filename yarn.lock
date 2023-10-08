@@ -644,7 +644,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^20.8.3":
   version: 20.8.3
   resolution: "@types/node@npm:20.8.3"
   checksum: bfb88b341faeb19f8fd37306a3bf433721b876c6491d10fcb0b13fd26601fa36ee45113dd82b1e1c23e3c957dff5b99f81a16493cefa03abe797e41a2487a4f7
@@ -989,6 +989,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "boh_app@workspace:."
   dependencies:
+    "@types/node": ^20.8.3
     "@types/react": ^18
     "@types/react-dom": ^18
     "@vitejs/plugin-react": ^4.1.0
