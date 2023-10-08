@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently -c auto npm:dev:generate npm:dev:api npm:dev:vite",
-    "dev:generate": "yarn run generate -w",
+    "dev:generate": "yarn run generate:schema -w && yarn run generate:query -w",
     "dev:api": "hatch run server",
     "dev:vite": "vite",
     "build": "tsc && vite build",
