@@ -1,6 +1,12 @@
 import { useQuery } from "urql"
+
+import Box from "@mui/material/Box"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemText from "@mui/material/ListItemText"
+import Paper from "@mui/material/Paper"
+
 import { graphql } from "../gql"
-import React from "react"
 
 const postsQueryDocument = graphql(`
     query Aspects {
@@ -16,16 +22,30 @@ const postsQueryDocument = graphql(`
 const Posts = () => {
     const [{ data }] = useQuery({ query: postsQueryDocument })
     return (
-        <dl>
-            {data!.aspect.map(({ assistants, id }) => (
-                <React.Fragment key={id}>
-                    <dt>{id}</dt>
-                    {assistants!.map(({ id }) => (
-                        <dd key={id}>{id}</dd>
+        <Box
+            sx={{
+                maxWidth: "350px",
+                marginBlock: 1,
+                marginInline: "auto",
+            }}
+        >
+            <Paper>
+                <List>
+                    {data!.aspect.map(({ assistants, id }) => (
+                        <ListItem key={id}>
+                            <ListItemText primary={id} />
+                            <List disablePadding>
+                                {assistants!.map(({ id }) => (
+                                    <ListItem key={id} sx={{ pl: 4 }}>
+                                        <ListItemText primary={id} />
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </ListItem>
                     ))}
-                </React.Fragment>
-            ))}
-        </dl>
+                </List>
+            </Paper>
+        </Box>
     )
 }
 
