@@ -176,13 +176,10 @@ class Recipe(Base, IdMixin):
     skills: Mapped[list[Skill]] = relationship(back_populates="recipes", secondary=recipe_skill_association)
 
 
-# is this necessary?  maybe enum instead
-# class WorkstationType(Base):
-#     __tablename__ = "workstation_type"
+class WorkstationType(Base, NameMixin):
+    __tablename__ = "workstation_type"
 
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     name: Mapped[str]
-#     workstations: Mapped[List["Workstation"]] = relationship(back_populates="workstation_type")
+    workstations: Mapped[list[Workstation]] = relationship(back_populates="workstation_type")
 
 
 class WorkstationSlot(Base, IdMixin):
@@ -196,8 +193,8 @@ class WorkstationSlot(Base, IdMixin):
 class Workstation(Base, NameMixin):
     __tablename__ = "workstation"
 
-    # workstation_type_id: Mapped[int] = mapped_column(ForeignKey("workstation_type.id"))
-    # workstation_type: Mapped[WorkstationType] = relationship(back_populates="workstations")
+    workstation_type_id: Mapped[str] = mapped_column(ForeignKey("workstation_type.id"))
+    workstation_type: Mapped[WorkstationType] = relationship(back_populates="workstations")
 
     wisdom_id: Mapped[int | None] = mapped_column(ForeignKey("wisdom.id"))
     evolves: Mapped[Wisdom | None] = relationship()
