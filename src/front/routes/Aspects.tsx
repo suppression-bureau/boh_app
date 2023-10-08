@@ -31,18 +31,20 @@ const Posts = () => {
         >
             <Paper>
                 <List>
-                    {data!.aspect.map(({ assistants, id }) => (
-                        <ListItem key={id}>
-                            <ListItemText primary={id} />
-                            <List disablePadding>
-                                {assistants!.map(({ id }) => (
-                                    <ListItem key={id} sx={{ pl: 4 }}>
-                                        <ListItemText primary={id} />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </ListItem>
-                    ))}
+                    {data!.aspect
+                        .filter(({ assistants }) => assistants!.length > 0)
+                        .map(({ assistants, id }) => (
+                            <ListItem key={id}>
+                                <ListItemText primary={id} />
+                                <List disablePadding>
+                                    {assistants!.map(({ id }) => (
+                                        <ListItem key={id} sx={{ pl: 4 }}>
+                                            <ListItemText primary={id} />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </ListItem>
+                        ))}
                 </List>
             </Paper>
         </Box>
