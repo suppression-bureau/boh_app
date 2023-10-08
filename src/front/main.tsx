@@ -1,7 +1,9 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
-import App from "./App.tsx"
 import { Provider, createClient, fetchExchange } from "urql"
+import { BrowserRouter as Router } from "react-router-dom"
+
+import App from "./App.tsx"
 
 const client = createClient({
     url: "http://localhost:8000/graphql",
@@ -12,9 +14,9 @@ const client = createClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <Provider value={client}>
-            <React.Suspense fallback={"Loading..."}>
+            <Router>
                 <App />
-            </React.Suspense>
+            </Router>
         </Provider>
     </React.StrictMode>,
 )

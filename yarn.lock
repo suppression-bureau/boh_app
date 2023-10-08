@@ -796,7 +796,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.11.1":
+"@emotion/react@npm:^11.10.5, @emotion/react@npm:^11.11.1":
   version: 11.11.1
   resolution: "@emotion/react@npm:11.11.1"
   dependencies:
@@ -2099,6 +2099,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@remix-run/router@npm:1.9.0":
+  version: 1.9.0
+  resolution: "@remix-run/router@npm:1.9.0"
+  checksum: 0537b0ff29879ac85077cb4c42eaca4a295b9efd71477848984c2f2dfa5741c9b83d3106a7bb72994a51a9adfeeab3b0f5a40f2dee8be3f0750feeeca2a6d513
+  languageName: node
+  linkType: hard
+
 "@repeaterjs/repeater@npm:^3.0.4":
   version: 3.0.4
   resolution: "@repeaterjs/repeater@npm:3.0.4"
@@ -2801,6 +2808,9 @@ __metadata:
     graphql: ^16.8.1
     react: ^18.2.0
     react-dom: ^18.2.0
+    react-router: ^6.16.0
+    react-router-dom: ^6.16.0
+    react-slide-routes: ^3.0.3
     typescript: ^5.2.2
     urql: ^4.0.5
     vite: ^4.4.11
@@ -5634,6 +5644,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-router-dom@npm:^6.16.0":
+  version: 6.16.0
+  resolution: "react-router-dom@npm:6.16.0"
+  dependencies:
+    "@remix-run/router": 1.9.0
+    react-router: 6.16.0
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 18b398924bb0f0d97cf2f71dab71d860b960a7a267b2f77388990c662bb6d8738bdc3042d92f713fd63d269ae9ad90df39c8e97661b6ba758bbb7386b9f20ae0
+  languageName: node
+  linkType: hard
+
+"react-router@npm:6.16.0, react-router@npm:^6.16.0":
+  version: 6.16.0
+  resolution: "react-router@npm:6.16.0"
+  dependencies:
+    "@remix-run/router": 1.9.0
+  peerDependencies:
+    react: ">=16.8"
+  checksum: b31c187e3fdcdf7294ffdad6ff834e14d012840c94d8ee8c7fbe451062a8fcb6e31e8bc7827fb1ff45445dd40fad2b8c96a7e98f0ac1c3eb1d716c257a0821c9
+  languageName: node
+  linkType: hard
+
+"react-slide-routes@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "react-slide-routes@npm:3.0.3"
+  dependencies:
+    "@emotion/react": ^11.10.5
+    react-transition-group: ^4.4.5
+    tslib: ^2.4.1
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+    react-router-dom: ">=6.0.0"
+  checksum: 2999968bdb301923f5a6b501257a0a12635c6ca8a49038a4a9d84138ed3227733cc171c3ae352abdcf0050d693b86e05ccb7247099952d7d4ea5b53b13a68e72
+  languageName: node
+  linkType: hard
+
 "react-transition-group@npm:^4.4.5":
   version: 4.4.5
   resolution: "react-transition-group@npm:4.4.5"
@@ -6346,7 +6395,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.6.1":
+"tslib@npm:^2.0.0, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.5.0, tslib@npm:^2.6.1":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
