@@ -1,4 +1,4 @@
-import Aspects from './routes/Aspects'
+import Aspects from "./routes/Aspects"
 
 // TODO: routing
-export default () => <Aspects/>
+export default () => <Aspects />

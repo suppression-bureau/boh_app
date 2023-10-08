@@ -14,5 +14,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Provider value={client}>
             <App />
         </Provider>
-    </React.StrictMode>
+    </React.StrictMode>,
 )
