@@ -1,7 +1,5 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
-import path from "node:path"
-import process from "node:process"
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,9 +8,6 @@ export default defineConfig({
     cacheDir: "../../.vite_cache",
     build: {
         outDir: "../../dist",
-    },
-    resolve: {
-        alias: { "/src/front": path.resolve(process.cwd(), "src/front") },
     },
     // app specific settings
     plugins: [react()],
