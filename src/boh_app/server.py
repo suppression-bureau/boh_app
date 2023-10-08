@@ -1,5 +1,8 @@
 from ariadne.asgi import GraphQL
+from ariadne.asgi.handlers import GraphQLHTTPHandler
 from fastapi import Depends, FastAPI
+from fastapi.middleware import Middleware
+from fastapi.middleware.cors import CORSMiddleware
 from graphql_sqlalchemy import build_schema
 from sqlalchemy.orm import Session, configure_mappers
 
@@ -31,6 +34,9 @@ init_db()
 
 app = FastAPI()
 
+cors = Middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.user_middleware.insert(0, cors)
+
 
 @app.get("/")
 async def root():
@@ -57,4 +63,11 @@ def get_by_id(table: str, id: str | int, session: Session = Depends(get_sess)):
 
 
 gql_schema = build_schema(Base)
-app.mount("/graphql", GraphQL(gql_schema, context_value={"session": SessionLocal()}))
+app.mount(
+    "/graphql",
+    GraphQL(
+        gql_schema,
+        context_value={"session": SessionLocal()},
+        http_handler=GraphQLHTTPHandler(middleware=[cors]),
+    ),
+)

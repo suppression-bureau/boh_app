@@ -1,1 +1,4 @@
-export default () => "Hi!"
+import Aspects from './routes/Aspects'
+
+// TODO: routing
+export default () => <Aspects/>

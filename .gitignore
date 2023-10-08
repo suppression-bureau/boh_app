@@ -10,6 +10,7 @@ __pycache__/
 
 # Build and package files
 /dist/
+/src/front/gql/*
 
 # Unit test / coverage reports
 /.coverage

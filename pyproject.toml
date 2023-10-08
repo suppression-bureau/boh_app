@@ -47,6 +47,7 @@ allow-direct-references = true
 python = "3.11"
 [tool.hatch.envs.default.scripts]
 server = "uvicorn boh_app.server:app --reload"
+schema = "python -m boh_app {args}"
 
 [tool.hatch.envs.test]
 features = ["test"]
