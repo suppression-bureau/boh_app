@@ -12,7 +12,9 @@ const client = createClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <Provider value={client}>
-            <App />
+            <React.Suspense fallback={"Loading..."}>
+                <App />
+            </React.Suspense>
         </Provider>
-    </React.StrictMode>,
+    </React.StrictMode>
 )

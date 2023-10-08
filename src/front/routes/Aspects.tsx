@@ -1,11 +1,12 @@
 import { useQuery } from "urql"
 import { graphql } from "../gql"
+import React from "react"
 
 const postsQueryDocument = graphql(`
     query Aspects {
         aspect {
             id
-            items {
+            assistants {
                 id
             }
         }
@@ -15,16 +16,16 @@ const postsQueryDocument = graphql(`
 const Posts = () => {
     const [{ data }] = useQuery({ query: postsQueryDocument })
     return (
-        <>
-            {data?.aspect.map(({ items, id }) => (
-                <p>
-                    {id}{" "}
-                    {items!.map(({ id }) => (
-                        <span>{id}</span>
+        <dl>
+            {data!.aspect.map(({ assistants, id }) => (
+                <React.Fragment key={id}>
+                    <dt>{id}</dt>
+                    {assistants!.map(({ id }) => (
+                        <dd key={id}>{id}</dd>
                     ))}
-                </p>
+                </React.Fragment>
             ))}
-        </>
+        </dl>
     )
 }
 
