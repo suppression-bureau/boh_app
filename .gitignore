@@ -10,12 +10,19 @@ __pycache__/
 
 # Build and package files
 /dist/
+/src/front/gql/*
 
 # Unit test / coverage reports
-.coverage
-.coverage.*
-coverage.xml
-htmlcov
+/.coverage
+/.coverage.*
+/coverage.xml
+/htmlcov
 
 # Front end
-/front/node_modules
+/.pnp.*
+/.yarn/*
+!/.yarn/patches
+!/.yarn/plugins
+!/.yarn/releases
+!/.yarn/sdks
+!/.yarn/versions
