@@ -36,29 +36,29 @@ class NameMixin:
 item_aspect_association = Table(
     "item_aspect",
     Base.metadata,
-    Column("aspect_id", ForeignKey("aspect.id")),
-    Column("item_id", ForeignKey("item.id")),
+    Column("aspect_id", ForeignKey("aspect.id"), primary_key=True),
+    Column("item_id", ForeignKey("item.id"), primary_key=True),
 )
 
 workstation_principle_association = Table(
     "workstation_principle",
     Base.metadata,
-    Column("workstation_id", ForeignKey("workstation.id")),
-    Column("principle_id", ForeignKey("principle.id")),
+    Column("workstation_id", ForeignKey("workstation.id"), primary_key=True),
+    Column("principle_id", ForeignKey("principle.id"), primary_key=True),
 )
 
 recipe_skill_association = Table(
     "recipe_skill",
     Base.metadata,
-    Column("recipe_id", ForeignKey("recipe.id")),
-    Column("skill_id", ForeignKey("skill.id")),
+    Column("recipe_id", ForeignKey("recipe.id"), primary_key=True),
+    Column("skill_id", ForeignKey("skill.id"), primary_key=True),
 )
 
 assistant_principle_count_association = Table(
     "assistant_principle_count",
     Base.metadata,
-    Column("assistant_id", ForeignKey("assistant.id")),
-    Column("principle_count_id", ForeignKey("principle_count.id")),
+    Column("assistant_id", ForeignKey("assistant.id"), primary_key=True),
+    Column("principle_count_id", ForeignKey("principle_count.id"), primary_key=True),
 )
 
 

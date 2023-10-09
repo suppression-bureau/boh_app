@@ -44,9 +44,10 @@ test = ["pytest", "pytest-cov", "httpx"]
 allow-direct-references = true
 
 [tool.hatch.envs.default]
-python = "3.12"
+python = "3.11"
 [tool.hatch.envs.default.scripts]
 server = "uvicorn boh_app.server:app --reload"
+schema = "python -m boh_app {args}"
 
 [tool.hatch.envs.test]
 features = ["test"]
