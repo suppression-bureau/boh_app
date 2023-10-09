@@ -31,7 +31,8 @@ def add_data(data: Any, _class: type[Base], *, session: Session):
 
 
 def load_all(session: Session) -> None:
-    data_file_paths = HERE.glob("*.json")
-    names = [f.stem for f in data_file_paths]
-    for name in names:
-        add_data(get_data(name), get_model_by_name(name), session=session)
+    data_file_names = [f.stem for f in HERE.glob("*.json")]
+    sorted_table_names = [t.fullname for t in Base.metadata.sorted_tables]
+    for name in sorted_table_names:
+        if name in data_file_names:
+            add_data(get_data(name), get_model_by_name(name), session=session)
