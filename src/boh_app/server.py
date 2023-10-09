@@ -1,5 +1,3 @@
-from enum import EnumType
-
 from ariadne.asgi import GraphQL
 from ariadne.asgi.handlers import GraphQLTransportWSHandler
 from fastapi import Depends, FastAPI, Request
@@ -11,7 +9,7 @@ from sqlalchemy.orm import Session
 from .database import SessionLocal, get_sess, init_db
 from .models import Base, get_model_by_tablename
 
-ValidTables: EnumType = init_db()
+ValidTables = init_db()
 
 app = FastAPI()
 
