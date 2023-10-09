@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import EnumType
 
 from ariadne.asgi import GraphQL
 from ariadne.asgi.handlers import GraphQLTransportWSHandler
@@ -6,38 +6,12 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from graphql_sqlalchemy import build_schema
-from sqlalchemy.orm import Session, configure_mappers
+from sqlalchemy.orm import Session
 
-from .data.load_data import load_all
-from .database import SessionLocal, engine
+from .database import SessionLocal, get_sess, init_db
 from .models import Base, get_model_by_name
-from .serializers import setup_schema
 
-Tables = None
-
-
-def init_db():
-    global Tables
-    Base.metadata.create_all(bind=engine)
-    configure_mappers()
-
-    session = SessionLocal()
-    setup_schema(Base, session)  # depends on mappers being configured
-    load_all(session)  # depends on schema being setup
-    session.close()
-    tables = [k.lower() for k in Base.registry._class_registry.keys() if not k.startswith("_")]
-    Tables = StrEnum("Tables", tables)
-
-
-def get_sess():
-    session = SessionLocal()
-    try:
-        yield session
-    finally:
-        session.close()
-
-
-init_db()
+ValidTables: EnumType = init_db()
 
 app = FastAPI()
 
@@ -72,8 +46,8 @@ async def handle_graphql_query(request: Request, db=Depends(get_sess)):
 
 
 @app.get("/{table}")
-def get_all(table: Tables, session: Session = Depends(get_sess)):
-    model = get_model_by_name(Tables[table].name)
+def get_all(table: ValidTables, session: Session = Depends(get_sess)):
+    model = get_model_by_name(ValidTables[table].name)
     serializer = model.__marshmallow__(many=True)
     with session.begin():
         data = session.query(model).all()
