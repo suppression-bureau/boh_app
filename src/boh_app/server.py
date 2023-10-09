@@ -9,7 +9,7 @@ from graphql_sqlalchemy import build_schema
 from sqlalchemy.orm import Session
 
 from .database import SessionLocal, get_sess, init_db
-from .models import Base, get_model_by_name
+from .models import Base, get_model_by_tablename
 
 ValidTables: EnumType = init_db()
 
@@ -47,7 +47,7 @@ async def handle_graphql_query(request: Request, db=Depends(get_sess)):
 
 @app.get("/{table}")
 def get_all(table: ValidTables, session: Session = Depends(get_sess)):
-    model = get_model_by_name(ValidTables[table].name)
+    model = get_model_by_tablename(ValidTables[table].name)
     serializer = model.__marshmallow__(many=True)
     with session.begin():
         data = session.query(model).all()
@@ -57,7 +57,7 @@ def get_all(table: ValidTables, session: Session = Depends(get_sess)):
 
 @app.get("/{table}/{id}")
 def get_by_id(table: str, id: str | int, session: Session = Depends(get_sess)):
-    model = get_model_by_name(table)
+    model = get_model_by_tablename(table)
     with session.begin():
         data = session.query(model).get(id)
         resp = model.__marshmallow__().dump(data)

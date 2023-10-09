@@ -19,10 +19,16 @@ class Base(DeclarativeBase):
     __marshmallow__: ClassVar[type[SQLAlchemyAutoSchema]]
 
 
-def get_model_by_name(name: str) -> type[Base]:
+def get_tablename_model_mapping():
     registry = Base.registry._class_registry
-    model = registry[name.capitalize()]
-    return cast(type[Base], model)
+    models = [cast(type(Base), m) for k, m in registry.items() if not k.startswith("_")]
+    tablename_model_mapping = {m.__tablename__: m for m in models}
+    return tablename_model_mapping
+
+
+def get_model_by_tablename(name: str) -> type[Base]:
+    tablename_model_mapping = get_tablename_model_mapping()
+    return tablename_model_mapping[name]
 
 
 class IdMixin:

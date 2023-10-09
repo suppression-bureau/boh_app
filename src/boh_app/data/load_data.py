@@ -6,7 +6,7 @@ from typing import Any
 from sqlalchemy.exc import SAWarning
 from sqlalchemy.orm import Session
 
-from ..models import Base, get_model_by_name
+from ..models import Base, get_model_by_tablename
 
 HERE = Path(__file__).parent
 
@@ -35,4 +35,4 @@ def load_all(session: Session) -> None:
     sorted_table_names = [t.fullname for t in Base.metadata.sorted_tables]
     for name in sorted_table_names:
         if name in data_file_names:
-            add_data(get_data(name), get_model_by_name(name), session=session)
+            add_data(get_data(name), get_model_by_tablename(name), session=session)

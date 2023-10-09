@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, configure_mappers, sessionmaker
 
 from .data.load_data import load_all
-from .models import Base
+from .models import Base, get_tablename_model_mapping
 from .serializers import setup_schema
 
 DB_PATH = user_cache_path("boh_app") / "db.sqlite"
@@ -22,9 +22,8 @@ SessionLocal: sessionmaker[Session] = sessionmaker(autocommit=False, autoflush=F
 
 
 def get_valid_tables() -> EnumType:
-    tables = [k.lower() for k in Base.registry._class_registry.keys() if not k.startswith("_")]
+    tables = list(get_tablename_model_mapping().keys())
     ValidTables = StrEnum("ValidTables", tables)
-    print(type(ValidTables), isinstance(ValidTables, EnumType))
     return ValidTables
 
 
