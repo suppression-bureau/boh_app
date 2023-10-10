@@ -53,6 +53,20 @@ workstation_principle_association = Table(
     Column("principle_id", ForeignKey("principle.id"), primary_key=True),
 )
 
+workstation_slot_aspect_association = Table(
+    "workstation_slot_aspect",
+    Base.metadata,
+    Column("workstation_slot_id", ForeignKey("workstation_slot.id"), primary_key=True),
+    Column("aspect_id", ForeignKey("aspect.id"), primary_key=True),
+)
+
+workstation_slot_workstation_association = Table(
+    "workstation_slot_workstation",
+    Base.metadata,
+    Column("workstation_slot_id", ForeignKey("workstation_slot.id"), primary_key=True),
+    Column("workstation_id", ForeignKey("workstation.id"), primary_key=True),
+)
+
 recipe_skill_association = Table(
     "recipe_skill",
     Base.metadata,
@@ -192,20 +206,38 @@ class WorkstationSlot(Base, IdMixin):
     __tablename__ = "workstation_slot"
 
     name: Mapped[str]
-    accepted_aspect_id: Mapped[list[int]] = mapped_column(ForeignKey("aspect.id"))
-    accepts: Mapped[list[Aspect]] = relationship()
+
+    workstations: Mapped[list[Workstation]] = relationship(
+        back_populates="workstation_slots",
+        secondary=workstation_slot_workstation_association,
+    )
+
+    accepts: Mapped[list[Aspect]] = relationship(secondary=workstation_slot_aspect_association)
 
 
 class Workstation(Base, NameMixin):
     __tablename__ = "workstation"
 
+    @classmethod
+    def _additional_fields(cls):
+        return {"workstation_slots": Nested(WorkstationSlot.__marshmallow__, many=True)}
+
     workstation_type_id: Mapped[str] = mapped_column(ForeignKey("workstation_type.id"))
     workstation_type: Mapped[WorkstationType] = relationship(back_populates="workstations")
 
+    # TODO: slots load first, meaning that we cannot name workstations on slots (lacking data, or repeated data), but
+    # slots are also not able to be called by .name, so we also cannot name slots on workstations
+    workstation_slots: Mapped[list[WorkstationSlot]] = relationship(
+        back_populates="workstations",
+        secondary=workstation_slot_workstation_association,
+    )
     wisdom_id: Mapped[int | None] = mapped_column(ForeignKey("wisdom.id"))
     evolves: Mapped[Wisdom | None] = relationship()
 
-    principles: Mapped[list[Principle]] = relationship(back_populates="workstations", secondary=workstation_principle_association)
+    principles: Mapped[list[Principle]] = relationship(
+        back_populates="workstations",
+        secondary=workstation_principle_association,
+    )
 
 
 class Assistant(Base, NameMixin):

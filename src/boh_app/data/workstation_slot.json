@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Devotion.base",
+    "accepts": [
+      { "id": "light" },
+      { "id": "soul" },
+      { "id": "omen" },
+      { "id": "mark" },
+      { "id": "cooperative" }
+    ]
+  }
+]

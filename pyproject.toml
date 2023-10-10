@@ -104,7 +104,7 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
 line-length = 140
 
 [tool.pytest.ini_options]
-norecursedirs = ["migrations", "src"]
+norecursedirs = ["migrations", "src", ".yarn"]
 addopts = [
     "-ra",
     "--strict-markers",

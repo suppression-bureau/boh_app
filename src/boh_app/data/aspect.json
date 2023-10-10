@@ -26,5 +26,7 @@
   { "id": "mark" },
   { "id": "omen" },
   { "id": "memory" },
-  { "id": "device" }
+  { "id": "device" },
+  { "id": "soul" },
+  { "id": "light" }
 ]

@@ -18,7 +18,7 @@ def setup_schema(Base, session):
             sqla_session = session
             include_relationships = True
             load_instance = True
-            # include_fk = True # not sure if this is useful(or even makes a difference)
+            # include_fk = True # seems to override include_relationships
 
         schema_class_name = f"{class_.__name__}Schema"
 
