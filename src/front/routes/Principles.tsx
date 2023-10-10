@@ -18,20 +18,13 @@ const postsQueryDocument = graphql(`
 
 function Principle(props) {
     return (
-        <Card key={props.id} sx={{ display: "inline-flex" }}>
-            <CardContent>
-                <Avatar
-                    variant="square"
-                    src={`/data/${props.id}.png`}
-                    sx={{ display: "inline-flex" }}
-                ></Avatar>
+        <Card key={props.id}>
+            <CardContent sx={{ display: "inline-flex" }}>
+                <Avatar variant="square" src={`/data/${props.id}.png`}></Avatar>
                 <Typography
                     gutterBottom
                     variant="h5"
-                    sx={{
-                        display: "inline-flex",
-                        paddingLeft: "10px",
-                    }}
+                    sx={{ paddingLeft: "10px" }}
                 >
                     {props.id}
                 </Typography>
