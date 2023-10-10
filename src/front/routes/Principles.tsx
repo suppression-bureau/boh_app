@@ -2,7 +2,7 @@ import { useQuery } from "urql"
 
 import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
-import CardContent from "@mui/material/CardContent"
+import CardHeader from "@mui/material/CardHeader"
 import Avatar from "@mui/material/Avatar"
 import Typography from "@mui/material/Typography"
 
@@ -19,16 +19,15 @@ const postsQueryDocument = graphql(`
 function Principle(props) {
     return (
         <Card key={props.id}>
-            <CardContent sx={{ display: "inline-flex" }}>
-                <Avatar variant="square" src={`/data/${props.id}.png`}></Avatar>
-                <Typography
-                    gutterBottom
-                    variant="h5"
-                    sx={{ paddingLeft: "10px" }}
-                >
-                    {props.id}
-                </Typography>
-            </CardContent>
+            <CardHeader
+                title={props.id}
+                avatar={
+                    <Avatar
+                        variant="square"
+                        src={`/data/${props.id}.png`}
+                    ></Avatar>
+                }
+            />
         </Card>
     )
 }
