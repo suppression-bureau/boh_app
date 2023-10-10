@@ -1,300 +1,127 @@
 [
   {
     "id": "Eva",
-    "workstation_type": {
-      "id": "desk"
-    },
+    "workstation_type": { "id": "desk" },
     "principles": [
-      {
-        "id": "edge"
-      },
-      {
-        "id": "grail"
-      },
-      {
-        "id": "moon"
-      },
-      {
-        "id": "winter"
-      }
+      { "id": "edge" },
+      { "id": "grail" },
+      { "id": "moon" },
+      { "id": "winter" }
     ]
   },
   {
     "id": "Pale",
-    "workstation_type": {
-      "id": "desk"
-    },
+    "workstation_type": { "id": "desk" },
     "principles": [
-      {
-        "id": "lantern"
-      },
-      {
-        "id": "scale"
-      },
-      {
-        "id": "sky"
-      },
-      {
-        "id": "winter"
-      }
+      { "id": "lantern" },
+      { "id": "scale" },
+      { "id": "sky" },
+      { "id": "winter" }
     ]
   },
   {
     "id": "Natan",
-    "workstation_type": {
-      "id": "desk"
-    },
+    "workstation_type": { "id": "desk" },
     "principles": [
-      {
-        "id": "heart"
-      },
-      {
-        "id": "knock"
-      },
-      {
-        "id": "moth"
-      },
-      {
-        "id": "rose"
-      }
+      { "id": "heart" },
+      { "id": "knock" },
+      { "id": "moth" },
+      { "id": "rose" }
     ]
   },
   {
     "id": "Vagabond",
-    "workstation_type": {
-      "id": "desk"
-    },
+    "workstation_type": { "id": "desk" },
     "principles": [
-      {
-        "id": "edge"
-      },
-      {
-        "id": "knock"
-      },
-      {
-        "id": "rose"
-      },
-      {
-        "id": "scale"
-      }
+      { "id": "edge" },
+      { "id": "knock" },
+      { "id": "rose" },
+      { "id": "scale" }
     ]
   },
   {
     "id": "Ambrose",
-    "workstation_type": {
-      "id": "desk"
-    },
+    "workstation_type": { "id": "desk" },
     "principles": [
-      {
-        "id": "forge"
-      },
-      {
-        "id": "knock"
-      },
-      {
-        "id": "lantern"
-      },
-      {
-        "id": "sky"
-      }
+      { "id": "forge" },
+      { "id": "knock" },
+      { "id": "lantern" },
+      { "id": "sky" }
     ]
   },
   {
     "id": "Reading Room",
-    "workstation_type": {
-      "id": "desk"
-    },
+    "workstation_type": { "id": "desk" },
     "principles": [
-      {
-        "id": "heart"
-      },
-      {
-        "id": "lantern"
-      },
-      {
-        "id": "moon"
-      },
-      {
-        "id": "sky"
-      }
+      { "id": "heart" },
+      { "id": "lantern" },
+      { "id": "moon" },
+      { "id": "sky" }
     ]
   },
   {
     "id": "Nonna",
-    "workstation_type": {
-      "id": "desk"
-    },
+    "workstation_type": { "id": "desk" },
     "principles": [
-      {
-        "id": "lantern"
-      },
-      {
-        "id": "grail"
-      },
-      {
-        "id": "nectar"
-      },
-      {
-        "id": "heart"
-      }
+      { "id": "lantern" },
+      { "id": "grail" },
+      { "id": "nectar" },
+      { "id": "heart" }
     ]
   },
   {
     "id": "Governor",
-    "workstation_type": {
-      "id": "desk"
-    },
-
+    "workstation_type": { "id": "desk" },
     "principles": [
-      {
-        "id": "lantern"
-      },
-      {
-        "id": "edge"
-      },
-      {
-        "id": "moth"
-      },
-      {
-        "id": "forge"
-      }
+      { "id": "lantern" },
+      { "id": "edge" },
+      { "id": "moth" },
+      { "id": "forge" }
     ]
   },
   {
     "id": "Shrine: The Watchman",
-    "workstation_type": {
-      "id": "shrine"
-    },
-    "evolves": {
-      "id": "Illumination"
-    },
-    "principles": [
-      {
-        "id": "rose"
-      },
-      {
-        "id": "sky"
-      },
-      {
-        "id": "lantern"
-      }
-    ]
+    "workstation_type": { "id": "shrine" },
+    "evolves": { "id": "Illumination" },
+    "principles": [{ "id": "rose" }, { "id": "sky" }, { "id": "lantern" }]
   },
   {
     "id": "Shrine: The Madrugad",
-    "workstation_type": {
-      "id": "shrine"
-    },
-    "evolves": {
-      "id": "Ithastry"
-    },
-    "principles": [
-      {
-        "id": "winter"
-      },
-      {
-        "id": "sky"
-      },
-      {
-        "id": "forge"
-      }
-    ]
+    "workstation_type": { "id": "shrine" },
+    "evolves": { "id": "Ithastry" },
+    "principles": [{ "id": "winter" }, { "id": "sky" }, { "id": "forge" }]
   },
   {
     "id": "Shrine: St. Januarius",
-    "workstation_type": {
-      "id": "shrine"
-    },
-    "evolves": {
-      "id": "Nyctodromy"
-    },
+    "workstation_type": { "id": "shrine" },
+    "evolves": { "id": "Nyctodromy" },
     "principles": [
-      {
-        "id": "rose"
-      },
-      {
-        "id": "sky"
-      },
-      {
-        "id": "heart"
-      },
-      {
-        "id": "knock"
-      }
+      { "id": "rose" },
+      { "id": "sky" },
+      { "id": "heart" },
+      { "id": "knock" }
     ]
   },
   {
     "id": "Shrine: The Chancel",
-    "workstation_type": {
-      "id": "shrine"
-    },
-    "evolves": {
-      "id": "Horomachistry"
-    },
-    "principles": [
-      {
-        "id": "moth"
-      },
-      {
-        "id": "winter"
-      },
-      {
-        "id": "edge"
-      }
-    ]
+    "workstation_type": { "id": "shrine" },
+    "evolves": { "id": "Horomachistry" },
+    "principles": [{ "id": "moth" }, { "id": "winter" }, { "id": "edge" }]
   },
   {
     "id": "Solar Altar",
-    "workstation_type": {
-      "id": "shrine"
-    },
-    "principles": [
-      {
-        "id": "lantern"
-      },
-      {
-        "id": "sky"
-      },
-      {
-        "id": "winter"
-      }
-    ]
+    "workstation_type": { "id": "shrine" },
+    "principles": [{ "id": "lantern" }, { "id": "sky" }, { "id": "winter" }]
   },
   {
     "id": "Altar of the Knot",
-    "workstation_type": {
-      "id": "shrine"
-    },
-    "evolves": {
-      "id": "Hushery"
-    },
-    "principles": [
-      {
-        "id": "moth"
-      },
-      {
-        "id": "moon"
-      },
-      {
-        "id": "heart"
-      }
-    ]
+    "workstation_type": { "id": "shrine" },
+    "evolves": { "id": "Hushery" },
+    "principles": [{ "id": "moth" }, { "id": "moon" }, { "id": "heart" }]
   },
   {
     "id": "Calcite Altar",
-    "workstation_type": {
-      "id": "shrine"
-    },
-    "principles": [
-      {
-        "id": "moon"
-      },
-      {
-        "id": "grail"
-      },
-      {
-        "id": "heart"
-      }
-    ]
+    "workstation_type": { "id": "shrine" },
+    "principles": [{ "id": "moon" }, { "id": "grail" }, { "id": "heart" }]
   }
 ]
