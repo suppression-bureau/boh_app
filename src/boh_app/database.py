@@ -1,7 +1,7 @@
 import os
 
 from platformdirs import user_cache_path
-from sqlalchemy import create_engine
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, configure_mappers, sessionmaker
 
 from .data.load_data import load_all
@@ -18,11 +18,11 @@ engine = create_engine(f"sqlite+pysqlite:///{DB_PATH}", echo=DEBUG)
 SessionLocal: sessionmaker[Session] = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def init_db() -> dict[str, type[Base]]:
+def init_db(engine: Engine = engine, mk_session: sessionmaker[Session] = SessionLocal) -> dict[str, type[Base]]:
     Base.metadata.create_all(bind=engine, checkfirst=True)
     configure_mappers()
 
-    session = SessionLocal()
+    session = mk_session()
     setup_schema(Base, session=session)  # depends on mappers being configured
     load_all(session)  # depends on schema being setup
     session.close()

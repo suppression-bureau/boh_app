@@ -1,6 +1,8 @@
+from typing import Any
+
 from ariadne.asgi import GraphQL
 from ariadne.asgi.handlers import GraphQLTransportWSHandler
-from fastapi import Depends, FastAPI, Request, Response, status
+from fastapi import Depends, FastAPI, Request, status
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from graphql_sqlalchemy import build_schema
@@ -44,59 +46,66 @@ async def handle_graphql_query(request: Request, db=Depends(get_sess)):
 
 
 def register_model(table_name: str, model: type[Base]):
-    @app.get(f"/{table_name}", response_model=list[model.__pydantic__], summary=f"Get all {table_name}s")
+    @app.get(
+        f"/{table_name}",
+        # response_model=list[model.__pydantic__],  # pydantic not set up for relationships or FKs
+        summary=f"Get all {table_name}s",
+    )
     def _get_all(session: Session = Depends(get_sess)):
-        serializer = model.__marshmallow__(many=True)
+        serializer = model.__marshmallow__(many=True, session=session)
         with session.begin():
             data = session.query(model).all()
             resp = serializer.dump(data)
             return resp
 
-    @app.get(f"/{table_name}/{{id}}", response_model=model.__pydantic__, summary=f"Get a {table_name} by ID")
+    @app.get(
+        f"/{table_name}/{{id}}",
+        # response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        summary=f"Get a {table_name} by ID",
+    )
     def _get_by_id(id: str | int, session: Session = Depends(get_sess)):
         with session.begin():
-            data = session.query(model).get(id)
-            resp = model.__marshmallow__().dump(data)
+            data = session.get(model, id)
+            resp = model.__marshmallow__(session=session).dump(data)
             return resp
 
-    @app.post(f"/{table_name}", response_model=model.__pydantic__, summary=f"Create a {table_name}", status_code=status.HTTP_201_CREATED)
-    def _create(data: model.__pydantic__, session: Session = Depends(get_sess)):
+    @app.post(
+        f"/{table_name}",
+        # response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        summary=f"Create a {table_name}",
+        status_code=status.HTTP_201_CREATED,
+    )
+    def _create(
+        data: dict[str, Any],
+        # data: model.__pydantic__,
+        session: Session = Depends(get_sess),
+    ):
         with session.begin():
-            item: Base = model(**data.model_dump())
+            serializer = model.__marshmallow__(session=session)
+            item: Base = serializer.load(data)
             session.add(item)
+            resp = model.__marshmallow__().dump(item)
             session.commit()
-        resp = model.__pydantic__.model_validate(item).model_dump()
         return resp
 
-    # TODO: put is not updating values for FKs
-    @app.put(f"/{table_name}/{{id}}", response_model=model.__pydantic__, summary=f"Add or Update a {table_name}")
-    def _put(id: str | int, data: model.__pydantic__, session: Session = Depends(get_sess)):
+    @app.put(
+        f"/{table_name}/{{id}}",
+        # response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        summary=f"Add or Update a {table_name}",
+    )
+    def _put(
+        id: str | int,
+        # data: model.__pydantic__,
+        data: dict[str, Any],
+        session: Session = Depends(get_sess),
+    ):
         with session.begin():
-            item = session.query(model).get(id)
-            if item is None:
-                item: Base = model(**data.model_dump())
-            else:
-                for key, value in data.model_dump().items():
-                    setattr(item, key, value)
+            # https://docs.sqlalchemy.org/en/20/orm/contextual.html#sqlalchemy.orm.scoped_session.get
+            serializer = model.__marshmallow__(session=session)
+            item: Base = serializer.load(data)
             session.add(item)
+            resp = serializer.dump(item)
             session.commit()
-        resp = model.__pydantic__.model_validate(item).model_dump()
-        return resp
-
-    # TODO: patch does not allow missing values
-    @app.patch(f"/{table_name}/{{id}}", response_model=model.__pydantic__, summary=f"Update a {table_name}")
-    def _patch(
-        id: str | int, data: model.__pydantic__, response: Response, session: Session = Depends(get_sess)
-    ):  # TODO: patch does not allow missing values
-        with session.begin():
-            item = session.query(model).get(id)
-            if item is None:
-                response.status_code = status.HTTP_404_NOT_FOUND
-            else:
-                for key, value in data.model_dump().items():
-                    setattr(item, key, value)
-            session.commit()
-        resp = model.__pydantic__.model_validate(item).model_dump()
         return resp
 
 
