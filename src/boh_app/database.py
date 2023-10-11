@@ -32,7 +32,7 @@ def init_db() -> type[StrEnum]:
     configure_mappers()
 
     session = SessionLocal()
-    setup_schema(Base, session)  # depends on mappers being configured
+    setup_schema(Base, session=session)  # depends on mappers being configured
     load_all(session)  # depends on schema being setup
     session.close()
 
