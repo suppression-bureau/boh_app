@@ -12,8 +12,6 @@ DB_PATH = user_cache_path("boh_app") / "db.sqlite"
 DEBUG = os.environ.get("DEBUG", "").lower() not in {"", "0", "false"}
 
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-if DB_PATH.is_file():
-    DB_PATH.unlink()
 
 engine = create_engine(f"sqlite+pysqlite:///{DB_PATH}", echo=DEBUG)
 
@@ -21,7 +19,7 @@ SessionLocal: sessionmaker[Session] = sessionmaker(autocommit=False, autoflush=F
 
 
 def init_db() -> dict[str, type[Base]]:
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine, checkfirst=True)
     configure_mappers()
 
     session = SessionLocal()

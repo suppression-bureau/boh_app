@@ -29,8 +29,9 @@ keywords = []
 requires-python =  ">=3.11"
 dependencies = [
     "sqlalchemy>=2",
-    "fastapi",  # router
-    "uvicorn",  # server
+    "typer>=0.9",  # cli
+    "fastapi",     # router
+    "uvicorn",     # server
     "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@fixes",  # sqlchemy schema to graphql
     "ariadne",  # graphql API endpoint
     "marshmallow-sqlalchemy",
@@ -47,7 +48,7 @@ allow-direct-references = true
 python = "3.11"
 [tool.hatch.envs.default.scripts]
 server = "uvicorn boh_app.server:app --reload"
-schema = "python -m boh_app {args}"
+boh = "python -m boh_app {args}"
 
 [tool.hatch.envs.test]
 features = ["test"]
@@ -88,6 +89,9 @@ select = [
 ]
 unfixable = ["F401"]
 src = ["src", "tests"]
+
+[tool.ruff.per-file-ignores]
+"src/boh_app/__main__.py" = ["UP007"] # typer
 
 [tool.ruff.flake8-pytest-style]
 fixture-parentheses = false
