@@ -48,6 +48,7 @@ def sqlalchemy_to_marshmallow(class_: type[DeclarativeBase], *, session: Session
 orm_config = ConfigDict(from_attributes=True)
 
 
+# TODO: Does not serialize relationships
 def sqlalchemy_to_pydantic(
     db_model: type[DeclarativeBase],
     *,
