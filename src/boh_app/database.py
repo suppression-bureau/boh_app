@@ -1,5 +1,4 @@
 import os
-from enum import StrEnum
 
 from platformdirs import user_cache_path
 from sqlalchemy import create_engine
@@ -21,13 +20,7 @@ engine = create_engine(f"sqlite+pysqlite:///{DB_PATH}", echo=DEBUG)
 SessionLocal: sessionmaker[Session] = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def get_valid_tables() -> type[StrEnum]:
-    tables = list(get_tablename_model_mapping().keys())
-    ValidTables = StrEnum("ValidTables", tables)
-    return ValidTables
-
-
-def init_db() -> type[StrEnum]:
+def init_db() -> dict[str, type[Base]]:
     Base.metadata.create_all(bind=engine)
     configure_mappers()
 
@@ -36,7 +29,7 @@ def init_db() -> type[StrEnum]:
     load_all(session)  # depends on schema being setup
     session.close()
 
-    return get_valid_tables()
+    return get_tablename_model_mapping()
 
 
 def get_sess():

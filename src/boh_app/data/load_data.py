@@ -6,7 +6,7 @@ from typing import Any
 from sqlalchemy.exc import SAWarning
 from sqlalchemy.orm import Session
 
-from ..models import Base, get_model_by_tablename
+from ..models import Base, get_tablename_model_mapping
 
 HERE = Path(__file__).parent
 
@@ -33,6 +33,7 @@ def add_data(data: Any, _class: type[Base], *, session: Session):
 def load_all(session: Session) -> None:
     data_file_names = [f.stem for f in HERE.glob("*.json")]
     sorted_table_names = [t.fullname for t in Base.metadata.sorted_tables]
+    tablename2model = get_tablename_model_mapping()
     for name in sorted_table_names:
         if name in data_file_names:
-            add_data(get_data(name), get_model_by_tablename(name), session=session)
+            add_data(get_data(name), tablename2model[name], session=session)

@@ -9,6 +9,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, object_sessio
 
 if TYPE_CHECKING:
     from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+    from pydantic import BaseModel
 
 reg = registry()
 
@@ -17,6 +18,7 @@ class Base(DeclarativeBase):
     registry = reg
     # added in serializers.py
     __marshmallow__: ClassVar[type[SQLAlchemyAutoSchema]]
+    __pydantic__: ClassVar[type[BaseModel]]
 
 
 def get_tablename_model_mapping() -> dict[str, type[Base]]:
@@ -24,11 +26,6 @@ def get_tablename_model_mapping() -> dict[str, type[Base]]:
     models = [cast(type[Base], m) for k, m in registry.items() if not k.startswith("_")]
     tablename_model_mapping = {m.__tablename__: m for m in models}
     return tablename_model_mapping
-
-
-def get_model_by_tablename(name: str) -> type[Base]:
-    tablename_model_mapping = get_tablename_model_mapping()
-    return tablename_model_mapping[name]
 
 
 class IdMixin:
