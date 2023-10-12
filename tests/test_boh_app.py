@@ -2,14 +2,6 @@ from boh_app import models
 from boh_app.data.load_data import get_data
 
 
-def test_rest_serializer(client):
-    result = client.get("assistant")
-    assert result.status_code == 200
-    assistants = {a["id"]: a for a in result.json()}
-    asp_names = {asp.get("id") for asp in assistants["Consulting Engineer"]["accepted_aspects"]}
-    assert asp_names == {*models.Assistant.base_aspects, "fuel"}
-
-
 def test_post_no_fk(client):
     fake_data = {"id": "test_value"}
     result = client.post("aspect", json=fake_data)

@@ -228,7 +228,7 @@ class Workstation(Base, NameMixin):
         back_populates="workstations",
         secondary=workstation_slot_workstation_association,
     )
-    wisdom_id: Mapped[int | None] = mapped_column(ForeignKey("wisdom.id"))
+    wisdom_id: Mapped[str | None] = mapped_column(ForeignKey("wisdom.id"))
     evolves: Mapped[Wisdom | None] = relationship()
 
     principles: Mapped[list[Principle]] = relationship(

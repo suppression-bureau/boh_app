@@ -1,9 +1,10 @@
 """
-Modified from https://marshmallow-sqlalchemy.readthedocs.io/en/latest/recipes.html#automatically-generating-schemas-for-sqlalchemy-models
+sqlalchemy_to_marshmallow is modified from https://marshmallow-sqlalchemy.readthedocs.io/en/latest/recipes.html#automatically-generating-schemas-for-sqlalchemy-models
 """
-
 import warnings
 from collections.abc import Container
+from inspect import get_annotations
+from typing import ClassVar, get_args
 
 from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema
 from pydantic import BaseModel, ConfigDict, create_model
@@ -48,7 +49,6 @@ def sqlalchemy_to_marshmallow(class_: type[DeclarativeBase], *, session: Session
 orm_config = ConfigDict(from_attributes=True)
 
 
-# TODO: Does not serialize relationships
 def sqlalchemy_to_pydantic(
     db_model: type[DeclarativeBase],
     *,
@@ -74,5 +74,33 @@ def sqlalchemy_to_pydantic(
         else:
             fields[name] = (python_type | None, None)
 
+    # add relationships
+    model_annotations = get_annotations(db_model, eval_str=True)
+    for name, mapping in model_annotations.items():
+        if mapping is ClassVar:
+            continue
+        is_nullable = False
+        [sqla_typ] = get_args(mapping)
+        if sqla_typ_inner := get_args(sqla_typ):
+            sqla_typ_inner = list(sqla_typ_inner)
+            if len(sqla_typ_inner) > 1:
+                if sqla_typ_inner[1] is type(None):
+                    is_nullable = True
+            typ_inner = (
+                get_pydantic_model(sqla_typ_inner[0]),
+                sqla_typ_inner[1:],
+            )
+            typ = list[typ_inner]
+        else:
+            typ = get_pydantic_model(sqla_typ)
+        if is_nullable:
+            fields[name] = (typ | None, None)
+        else:
+            fields[name] = (typ, ...)
+
     pydantic_model = create_model(db_model.__name__, __config__=config, **fields)
     return pydantic_model
+
+
+def get_pydantic_model(sqla_typ: type) -> str:
+    return f"'{sqla_typ.__module__}.{sqla_typ.__name__}.__pydantic__'"
