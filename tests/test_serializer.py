@@ -15,4 +15,4 @@ def test_rest_serializer(client):
 def test_pydantic_v_marshmallow(model):
     marshmallow = model.__marshmallow__()
     pydantic = model.__pydantic__
-    assert marshmallow.declared_fields.keys() == pydantic.model_fields.keys()
+    assert set(marshmallow.declared_fields.keys()) == set(pydantic.model_fields.keys())
