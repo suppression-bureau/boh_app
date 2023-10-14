@@ -4,13 +4,14 @@ sqlalchemy_to_marshmallow is modified from https://marshmallow-sqlalchemy.readth
 import warnings
 from collections.abc import Container, Generator
 from functools import reduce
-from inspect import get_annotations
+from inspect import get_annotations, signature
 from operator import or_
 from types import EllipsisType, UnionType
 from typing import ForwardRef, get_args, get_origin
 
 from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema
 from pydantic import BaseModel, ConfigDict, create_model
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session
 from sqlalchemy.orm.clsregistry import ClsRegistryToken, _ModuleMarker
 
@@ -60,7 +61,8 @@ def sqlalchemy_to_pydantic(
 ) -> type[BaseModel]:
     simple_fields = dict(convert_simple_fields(db_model, exclude=exclude))
     rel_fields = dict(convert_relationships(db_model, exclude=exclude))
-    fields = simple_fields | rel_fields
+    prop_fields = dict(convert_hybrid_properties(db_model, exclude=exclude))
+    fields = simple_fields | rel_fields | prop_fields
 
     pydantic_model = create_model(db_model.__name__, __config__=config, **fields)
     return pydantic_model
@@ -103,6 +105,19 @@ def convert_relationships(
         else:
             python_type = get_python_type(sqla_type)
         yield name, (python_type, None if is_nullable else ...)
+
+
+def convert_hybrid_properties(
+    db_model: type[DeclarativeBase], *, exclude: Container[str] = ()
+) -> Generator[tuple[str, tuple[type | UnionType | None, EllipsisType | None]], None, None]:
+    for name, field in vars(db_model).items():
+        if name in exclude:
+            continue
+        if not isinstance(field, hybrid_property):
+            continue
+        python_type: type | UnionType = signature(field.fget, eval_str=True).return_annotation
+        nullable = isinstance(python_type, UnionType) and None in get_args(python_type)
+        yield name, (python_type, None if nullable else ...)
 
 
 def get_python_type(sqla_typ: type | None) -> ForwardRef | None:
