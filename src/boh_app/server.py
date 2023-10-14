@@ -48,26 +48,25 @@ async def handle_graphql_query(request: Request, db=Depends(get_sess)):
 def register_model(table_name: str, model: type[Base]):
     @app.get(
         f"/{table_name}",
-        # response_model=list[model.__pydantic__],  # pydantic not set up for relationships or FKs
+        response_model=list[model.__pydantic__],
         summary=f"Get all {table_name}s",
     )
     def _get_all(session: Session = Depends(get_sess)):
-        serializer = model.__marshmallow__(many=True, session=session)
         with session.begin():
             data = session.query(model).all()
-            resp = serializer.dump(data)
-            return resp
+            return [model.__pydantic__.model_validate(d) for d in data]
 
     @app.get(
         f"/{table_name}/{{id}}",
-        # response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        response_model=model.__pydantic__,
         summary=f"Get a {table_name} by ID",
     )
     def _get_by_id(id: str | int, session: Session = Depends(get_sess)):
         with session.begin():
             data = session.get(model, id)
-            resp = model.__marshmallow__(session=session).dump(data)
-            return resp
+            if data is None:
+                return None  # TODO: 404
+            return model.__pydantic__.model_validate(data)
 
     @app.post(
         f"/{table_name}",

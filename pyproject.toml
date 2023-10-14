@@ -87,7 +87,7 @@ select = [
     "UP", # pyupgrade
     "W", # pycodestyle warnings
 ]
-unfixable = ["F401"]
+unfixable = ["F401", "F841"]
 src = ["src", "tests"]
 
 [tool.ruff.per-file-ignores]
