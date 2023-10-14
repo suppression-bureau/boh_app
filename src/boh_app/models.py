@@ -247,8 +247,8 @@ class Assistant(Base, NameMixin):
     base_aspects: ClassVar = frozenset(["sustenance", "beverage", "memory", "tool", "device"])
 
     season: Mapped[str | None]
-    aspect_id = mapped_column(ForeignKey("aspect.id"))
-    special_aspect: Mapped[Aspect] = relationship(back_populates="assistants")
+    aspect_id: Mapped[str | None] = mapped_column(ForeignKey("aspect.id"))
+    special_aspect: Mapped[Aspect | None] = relationship(back_populates="assistants")
     base_principles: Mapped[list[PrincipleCount]] = relationship(
         back_populates="assistants", secondary=assistant_principle_count_association
     )
@@ -258,4 +258,7 @@ class Assistant(Base, NameMixin):
         db_session = object_session(self)
         assert db_session
         base_aspects = db_session.query(Aspect).filter(Aspect.id.in_(self.base_aspects)).all()
-        return [self.special_aspect, *base_aspects]
+        if not self.special_aspect:
+            return base_aspects
+        else:
+            return [self.special_aspect, *base_aspects]

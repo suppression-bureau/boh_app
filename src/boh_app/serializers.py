@@ -139,7 +139,12 @@ def get_python_type(sqla_type: type | UnionType | None):
         if None in sqla_types_inner:
             is_nullable = True
         python_types_inner = [get_python_type_inner(t) for t in sqla_types_inner]
-        return list[reduce(or_, python_types_inner)], is_nullable
+        python_type_inner = reduce(or_, python_types_inner)
+        if get_origin(sqla_type) is list:
+            python_type = list[python_type_inner]
+        else:
+            python_type = python_type_inner
+        return python_type, is_nullable
     else:
         return get_python_type_inner(sqla_type), is_nullable
 
