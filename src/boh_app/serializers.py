@@ -2,13 +2,17 @@
 sqlalchemy_to_marshmallow is modified from https://marshmallow-sqlalchemy.readthedocs.io/en/latest/recipes.html#automatically-generating-schemas-for-sqlalchemy-models
 """
 import warnings
-from collections.abc import Container
+from collections.abc import Container, Generator
+from functools import reduce
 from inspect import get_annotations
-from typing import ClassVar, get_args
+from operator import or_
+from types import EllipsisType
+from typing import ForwardRef, get_args, get_origin
 
 from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema
 from pydantic import BaseModel, ConfigDict, create_model
-from sqlalchemy.orm import DeclarativeBase, Session
+from sqlalchemy import Table
+from sqlalchemy.orm import DeclarativeBase, Mapped, Session
 from sqlalchemy.orm.clsregistry import ClsRegistryToken, _ModuleMarker
 
 
@@ -53,10 +57,20 @@ def sqlalchemy_to_pydantic(
     db_model: type[DeclarativeBase],
     *,
     config: ConfigDict = orm_config,
-    exclude: Container[str] = [],
+    exclude: Container[str] = (),
 ) -> type[BaseModel]:
     table = db_model.metadata.tables[db_model.__tablename__]
-    fields = {}
+
+    fields = dict(convert_simple_fields(table, exclude=exclude))
+    fields |= dict(convert_relationships(db_model, exclude=exclude))
+
+    pydantic_model = create_model(db_model.__name__, __config__=config, **fields)
+    return pydantic_model
+
+
+def convert_simple_fields(
+    table: Table, *, exclude: Container[str] = ()
+) -> Generator[tuple[str, tuple[type | None, EllipsisType | None]], None, None]:
     for column in table.columns:
         name = column.name
         if name in exclude:
@@ -70,37 +84,33 @@ def sqlalchemy_to_pydantic(
         assert python_type, f"Could not infer python_type for {column}"
 
         if not column.nullable:
-            fields[name] = (python_type, ...)
+            yield name, (python_type, ...)
         else:
-            fields[name] = (python_type | None, None)
+            yield name, (python_type | None, None)
 
-    # add relationships
+
+def convert_relationships(
+    db_model: type[DeclarativeBase], *, exclude: Container[str] = ()
+) -> Generator[tuple[str, tuple[type | None, EllipsisType | None]], None, None]:
     model_annotations = get_annotations(db_model, eval_str=True)
     for name, mapping in model_annotations.items():
-        if mapping is ClassVar:
+        if name in exclude:
+            continue
+        if get_origin(mapping) is not Mapped:
             continue
         is_nullable = False
-        [sqla_typ] = get_args(mapping)
-        if sqla_typ_inner := get_args(sqla_typ):
-            sqla_typ_inner = list(sqla_typ_inner)
-            if len(sqla_typ_inner) > 1:
-                if sqla_typ_inner[1] is type(None):
-                    is_nullable = True
-            typ_inner = (
-                get_pydantic_model(sqla_typ_inner[0]),
-                sqla_typ_inner[1:],
-            )
-            typ = list[typ_inner]
+        [sqla_type] = get_args(mapping)
+        if sqla_types_inner := get_args(sqla_type):
+            if None in sqla_types_inner:
+                is_nullable = True
+            python_types_inner = [get_python_type(t) for t in sqla_types_inner]
+            python_type = list[reduce(or_, python_types_inner)]
         else:
-            typ = get_pydantic_model(sqla_typ)
-        if is_nullable:
-            fields[name] = (typ | None, None)
-        else:
-            fields[name] = (typ, ...)
-
-    pydantic_model = create_model(db_model.__name__, __config__=config, **fields)
-    return pydantic_model
+            python_type = get_python_type(sqla_type)
+        yield name, (python_type, None if is_nullable else ...)
 
 
-def get_pydantic_model(sqla_typ: type) -> str:
-    return f"'{sqla_typ.__module__}.{sqla_typ.__name__}.__pydantic__'"
+def get_python_type(sqla_typ: type | None) -> ForwardRef | None:
+    if sqla_typ is None:
+        return None
+    return ForwardRef(f"'{sqla_typ.__module__}.{sqla_typ.__name__}.__pydantic__'")

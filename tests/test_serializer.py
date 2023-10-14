@@ -12,7 +12,7 @@ def test_rest_serializer(client):
 
 
 @pytest.mark.parametrize("model", models.get_tablename_model_mapping().values())
-def test_pydantic_v_marshmallow(model):
+def test_pydantic_v_marshmallow(model: type[models.Base]):
     marshmallow = model.__marshmallow__()
     pydantic = model.__pydantic__
     assert set(marshmallow.declared_fields.keys()) == set(pydantic.model_fields.keys())
