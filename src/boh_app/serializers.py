@@ -11,7 +11,6 @@ from typing import ForwardRef, get_args, get_origin
 
 from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema
 from pydantic import BaseModel, ConfigDict, create_model
-from sqlalchemy import Table
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session
 from sqlalchemy.orm.clsregistry import ClsRegistryToken, _ModuleMarker
 
@@ -59,21 +58,22 @@ def sqlalchemy_to_pydantic(
     config: ConfigDict = orm_config,
     exclude: Container[str] = (),
 ) -> type[BaseModel]:
-    table = db_model.metadata.tables[db_model.__tablename__]
-
-    fields = dict(convert_simple_fields(table, exclude=exclude))
-    fields |= dict(convert_relationships(db_model, exclude=exclude))
+    simple_fields = dict(convert_simple_fields(db_model, exclude=exclude))
+    rel_fields = dict(convert_relationships(db_model, exclude=exclude))
+    fields = simple_fields | rel_fields
 
     pydantic_model = create_model(db_model.__name__, __config__=config, **fields)
     return pydantic_model
 
 
 def convert_simple_fields(
-    table: Table, *, exclude: Container[str] = ()
+    db_model: type[DeclarativeBase], *, exclude: Container[str] = ()
 ) -> Generator[tuple[str, tuple[type | UnionType | None, EllipsisType | None]], None, None]:
-    for name, column in table.columns.items():
+    for name, column in db_model.__table__.columns.items():
         if name in exclude:
             continue
+        if column.foreign_keys:
+            continue  # skip foreign_id fields
         python_type = column.type.python_type
         if not column.nullable:
             yield name, (python_type, ...)
@@ -86,10 +86,13 @@ def convert_relationships(
 ) -> Generator[tuple[str, tuple[type | ForwardRef | None, EllipsisType | None]], None, None]:
     model_annotations = get_annotations(db_model, eval_str=True)
     for name, mapping in model_annotations.items():
+        column = db_model.__table__.columns.get(name)
         if name in exclude:
             continue
         if get_origin(mapping) is not Mapped:
-            continue
+            continue  # skip ClassVars and the like
+        if column is not None and column.foreign_keys and column.type.python_type in {int, str}:
+            continue  # skip foreign_id fields
         is_nullable = False
         [sqla_type] = get_args(mapping)
         if sqla_types_inner := get_args(sqla_type):
