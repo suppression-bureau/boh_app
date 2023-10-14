@@ -8,7 +8,7 @@ from graphql import IntrospectionQuery, build_client_schema, get_introspection_q
 from .database import DB_PATH
 from .utils import gql_query
 
-app = typer.Typer()
+app = typer.Typer(no_args_is_help=True)
 
 
 @app.command()

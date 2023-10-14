@@ -71,7 +71,7 @@ orm_config = ConfigDict(from_attributes=True)
 def sqlalchemy_to_pydantic(
     db_model: type[DeclarativeBase], *, config: ConfigDict = orm_config, exclude: Container[str] = (), flat: bool = False
 ) -> type[BaseModel]:
-    simple_fields = dict(convert_simple_fields(db_model, exclude=exclude))
+    simple_fields = dict(convert_simple_fields(db_model, exclude=exclude, include_fk=flat))
     if flat:
         fields = simple_fields
         name = f"{db_model.__name__}FlatModel"
@@ -86,12 +86,12 @@ def sqlalchemy_to_pydantic(
 
 
 def convert_simple_fields(
-    db_model: type[DeclarativeBase], *, exclude: Container[str] = ()
+    db_model: type[DeclarativeBase], *, exclude: Container[str] = (), include_fk: bool = False
 ) -> Generator[tuple[str, PydanticFieldDecl], None, None]:
     for name, column in db_model.__table__.columns.items():
         if name in exclude:
             continue
-        if column.foreign_keys:
+        if not include_fk and column.foreign_keys:
             continue  # skip foreign_id fields
         python_type = column.type.python_type
         if not column.nullable:
