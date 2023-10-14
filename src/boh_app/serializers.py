@@ -6,7 +6,7 @@ from collections.abc import Container, Generator
 from functools import reduce
 from inspect import get_annotations
 from operator import or_
-from types import EllipsisType
+from types import EllipsisType, UnionType
 from typing import ForwardRef, get_args, get_origin
 
 from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema
@@ -70,19 +70,11 @@ def sqlalchemy_to_pydantic(
 
 def convert_simple_fields(
     table: Table, *, exclude: Container[str] = ()
-) -> Generator[tuple[str, tuple[type | None, EllipsisType | None]], None, None]:
-    for column in table.columns:
-        name = column.name
+) -> Generator[tuple[str, tuple[type | UnionType | None, EllipsisType | None]], None, None]:
+    for name, column in table.columns.items():
         if name in exclude:
             continue
-        python_type: type | None = None
-        if hasattr(column.type, "impl"):
-            if hasattr(column.type.impl, "python_type"):
-                python_type = column.type.impl.python_type
-        elif hasattr(column.type, "python_type"):
-            python_type = column.type.python_type
-        assert python_type, f"Could not infer python_type for {column}"
-
+        python_type = column.type.python_type
         if not column.nullable:
             yield name, (python_type, ...)
         else:
@@ -91,7 +83,7 @@ def convert_simple_fields(
 
 def convert_relationships(
     db_model: type[DeclarativeBase], *, exclude: Container[str] = ()
-) -> Generator[tuple[str, tuple[type | None, EllipsisType | None]], None, None]:
+) -> Generator[tuple[str, tuple[type | ForwardRef | None, EllipsisType | None]], None, None]:
     model_annotations = get_annotations(db_model, eval_str=True)
     for name, mapping in model_annotations.items():
         if name in exclude:
