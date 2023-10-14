@@ -1,24 +1,25 @@
 from typing import Any
 
+import rich.traceback
 from ariadne.asgi import GraphQL
 from ariadne.asgi.handlers import GraphQLTransportWSHandler
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
-from graphql_sqlalchemy import build_schema
 from sqlalchemy.orm import Session
 
 from .database import SessionLocal, get_sess, init_db
+from .graphql import gql_schema
 from .models import Base
 
 table_name2model = init_db()
+
+rich.traceback.install()
 
 app = FastAPI()
 
 cors = Middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.user_middleware.insert(0, cors)
-
-gql_schema = build_schema(Base)
 
 graphql_app = GraphQL(
     gql_schema,

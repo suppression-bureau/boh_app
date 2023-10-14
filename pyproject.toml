@@ -6,6 +6,7 @@ description = "Companion app for Book of Hours"
 readme = "README.rst"
 authors = [
     { name = "Desiree D.", email = "ded8393@gmail.com" },
+    { name = "Philipp A.", email = "flying-sheep@web.de" },
 ]
 urls.Homepage = "https://github.com/ded8393/boh_app"
 urls.Issues = "https://github.com/ded8393/boh_app/issues"
@@ -29,6 +30,7 @@ keywords = []
 requires-python =  ">=3.11"
 dependencies = [
     "sqlalchemy>=2",
+    "rich",        # better tracebacks
     "typer>=0.9",  # cli
     "fastapi",     # router
     "uvicorn",     # server
