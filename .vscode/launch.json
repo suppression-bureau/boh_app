@@ -26,5 +26,14 @@
       "console": "internalConsole",
       "justMyCode": false,
     },
+    {
+      "name": "Python: Debug File",
+      "type": "python",
+      "purpose": ["debug-in-terminal"],
+      "request": "launch",
+      "program": "${file}",
+      "console": "internalConsole",
+      "justMyCode": false,
+    },
   ],
 }

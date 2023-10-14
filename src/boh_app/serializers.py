@@ -3,13 +3,12 @@ sqlalchemy_to_marshmallow is modified from https://marshmallow-sqlalchemy.readth
 """
 import sys
 import warnings
-from collections.abc import Container, Generator, Mapping
+from collections.abc import Container, Generator
 from functools import reduce
 from inspect import get_annotations, signature
 from operator import or_
-from textwrap import dedent
 from types import EllipsisType, ModuleType, UnionType
-from typing import ForwardRef, Literal, TypeAlias, Union, get_args, get_origin, overload
+from typing import ForwardRef, TypeAlias, get_args, get_origin
 
 from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema
 from pydantic import BaseModel, ConfigDict, create_model
@@ -22,25 +21,26 @@ PydanticFieldDecl: TypeAlias = tuple[type | UnionType | ForwardRef | None, Ellip
 SYNTH_MODULE = "_boh_app_synth"
 
 
-def setup_schema(decl_base: type[DeclarativeBase], *, session: Session, pydantic_bug: bool = True) -> None:
-    pydantic_models: dict[type[DeclarativeBase], dict[str, PydanticFieldDecl]] = {}
+def setup_schema(decl_base: type[DeclarativeBase], *, session: Session) -> None:
+    mod = sys.modules[SYNTH_MODULE] = ModuleType(SYNTH_MODULE)
+
+    classes = []
     for class_ in decl_base.registry._class_registry.values():
         if isinstance(class_, ClsRegistryToken):
             if not isinstance(class_, _ModuleMarker):
                 warnings.warn(f"setup_schema does not work with ClsRegistryToken {class_}", stacklevel=2)
             continue
         assert issubclass(class_, DeclarativeBase), class_.mro()
+        classes.append(class_)
 
+    for class_ in classes:
+        pydantic_model = sqlalchemy_to_pydantic(class_, flat=True)
+        setattr(mod, pydantic_model.__name__, pydantic_model)
+
+    for class_ in classes:
         class_.__marshmallow__ = sqlalchemy_to_marshmallow(class_, session=session)
-        if pydantic_bug:
-            # TODO: config out of loop
-            pydantic_models[class_], config = sqlalchemy_to_pydantic(class_, decl=True)
-        else:
-            class_.__pydantic__ = sqlalchemy_to_pydantic(class_)
-
-    # only filled if pydantic_bug == True
-    for class_, model in render_pydantic_models(pydantic_models, config):
-        class_.__pydantic__ = model
+        class_.__pydantic__ = sqlalchemy_to_pydantic(class_)
+        setattr(mod, class_.__pydantic__.__name__, class_.__pydantic__)
 
 
 def sqlalchemy_to_marshmallow(class_: type[DeclarativeBase], *, session: Session) -> type[SQLAlchemyAutoSchema]:
@@ -68,45 +68,21 @@ def sqlalchemy_to_marshmallow(class_: type[DeclarativeBase], *, session: Session
 orm_config = ConfigDict(from_attributes=True)
 
 
-@overload
 def sqlalchemy_to_pydantic(
-    db_model: type[DeclarativeBase],
-    *,
-    config: ConfigDict = ...,
-    exclude: Container[str] = ...,
-    decl: Literal[True],
-) -> tuple[dict[str, PydanticFieldDecl], ConfigDict]:
-    ...
-
-
-@overload
-def sqlalchemy_to_pydantic(
-    db_model: type[DeclarativeBase],
-    *,
-    config: ConfigDict = ...,
-    exclude: Container[str] = ...,
-    decl: Literal[False] = False,
+    db_model: type[DeclarativeBase], *, config: ConfigDict = orm_config, exclude: Container[str] = (), flat: bool = False
 ) -> type[BaseModel]:
-    ...
-
-
-def sqlalchemy_to_pydantic(
-    db_model: type[DeclarativeBase],
-    *,
-    config: ConfigDict = orm_config,
-    exclude: Container[str] = (),
-    decl: bool = False,
-) -> type[BaseModel] | tuple[dict[str, PydanticFieldDecl], ConfigDict]:
     simple_fields = dict(convert_simple_fields(db_model, exclude=exclude))
-    rel_fields = dict(convert_relationships(db_model, exclude=exclude, pydantic_bug=decl))
-    prop_fields = dict(convert_hybrid_properties(db_model, exclude=exclude, pydantic_bug=decl))
-    fields = simple_fields | rel_fields | prop_fields
-
-    if decl:
-        return fields, config
+    if flat:
+        fields = simple_fields
+        name = f"{db_model.__name__}FlatModel"
     else:
-        pydantic_model = create_model(db_model.__name__, __config__=config, **fields)
-        return pydantic_model
+        rel_fields = dict(convert_relationships(db_model, exclude=exclude))
+        prop_fields = dict(convert_hybrid_properties(db_model, exclude=exclude))
+        fields = simple_fields | rel_fields | prop_fields
+        name = f"{db_model.__name__}Model"
+
+    pydantic_model = create_model(name, __config__=config, **fields)
+    return pydantic_model
 
 
 def convert_simple_fields(
@@ -125,7 +101,7 @@ def convert_simple_fields(
 
 
 def convert_relationships(
-    db_model: type[DeclarativeBase], *, exclude: Container[str] = (), pydantic_bug: bool = False
+    db_model: type[DeclarativeBase], *, exclude: Container[str] = ()
 ) -> Generator[tuple[str, PydanticFieldDecl], None, None]:
     model_annotations = get_annotations(db_model, eval_str=True)
     for name, mapping in model_annotations.items():
@@ -140,12 +116,12 @@ def convert_relationships(
             if column.type.python_type in {int, str}:
                 continue  # skip foreign_id fields
         [sqla_type] = get_args(mapping)
-        python_type, is_nullable = get_python_type(sqla_type, pydantic_bug=pydantic_bug)
+        python_type, is_nullable = get_python_type(sqla_type)
         yield name, (python_type, None if is_nullable else ...)
 
 
 def convert_hybrid_properties(
-    db_model: type[DeclarativeBase], *, exclude: Container[str] = (), pydantic_bug: bool = False
+    db_model: type[DeclarativeBase], *, exclude: Container[str] = ()
 ) -> Generator[tuple[str, PydanticFieldDecl], None, None]:
     for name, field in vars(db_model).items():
         if name in exclude:
@@ -153,79 +129,22 @@ def convert_hybrid_properties(
         if not isinstance(field, hybrid_property):
             continue
         sqla_type: type | UnionType = signature(field.fget, eval_str=True).return_annotation
-        python_type, is_nullable = get_python_type(sqla_type, pydantic_bug=pydantic_bug)
+        python_type, is_nullable = get_python_type(sqla_type)
         yield name, (python_type, None if is_nullable else ...)
 
 
-def get_python_type(sqla_type: type | UnionType | None, *, pydantic_bug: bool = False):
+def get_python_type(sqla_type: type | UnionType | None):
     is_nullable = False
     if sqla_types_inner := get_args(sqla_type):
         if None in sqla_types_inner:
             is_nullable = True
-        python_types_inner = [get_python_type_inner(t, pydantic_bug=pydantic_bug) for t in sqla_types_inner]
+        python_types_inner = [get_python_type_inner(t) for t in sqla_types_inner]
         return list[reduce(or_, python_types_inner)], is_nullable
     else:
-        return get_python_type_inner(sqla_type, pydantic_bug=pydantic_bug), is_nullable
+        return get_python_type_inner(sqla_type), is_nullable
 
 
-def get_python_type_inner(sqla_type: type | None, *, pydantic_bug: bool = False) -> ForwardRef | None:
+def get_python_type_inner(sqla_type: type | None) -> ForwardRef | None:
     if sqla_type in (None, type(None)) or issubclass(sqla_type, str | int):
         return None
-    if pydantic_bug:
-        return ForwardRef(f"{sqla_type.__name__}FlatModel", module=SYNTH_MODULE)
-    else:
-        return ForwardRef(f"{sqla_type.__name__}.__pydantic__", module="boh_app.models")
-
-
-def render_model(class_, fields, *, config: ConfigDict, flat: bool):
-    flat_str = "Flat" if flat else ""
-    model_code = dedent(
-        f"""
-        class {class_.__name__}{flat_str}Model(BaseModel):
-            model_config = {config!r}
-        """
-    )
-    for field_name, (python_type, default) in fields.items():
-        typ = type_str(python_type)
-        if flat and "Model" in typ:
-            continue
-        default_str = "" if default is ... else f" = {default!r}"
-        model_code += f"    {field_name}: {typ}{default_str}\n"
-    return model_code
-
-
-def render_pydantic_models(
-    model_decls: Mapping[type[DeclarativeBase], Mapping[str, PydanticFieldDecl]],
-    config: ConfigDict,
-) -> Generator[tuple[type[DeclarativeBase], type[BaseModel]], None, None]:
-    module_code = dedent(
-        """
-        from __future__ import annotations
-        from pydantic import BaseModel
-        """
-    )
-
-    for flat in [True, False]:
-        for class_, fields in model_decls.items():
-            module_code += render_model(class_, fields, config=config, flat=flat)
-
-    mod = sys.modules[SYNTH_MODULE] = ModuleType(SYNTH_MODULE)
-    exec(module_code, mod.__dict__)  # noqa: S102
-    for class_ in model_decls:
-        yield class_, getattr(mod, f"{class_.__name__}Model")
-
-
-def type_str(python_type: type | UnionType | ForwardRef | None) -> str:
-    if python_type in (None, type(None)):
-        return "None"
-    if isinstance(python_type, ForwardRef):
-        assert python_type.__forward_module__ == SYNTH_MODULE
-        return python_type.__forward_arg__
-    if get_origin(python_type) in (UnionType, Union):
-        return " | ".join(type_str(t) for t in get_args(python_type))
-    if get_origin(python_type) is list:
-        [python_type_inner] = get_args(python_type)
-        return f"list[{type_str(python_type_inner)}]"
-    if isinstance(python_type, type):
-        return python_type.__name__
-    raise AssertionError(f"Unknown type: {python_type!r}")
+    return ForwardRef(f"{sqla_type.__name__}FlatModel", module=SYNTH_MODULE)
