@@ -185,7 +185,7 @@ class Recipe(Base, IdMixin):
     source_id: Mapped[int | None] = mapped_column(ForeignKey("item.id"))
     source: Mapped[Item] = relationship(back_populates="product_recipe", foreign_keys=[source_id])
 
-    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
+    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))  # TODO:  make nullable
     principle: Mapped[Principle] = relationship()
 
     principle_amount: Mapped[int]
@@ -202,7 +202,7 @@ class WorkstationType(Base, NameMixin):
 class WorkstationSlot(Base, IdMixin):
     __tablename__ = "workstation_slot"
 
-    name: Mapped[str]
+    name: Mapped[str]  # TODO: make NameMixin, why would we need int id?
 
     workstations: Mapped[list[Workstation]] = relationship(
         back_populates="workstation_slots",

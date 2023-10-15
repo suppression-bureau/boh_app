@@ -71,7 +71,7 @@ def register_model(table_name: str, model: type[Base]):
 
     @app.post(
         f"/{table_name}",
-        response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        response_model=model.__pydantic__,
         summary=f"Create a {table_name}",
         status_code=status.HTTP_201_CREATED,
     )
@@ -91,7 +91,7 @@ def register_model(table_name: str, model: type[Base]):
 
     @app.put(
         f"/{table_name}/{{id}}",
-        response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        response_model=model.__pydantic__,
         summary=f"Add or Update a {table_name}",
     )
     def _put(
