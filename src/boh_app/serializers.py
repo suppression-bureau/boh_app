@@ -11,7 +11,8 @@ from types import EllipsisType, ModuleType, UnionType
 from typing import ForwardRef, TypeAlias, get_args, get_origin
 
 from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema
-from pydantic import BaseModel, ConfigDict, create_model
+from pydantic import BaseModel, ConfigDict, Field, create_model
+from pydantic.fields import FieldInfo
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session
 from sqlalchemy.orm.clsregistry import ClsRegistryToken, _ModuleMarker
@@ -94,10 +95,9 @@ def convert_simple_fields(
         if not include_fk and column.foreign_keys:
             continue  # skip foreign_id fields
         python_type = column.type.python_type
-        if not column.nullable:
-            yield name, (python_type, ...)
-        else:
-            yield name, (python_type | None, None)
+        if column.nullable:
+            python_type = python_type | None
+        yield name, (python_type, get_default(python_type, nullable=column.nullable))
 
 
 def convert_relationships(
@@ -117,7 +117,7 @@ def convert_relationships(
                 continue  # skip foreign_id fields
         [sqla_type] = get_args(mapping)
         python_type, is_nullable = get_python_type(sqla_type)
-        yield name, (python_type, None if is_nullable else ...)
+        yield name, (python_type, get_default(python_type, nullable=is_nullable))
 
 
 def convert_hybrid_properties(
@@ -130,7 +130,7 @@ def convert_hybrid_properties(
             continue
         sqla_type: type | UnionType = signature(field.fget, eval_str=True).return_annotation
         python_type, is_nullable = get_python_type(sqla_type)
-        yield name, (python_type, None if is_nullable else ...)
+        yield name, (python_type, get_default(python_type, nullable=is_nullable))
 
 
 def get_python_type(sqla_type: type | UnionType | None):
@@ -153,3 +153,11 @@ def get_python_type_inner(sqla_type: type | None) -> ForwardRef | None:
     if sqla_type in (None, type(None)) or issubclass(sqla_type, str | int):
         return None
     return ForwardRef(f"{sqla_type.__name__}FlatModel", module=SYNTH_MODULE)
+
+
+def get_default(typ: type, *, nullable: bool) -> EllipsisType | None | FieldInfo:
+    if nullable:
+        return None
+    if get_origin(typ) is list:
+        return Field(default_factory=list)
+    return ...

@@ -24,7 +24,7 @@ def db_session(tmp_path: Path) -> Generator[Session, None, None]:
 
 
 @pytest.fixture
-def client(db_session):
+def client(db_session) -> Generator[TestClient, None, None]:
     from boh_app.server import app
 
     client = TestClient(app)

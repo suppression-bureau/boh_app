@@ -71,7 +71,7 @@ def register_model(table_name: str, model: type[Base]):
 
     @app.post(
         f"/{table_name}",
-        # response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
         summary=f"Create a {table_name}",
         status_code=status.HTTP_201_CREATED,
     )
@@ -84,13 +84,14 @@ def register_model(table_name: str, model: type[Base]):
             serializer = model.__marshmallow__(session=session)
             item: Base = serializer.load(data)
             session.add(item)
-            resp = model.__marshmallow__().dump(item)
+            session.flush()
+            resp = model.__pydantic__.model_validate(item)
             session.commit()
         return resp
 
     @app.put(
         f"/{table_name}/{{id}}",
-        # response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
         summary=f"Add or Update a {table_name}",
     )
     def _put(
@@ -99,12 +100,14 @@ def register_model(table_name: str, model: type[Base]):
         data: dict[str, Any],
         session: Session = Depends(get_sess),
     ):
+        # TODO: check that ID is missing or matching
         with session.begin():
             # https://docs.sqlalchemy.org/en/20/orm/contextual.html#sqlalchemy.orm.scoped_session.get
             serializer = model.__marshmallow__(session=session)
             item: Base = serializer.load(data)
             session.add(item)
-            resp = serializer.dump(item)
+            session.flush()
+            resp = model.__pydantic__.model_validate(item)
             session.commit()
         return resp
 
