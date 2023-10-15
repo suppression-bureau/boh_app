@@ -4,7 +4,7 @@ from graphql import graphql_sync
 from sqlalchemy.orm import Session
 
 from .database import SessionLocal
-from .server import gql_schema
+from .graphql import gql_schema
 
 
 def gql_query(src: LiteralString, *, db_session: Session | None = None) -> dict[str, Any]:
