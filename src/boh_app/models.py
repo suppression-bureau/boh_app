@@ -9,6 +9,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, object_sessio
 
 if TYPE_CHECKING:
     from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+    from pydantic import BaseModel
 
 reg = registry()
 
@@ -17,12 +18,14 @@ class Base(DeclarativeBase):
     registry = reg
     # added in serializers.py
     __marshmallow__: ClassVar[type[SQLAlchemyAutoSchema]]
+    __pydantic__: ClassVar[type[BaseModel]]
 
 
-def get_model_by_name(name: str) -> type[Base]:
+def get_tablename_model_mapping() -> dict[str, type[Base]]:
     registry = Base.registry._class_registry
-    model = registry[name.capitalize()]
-    return cast(type[Base], model)
+    models = [cast(type[Base], m) for k, m in registry.items() if not k.startswith("_")]
+    tablename_model_mapping = {m.__tablename__: m for m in models}
+    return tablename_model_mapping
 
 
 class IdMixin:
@@ -45,6 +48,20 @@ workstation_principle_association = Table(
     Base.metadata,
     Column("workstation_id", ForeignKey("workstation.id"), primary_key=True),
     Column("principle_id", ForeignKey("principle.id"), primary_key=True),
+)
+
+workstation_slot_aspect_association = Table(
+    "workstation_slot_aspect",
+    Base.metadata,
+    Column("workstation_slot_id", ForeignKey("workstation_slot.id"), primary_key=True),
+    Column("aspect_id", ForeignKey("aspect.id"), primary_key=True),
+)
+
+workstation_slot_workstation_association = Table(
+    "workstation_slot_workstation",
+    Base.metadata,
+    Column("workstation_slot_id", ForeignKey("workstation_slot.id"), primary_key=True),
+    Column("workstation_id", ForeignKey("workstation.id"), primary_key=True),
 )
 
 recipe_skill_association = Table(
@@ -101,17 +118,26 @@ class Wisdom(Base, NameMixin):
 class Skill(Base, NameMixin):
     __tablename__ = "skill"
 
+    @classmethod
+    def _additional_fields(cls):
+        return {"wisdoms": Nested(Wisdom.__marshmallow__, many=True)}
+
     primary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     primary_principle: Mapped[Principle] = relationship(back_populates="primary_skills", foreign_keys=[primary_principle_id])
 
     secondary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     secondary_principle: Mapped[Principle] = relationship(back_populates="secondary_skills", foreign_keys=[secondary_principle_id])
 
+    # could also just make wisdoms MANYTOMANY? numerical assignment is arbitrary
     wisdom_1_id: Mapped[int] = mapped_column(ForeignKey("wisdom.id"))
     wisdom_1: Mapped[Wisdom] = relationship(foreign_keys=[wisdom_1_id])
 
     wisdom_2_id: Mapped[int] = mapped_column(ForeignKey("wisdom.id"))
     wisdom_2: Mapped[Wisdom] = relationship(foreign_keys=[wisdom_2_id])
+
+    @hybrid_property
+    def wisdoms(self) -> list[Wisdom]:
+        return [self.wisdom_1, self.wisdom_2]
 
     recipes: Mapped[list[Recipe]] = relationship(back_populates="skills", secondary=recipe_skill_association)
 
@@ -167,33 +193,48 @@ class Recipe(Base, IdMixin):
     skills: Mapped[list[Skill]] = relationship(back_populates="recipes", secondary=recipe_skill_association)
 
 
-# is this necessary?  maybe enum instead
-# class WorkstationType(Base):
-#     __tablename__ = "workstation_type"
+class WorkstationType(Base, NameMixin):
+    __tablename__ = "workstation_type"
 
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     name: Mapped[str]
-#     workstations: Mapped[List["Workstation"]] = relationship(back_populates="workstation_type")
+    workstations: Mapped[list[Workstation]] = relationship(back_populates="workstation_type")
 
 
 class WorkstationSlot(Base, IdMixin):
     __tablename__ = "workstation_slot"
 
     name: Mapped[str]
-    accepted_aspect_id: Mapped[list[int]] = mapped_column(ForeignKey("aspect.id"))
-    accepts: Mapped[list[Aspect]] = relationship()
+
+    workstations: Mapped[list[Workstation]] = relationship(
+        back_populates="workstation_slots",
+        secondary=workstation_slot_workstation_association,
+    )
+
+    accepts: Mapped[list[Aspect]] = relationship(secondary=workstation_slot_aspect_association)
 
 
 class Workstation(Base, NameMixin):
     __tablename__ = "workstation"
 
-    # workstation_type_id: Mapped[int] = mapped_column(ForeignKey("workstation_type.id"))
-    # workstation_type: Mapped[WorkstationType] = relationship(back_populates="workstations")
+    @classmethod
+    def _additional_fields(cls):
+        return {"workstation_slots": Nested(WorkstationSlot.__marshmallow__, many=True)}
 
-    wisdom_id: Mapped[int | None] = mapped_column(ForeignKey("wisdom.id"))
+    workstation_type_id: Mapped[str] = mapped_column(ForeignKey("workstation_type.id"))
+    workstation_type: Mapped[WorkstationType] = relationship(back_populates="workstations")
+
+    # TODO: slots load first, meaning that we cannot name workstations on slots (lacking data, or repeated data), but
+    # slots are also not able to be called by .name, so we also cannot name slots on workstations
+    workstation_slots: Mapped[list[WorkstationSlot]] = relationship(
+        back_populates="workstations",
+        secondary=workstation_slot_workstation_association,
+    )
+    wisdom_id: Mapped[str | None] = mapped_column(ForeignKey("wisdom.id"))
     evolves: Mapped[Wisdom | None] = relationship()
 
-    principles: Mapped[list[Principle]] = relationship(back_populates="workstations", secondary=workstation_principle_association)
+    principles: Mapped[list[Principle]] = relationship(
+        back_populates="workstations",
+        secondary=workstation_principle_association,
+    )
 
 
 class Assistant(Base, NameMixin):
@@ -206,8 +247,8 @@ class Assistant(Base, NameMixin):
     base_aspects: ClassVar = frozenset(["sustenance", "beverage", "memory", "tool", "device"])
 
     season: Mapped[str | None]
-    aspect_id = mapped_column(ForeignKey("aspect.id"))
-    special_aspect: Mapped[Aspect] = relationship(back_populates="assistants")
+    aspect_id: Mapped[str | None] = mapped_column(ForeignKey("aspect.id"))
+    special_aspect: Mapped[Aspect | None] = relationship(back_populates="assistants")
     base_principles: Mapped[list[PrincipleCount]] = relationship(
         back_populates="assistants", secondary=assistant_principle_count_association
     )
@@ -217,4 +258,7 @@ class Assistant(Base, NameMixin):
         db_session = object_session(self)
         assert db_session
         base_aspects = db_session.query(Aspect).filter(Aspect.id.in_(self.base_aspects)).all()
-        return [self.special_aspect, *base_aspects]
+        if not self.special_aspect:
+            return base_aspects
+        else:
+            return [self.special_aspect, *base_aspects]
