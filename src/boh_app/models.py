@@ -122,6 +122,7 @@ class Skill(Base, NameMixin):
     def _additional_fields(cls):
         return {"wisdoms": Nested(Wisdom.__marshmallow__, many=True)}
 
+    level: Mapped[int | None]
     primary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     primary_principle: Mapped[Principle] = relationship(back_populates="primary_skills", foreign_keys=[primary_principle_id])
 
@@ -166,14 +167,6 @@ class Item(Base, NameMixin):
 
     source_recipe: Mapped[list[Recipe]] = relationship(back_populates="product", primaryjoin="Item.id==Recipe.product_id")
     product_recipe: Mapped[list[Recipe]] = relationship(back_populates="source", primaryjoin="Item.id==Recipe.source_id")
-
-
-class SkillLevel(Base, IdMixin):
-    __tablename__ = "skill_level"
-
-    skill_id: Mapped[int] = mapped_column(ForeignKey("skill.id"))
-    # skill: Mapped[Skill] = relationship(back_populates="skill_level")
-    level: Mapped[int]
 
 
 class Recipe(Base, IdMixin):

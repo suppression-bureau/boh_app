@@ -12,8 +12,6 @@ from .database import SessionLocal, get_sess, init_db
 from .graphql import gql_schema
 from .models import Base
 
-table_name2model = init_db()
-
 rich.traceback.install()
 
 app = FastAPI()
@@ -21,6 +19,7 @@ app = FastAPI()
 cors = Middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.user_middleware.insert(0, cors)
 
+# TODO: is not wrapped for test isolation
 graphql_app = GraphQL(
     gql_schema,
     context_value={"session": SessionLocal()},
@@ -112,5 +111,6 @@ def register_model(table_name: str, model: type[Base]):
         return resp
 
 
+table_name2model = init_db()
 for table_name, model in table_name2model.items():
     register_model(table_name, model)
