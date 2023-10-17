@@ -4,11 +4,10 @@ import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 import Avatar from "@mui/material/Avatar"
-import Typography from "@mui/material/Typography"
 
 import { graphql } from "../gql"
 
-const postsQueryDocument = graphql(`
+const principleQueryDocument = graphql(`
     query Principle {
         principle {
             id
@@ -16,11 +15,11 @@ const postsQueryDocument = graphql(`
     }
 `)
 
-function Principle(props) {
+function PrincipleCard(props) {
     return (
         <Card key={props.id}>
             <CardHeader
-                title={props.id}
+                title={props.title}
                 avatar={
                     <Avatar
                         variant="square"
@@ -33,7 +32,7 @@ function Principle(props) {
 }
 
 const Principles = () => {
-    const [{ data }] = useQuery({ query: postsQueryDocument })
+    const [{ data }] = useQuery({ query: principleQueryDocument })
     return (
         <Box
             sx={{
@@ -46,10 +45,10 @@ const Principles = () => {
             }}
         >
             {data!.principle.map(({ id }) => (
-                <Principle key={id} id={id} />
+                <PrincipleCard key={id} id={id} title={id} />
             ))}
         </Box>
     )
 }
 
-export default Principles
+export { PrincipleCard, Principles as default }
