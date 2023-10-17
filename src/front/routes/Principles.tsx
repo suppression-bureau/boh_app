@@ -15,16 +15,13 @@ const principleQueryDocument = graphql(`
     }
 `)
 
-function PrincipleCard(props) {
+function PrincipleCard({ id, title = id }: { id: string; title?: string }) {
     return (
-        <Card key={props.id}>
+        <Card key={id}>
             <CardHeader
-                title={props.title}
+                title={title}
                 avatar={
-                    <Avatar
-                        variant="square"
-                        src={`/data/${props.id}.png`}
-                    ></Avatar>
+                    <Avatar variant="square" src={`/data/${id}.png`}></Avatar>
                 }
             />
         </Card>
@@ -45,7 +42,7 @@ const Principles = () => {
             }}
         >
             {data!.principle.map(({ id }) => (
-                <PrincipleCard key={id} id={id} title={id} />
+                <PrincipleCard key={id} id={id} />
             ))}
         </Box>
     )
