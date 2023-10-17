@@ -34,7 +34,7 @@ dependencies = [
     "typer>=0.9",  # cli
     "fastapi",     # router
     "uvicorn",     # server
-    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@fixes",  # sqlchemy schema to graphql
+    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git",  # sqlchemy schema to graphql
     "ariadne",  # graphql API endpoint
     "marshmallow-sqlalchemy",
     "platformdirs",
