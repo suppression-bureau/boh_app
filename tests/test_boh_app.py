@@ -8,8 +8,10 @@ from boh_app.data.load_data import get_data
 
 def get_loaded_data(data: dict[str, Any], model: type[models.Base]) -> dict[str, Any]:
     # data must be loaded through the serializer to get hybrid properties
-    model_data = model.__pydantic__.model_validate(data)
-    return model.__pydantic__.model_dump(model_data)
+    # transient=True indicates we are Not touching the Database
+    model_sqla: type[models.Base] = model.__marshmallow__(transient=True, many=False).load(data)
+    model_python = model.__pydantic__.model_validate(model_sqla, from_attributes=True)
+    return model.__pydantic__.model_dump(model_python, mode="json")
 
 
 def test_post_no_fk(client: TestClient):
@@ -46,5 +48,4 @@ def test_put_replace_fk(client: TestClient):
 
     result = client.put(f"/skill/{og_skill_data['id']}", json=updated_data)
     assert result.status_code == 200, result.json()
-    expected_data = {**updated_data, "wisdoms": [{"id": "test_value"}, skill_data[0]["wisdom_2"]]}
-    assert result.json() == get_loaded_data(expected_data, models.Skill)
+    assert result.json() == get_loaded_data(updated_data, models.Skill)
