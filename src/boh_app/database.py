@@ -1,5 +1,3 @@
-import os
-
 from platformdirs import user_cache_path
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, configure_mappers, sessionmaker
@@ -7,9 +5,9 @@ from sqlalchemy.orm import Session, configure_mappers, sessionmaker
 from .data.load_data import load_all
 from .models import Base, get_tablename_model_mapping
 from .serializers import setup_schema
+from .settings import DEBUG
 
 DB_PATH = user_cache_path("boh_app") / "db.sqlite"
-DEBUG = os.environ.get("DEBUG", "").lower() not in {"", "0", "false"}
 
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
