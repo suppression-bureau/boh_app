@@ -34,7 +34,8 @@ dependencies = [
     "typer>=0.9",  # cli
     "fastapi",     # router
     "uvicorn",     # server
-    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@fixes",  # sqlchemy schema to graphql
+    "watchfiles",  # uvicorn and schema reload
+    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git",  # sqlchemy schema to graphql
     "ariadne",  # graphql API endpoint
     "marshmallow-sqlalchemy",
     "platformdirs",
@@ -49,7 +50,6 @@ allow-direct-references = true
 [tool.hatch.envs.default]
 python = "3.11"
 [tool.hatch.envs.default.scripts]
-server = "uvicorn boh_app.server:app --reload"
 boh = "python -m boh_app {args}"
 
 [tool.hatch.envs.test]
