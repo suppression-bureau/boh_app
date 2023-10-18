@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -c auto npm:dev:generate npm:dev:api npm:dev:vite",
-    "dev:generate": "yarn run generate:schema -w && yarn run generate:query -w",
-    "dev:api": "hatch run server",
+    "dev": "concurrently -c auto npm:dev:generate:schema npm:dev:generate:query npm:dev:api npm:dev:vite",
+    "dev:generate:schema": "yarn run generate:schema -w",
+    "dev:generate:query": "yarn run generate:query -w",
+    "dev:api": "DEBUG=1 hatch run boh api",
     "dev:vite": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
