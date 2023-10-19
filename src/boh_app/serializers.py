@@ -17,6 +17,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session
 from sqlalchemy.orm.clsregistry import ClsRegistryToken, _ModuleMarker
 
+from .models import IdMixin
+
 PydanticFieldDecl: TypeAlias = tuple[type | UnionType | ForwardRef | None, EllipsisType | None]
 
 SYNTH_MODULE = "_boh_app_synth"
@@ -41,7 +43,11 @@ def setup_schema(decl_base: type[DeclarativeBase], *, session: Session) -> None:
     for class_ in classes:
         class_.__marshmallow__ = sqlalchemy_to_marshmallow(class_, session=session)
         class_.__pydantic__ = sqlalchemy_to_pydantic(class_)
-        class_.__pydantic_put__ = sqlalchemy_to_pydantic(class_, flat=False, include_relationships=True, include_hybrid=False)
+
+        exclude = ("id",) if issubclass(class_, IdMixin) else ()
+        class_.__pydantic_put__ = sqlalchemy_to_pydantic(
+            class_, flat=False, include_relationships=True, include_hybrid=False, exclude=exclude
+        )
         setattr(mod, class_.__pydantic__.__name__, class_.__pydantic__)
 
 

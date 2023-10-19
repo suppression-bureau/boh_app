@@ -1,5 +1,3 @@
-from typing import Any
-
 import rich.traceback
 from ariadne.asgi import GraphQL
 from ariadne.asgi.handlers import GraphQLTransportWSHandler
@@ -76,13 +74,12 @@ def register_model(table_name: str, model: type[Base]):
         status_code=status.HTTP_201_CREATED,
     )
     def _create(
-        data: dict[str, Any],
-        # data: model.__pydantic_put__,  # still requires db-generated ids, i.e. PrincipleCount
+        data: model.__pydantic_put__,
         session: Session = Depends(get_sess),
     ):
         with session.begin():
             serializer = model.__marshmallow__(session=session)
-            item: Base = serializer.load(data)
+            item: Base = serializer.load(data.model_dump())
             session.add(item)
             session.flush()
             resp = model.__pydantic__.model_validate(item)
@@ -96,7 +93,7 @@ def register_model(table_name: str, model: type[Base]):
     )
     def _put(
         id: str | int,
-        data: model.__pydantic_put__,
+        data: model.__pydantic_put__,  # NB: cannot use PUT for `IdMixin`-derived models
         session: Session = Depends(get_sess),
     ):
         with session.begin():
