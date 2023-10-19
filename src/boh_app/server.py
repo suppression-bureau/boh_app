@@ -1,3 +1,5 @@
+from typing import Any
+
 import rich.traceback
 from ariadne.asgi import GraphQL
 from ariadne.asgi.handlers import GraphQLTransportWSHandler
@@ -112,6 +114,18 @@ def register_model(table_name: str, model: type[Base]):
             resp = model.__pydantic__.model_validate(item)
             session.commit()
         return resp
+
+    @app.patch(
+        f"/{table_name}/{{id}}",
+        response_model=model.__pydantic__,
+        summary=f"Update a {table_name}",
+    )
+    def _patch(
+        id: str | int,
+        data: dict[str, Any],
+        session: Session = Depends(get_sess),
+    ):
+        pass
 
 
 for table_name, model in table_name2model.items():
