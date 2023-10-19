@@ -7,7 +7,7 @@ from boh_app.data.load_data import get_data
 
 
 def get_loaded_data(data: dict[str, Any], model: type[models.Base]) -> dict[str, Any]:
-    # data must be loaded through the serializer to get hybrid properties
+    # data must be loaded through marshmallow serializer to get hybrid properties
     # transient=True indicates we are Not touching the Database
     model_sqla: type[models.Base] = model.__marshmallow__(transient=True, many=False).load(data)
     model_python = model.__pydantic__.model_validate(model_sqla, from_attributes=True)
@@ -26,6 +26,8 @@ def test_post_w_generated_id(client: TestClient):
     result = client.post("principle_count", json=fake_data)
     assert result.status_code == 201, result.json()
     data = result.json()
+
+    # id is db-generated, cannot be "validated"
     data.pop("id")
     expected_data = get_loaded_data({**fake_data, "id": -1}, models.PrincipleCount)
     expected_data.pop("id")

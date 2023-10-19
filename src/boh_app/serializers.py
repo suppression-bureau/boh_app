@@ -41,6 +41,7 @@ def setup_schema(decl_base: type[DeclarativeBase], *, session: Session) -> None:
     for class_ in classes:
         class_.__marshmallow__ = sqlalchemy_to_marshmallow(class_, session=session)
         class_.__pydantic__ = sqlalchemy_to_pydantic(class_)
+        class_.__pydantic_put__ = sqlalchemy_to_pydantic(class_, flat=False, include_relationships=True, include_hybrid=False)
         setattr(mod, class_.__pydantic__.__name__, class_.__pydantic__)
 
 
@@ -70,17 +71,26 @@ orm_config = ConfigDict(from_attributes=True)
 
 
 def sqlalchemy_to_pydantic(
-    db_model: type[DeclarativeBase], *, config: ConfigDict = orm_config, exclude: Container[str] = (), flat: bool = False
+    db_model: type[DeclarativeBase],
+    *,
+    config: ConfigDict = orm_config,
+    exclude: Container[str] = (),
+    flat: bool = False,  # includes FKs when True
+    include_relationships: bool = True,
+    include_hybrid: bool = True,
 ) -> type[BaseModel]:
     simple_fields = dict(convert_simple_fields(db_model, exclude=exclude, include_fk=flat))
+    fields = simple_fields
     if flat:
-        fields = simple_fields
         name = f"{db_model.__name__}FlatModel"
     else:
-        rel_fields = dict(convert_relationships(db_model, exclude=exclude))
-        prop_fields = dict(convert_hybrid_properties(db_model, exclude=exclude))
-        fields = simple_fields | rel_fields | prop_fields
         name = f"{db_model.__name__}Model"
+        if include_hybrid:
+            prop_fields = dict(convert_hybrid_properties(db_model, exclude=exclude))
+            fields = fields | prop_fields
+        if include_relationships:
+            rel_fields = dict(convert_relationships(db_model, exclude=exclude))
+            fields = fields | rel_fields
 
     pydantic_model = create_model(name, __config__=config, **fields)
     return pydantic_model

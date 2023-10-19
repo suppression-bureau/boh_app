@@ -71,13 +71,13 @@ def register_model(table_name: str, model: type[Base]):
 
     @app.post(
         f"/{table_name}",
-        response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        response_model=model.__pydantic__,
         summary=f"Create a {table_name}",
         status_code=status.HTTP_201_CREATED,
     )
     def _create(
         data: dict[str, Any],
-        # data: model.__pydantic__,
+        # data: model.__pydantic_put__,  # still requires db-generated ids, i.e. PrincipleCount
         session: Session = Depends(get_sess),
     ):
         with session.begin():
@@ -91,20 +91,25 @@ def register_model(table_name: str, model: type[Base]):
 
     @app.put(
         f"/{table_name}/{{id}}",
-        response_model=model.__pydantic__,  # pydantic not set up for relationships or FKs
+        response_model=model.__pydantic__,
         summary=f"Add or Update a {table_name}",
     )
     def _put(
         id: str | int,
-        # data: model.__pydantic__,
-        data: dict[str, Any],
+        data: model.__pydantic_put__,
         session: Session = Depends(get_sess),
     ):
-        # TODO: check that ID is missing or matching
         with session.begin():
+            assert id == data.id, data.model_dump()
             # https://docs.sqlalchemy.org/en/20/orm/contextual.html#sqlalchemy.orm.scoped_session.get
-            serializer = model.__marshmallow__(session=session)
-            item: Base = serializer.load(data)
+            if item := session.get(model, id):
+                # marshmallow loads nested items as model objects, which can be set on model
+                serializer = model.__marshmallow__(session=session)
+                m_item: Base = serializer.load(data.model_dump())
+                for field in data.model_fields_set:
+                    setattr(item, field, getattr(m_item, field))
+            else:
+                item = model(**data.model_dump())
             session.add(item)
             session.flush()
             resp = model.__pydantic__.model_validate(item)
