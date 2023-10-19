@@ -3,7 +3,7 @@ from typing import Any
 import rich.traceback
 from ariadne.asgi import GraphQL
 from ariadne.asgi.handlers import GraphQLTransportWSHandler
-from fastapi import Depends, FastAPI, Request, status
+from fastapi import Depends, FastAPI, Request, Response, status
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -62,11 +62,12 @@ def register_model(table_name: str, model: type[Base]):
         response_model=model.__pydantic__,
         summary=f"Get a {table_name} by ID",
     )
-    def _get_by_id(id: str | int, session: Session = Depends(get_sess)):
+    def _get_by_id(id: str | int, response: Response, session: Session = Depends(get_sess)):
         with session.begin():
             data = session.get(model, id)
             if data is None:
-                return None  # TODO: 404
+                response.status_code = status.HTTP_404_NOT_FOUND
+                return None
             return model.__pydantic__.model_validate(data)
 
     @app.post(
@@ -118,14 +119,29 @@ def register_model(table_name: str, model: type[Base]):
     @app.patch(
         f"/{table_name}/{{id}}",
         response_model=model.__pydantic__,
+        status_code=status.HTTP_200_OK,
         summary=f"Update a {table_name}",
     )
     def _patch(
         id: str | int,
         data: dict[str, Any],
+        response: Response,
         session: Session = Depends(get_sess),
     ):
-        pass
+        with session.begin():
+            if not (item := session.get(model, id)):
+                response.status_code = status.HTTP_404_NOT_FOUND
+                return None
+
+            serializer = model.__marshmallow__(session=session)
+            m_item: Base = serializer.load({**data, "id": id}, transient=True)
+            for field in data:
+                setattr(item, field, getattr(m_item, field))
+            session.add(item)
+            session.flush()
+            resp = model.__pydantic__.model_validate(item)
+            session.commit()
+        return resp
 
 
 for table_name, model in table_name2model.items():

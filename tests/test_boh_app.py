@@ -1,5 +1,6 @@
 from typing import Any
 
+import pytest
 from fastapi.testclient import TestClient
 
 from boh_app import models
@@ -49,5 +50,30 @@ def test_put_replace_fk(client: TestClient):
     assert og_skill_data != updated_data
 
     result = client.put(f"/skill/{og_skill_data['id']}", json=updated_data)
+    assert result.status_code == 200, result.json()
+    assert result.json() == get_loaded_data(updated_data, models.Skill)
+
+
+@pytest.mark.skip(reason="fails due to response data validation, no simple enough model")
+def test_patch_field(client: TestClient):
+    assistant_data = get_data("assistant")
+    og_assistant_data = assistant_data[0]
+
+    fake_data = {"season": "autumn"}
+    updated_data = {**og_assistant_data, **fake_data}
+    result = client.patch(f"assistant/{og_assistant_data['id']}", json=fake_data)
+    assert result.status_code == 200, result.json()
+    assert result.json() == get_loaded_data(updated_data, models.Assistant)
+    # doesn't work because of `accepted_aspects` and `base_principlees`
+
+
+def test_patch_fk(client: TestClient):
+    skill_data = get_data("skill")
+    og_skill_data = skill_data[0]
+    new_data = {"wisdom_1": {"id": "test_value"}}
+    updated_data = {**og_skill_data, **new_data}
+    assert og_skill_data != updated_data
+
+    result = client.patch(f"/skill/{og_skill_data['id']}", json=new_data)
     assert result.status_code == 200, result.json()
     assert result.json() == get_loaded_data(updated_data, models.Skill)
