@@ -10,6 +10,7 @@ import CardHeader from "@mui/material/CardHeader"
 import CardContent from "@mui/material/CardContent"
 import CardActions from "@mui/material/CardActions"
 import Dialog from "@mui/material/Dialog"
+import { DialogActions, DialogContent } from "@mui/material"
 import TextField from "@mui/material/TextField"
 
 import { PrincipleCard } from "../routes/Principles"
@@ -82,17 +83,14 @@ function Skill(props: SkillProps) {
                 />
             </CardContent>
             <CardActions>
-                {/* TODO: PUT change to database */}
                 <Button onClick={upgradeSkill}>Upgrade Skill</Button>
             </CardActions>
         </Card>
     )
 }
 
-// TODO: reload after updates
 const SkillsView = () => {
     const [{ data }] = useQuery({ query: skillQueryDocument })
-    // const [data, setData] = useQuery({ query: skillQueryDocument })
 
     const [state, dispatch] = useReducer(skillReducer, data!.skill)
 
@@ -113,13 +111,12 @@ const SkillsView = () => {
     const handleNewSkill = (event, value) => {
         setNewSkill(value)
     }
+    // TODO: move into reducer
     function learnSkill() {
-        axios
-            .patch(`${API_URL}/skill/${newSkill}`, { level: 1 })
-            .then((response) => {
-                console.log(response.data)
-                setOpen(false)
-            })
+        axios.patch(`${API_URL}/skill/${newSkill}`, { level: 1 }).then(() => {
+            dispatch({ type: "increment", skill: newSkill })
+            setOpen(false)
+        })
     }
 
     return (
@@ -136,19 +133,23 @@ const SkillsView = () => {
             <Button onClick={handleClickOpen}>Learn new Skill</Button>
             {/* TODO: style that baby */}
             <Dialog open={open} onClose={handleClose}>
-                <Autocomplete
-                    id="skill-selector"
-                    options={state
-                        .filter(({ level }) => level == 0)
-                        .map((s) => s.id)}
-                    sx={{ width: 300 }}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Skill" />
-                    )}
-                    onChange={handleNewSkill}
-                />
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={learnSkill}>Learn</Button>
+                <DialogContent>
+                    <Autocomplete
+                        id="skill-selector"
+                        options={state
+                            .filter(({ level }) => level == 0)
+                            .map((s) => s.id)}
+                        sx={{ width: 300 }}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Skill" />
+                        )}
+                        onChange={handleNewSkill}
+                    />
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={learnSkill}>Learn</Button>
+                    </DialogActions>
+                </DialogContent>
             </Dialog>
             {state
                 .filter(({ level }) => level > 0)
