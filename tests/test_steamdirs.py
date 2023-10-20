@@ -49,4 +49,4 @@ def test_find_steam_dirs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Non
 
     expected = [(path / "steamapps/common/Book of Hours") for path in [data_dir, base_inst, other_lib]]
 
-    assert list(utils.find_app_dirs()) == expected
+    assert list(utils.find_app_dirs(app_id=1028310, app_name="Book of Hours")) == expected

@@ -65,12 +65,7 @@ def find_steam_lib_dirs() -> Generator[Path, None, None]:
             yield lib_dir
 
 
-# $ ls '/Users/ded/Library/Application Support/Steam/steamapps/common/Book of Hours/OSX.app/Contents'
-# BOOK OF HOURS Perpetual Edition wallpapers.zip  Info.plist                                      MonoBleedingEdge                                Resources
-# Frameworks                                      MacOS                                           PlugIns                                         _CodeSignature
-
-
-def find_app_dirs(app_id=1028310, app_name="Book of Hours") -> Generator[Path, None, None]:
+def find_app_dirs(*, app_id: int, app_name: str) -> Generator[Path, None, None]:
     # get from config
     steam_config = get_steam_config()
     try:
@@ -83,3 +78,12 @@ def find_app_dirs(app_id=1028310, app_name="Book of Hours") -> Generator[Path, N
         boh_dir = steam_dir / f"steamapps/common/{app_name}"
         if boh_dir.is_dir():
             yield boh_dir
+
+
+def find_boh_dir() -> Path:
+    for boh_dir in find_app_dirs(app_id=1028310, app_name="Book of Hours"):
+        if (osx_dir := boh_dir / "OSX.app/Contents/Resources/Data").is_dir():
+            return osx_dir
+        if (linux_dir := boh_dir / "bh_Data").is_dir():
+            return linux_dir
+    raise RuntimeError("Failed to find Book of Hours")
