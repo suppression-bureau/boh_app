@@ -124,6 +124,7 @@ class Skill(Base, NameMixin):
         return {"wisdoms": Nested(Wisdom.__marshmallow__, many=True)}
 
     level: Mapped[int] = mapped_column(default=0)
+    committed: Mapped[bool] = mapped_column(default=False)
     primary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     primary_principle: Mapped[Principle] = relationship(back_populates="primary_skills", foreign_keys=[primary_principle_id])
 

@@ -13,7 +13,8 @@
     "wisdom_2": {
       "id": "Ithastry"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Applebright Euphonies",
@@ -29,7 +30,8 @@
     "wisdom_2": {
       "id": "Illumination"
     },
-    "level": 4
+    "level": 4,
+    "committed": true
   },
   {
     "id": "Auroral Contemplations",
@@ -45,7 +47,8 @@
     "wisdom_2": {
       "id": "Nyctodromy"
     },
-    "level": 2
+    "level": 2,
+    "committed": true
   },
   {
     "id": "Bells & Brazieries",
@@ -91,7 +94,8 @@
     "wisdom_2": {
       "id": "Horomachistry"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Disciplines of the Hammer",
@@ -107,7 +111,8 @@
     "wisdom_2": {
       "id": "Nyctodromy"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Disciplines of the Scar",
@@ -138,7 +143,8 @@
     "wisdom_2": {
       "id": "Nyctodromy"
     },
-    "level": 4
+    "level": 4,
+    "committed": true
   },
   {
     "id": "Drums & Dances",
@@ -154,7 +160,8 @@
     "wisdom_2": {
       "id": "Horomachistry"
     },
-    "level": 4
+    "level": 4,
+    "committed": true
   },
   {
     "id": "Edicts Inviolable",
@@ -185,7 +192,8 @@
     "wisdom_2": {
       "id": "Skolekosophy"
     },
-    "level": 1
+    "level": 1,
+    "committed": true
   },
   {
     "id": "Edicts Martial",
@@ -231,7 +239,8 @@
     "wisdom_2": {
       "id": "Ithastry"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Glaziery & Lightsmithing",
@@ -247,7 +256,8 @@
     "wisdom_2": {
       "id": "Ithastry"
     },
-    "level": 2
+    "level": 2,
+    "committed": true
   },
   {
     "id": "The Great Signs & the Great Scars",
@@ -263,7 +273,8 @@
     "wisdom_2": {
       "id": "Hushery"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Herbs & Infusions",
@@ -324,7 +335,8 @@
     "wisdom_2": {
       "id": "Preservation"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Inks of Power",
@@ -355,7 +367,8 @@
     "wisdom_2": {
       "id": "Ithastry"
     },
-    "level": 4
+    "level": 4,
+    "committed": true
   },
   {
     "id": "Insects & Nectars",
@@ -401,7 +414,8 @@
     "wisdom_2": {
       "id": "Skolekosophy"
     },
-    "level": 4
+    "level": 4,
+    "committed": true
   },
   {
     "id": "Maggephene Mysteries",
@@ -447,7 +461,8 @@
     "wisdom_2": {
       "id": "Skolekosophy"
     },
-    "level": 5
+    "level": 5,
+    "committed": true
   },
   {
     "id": "Ouranoscopy",
@@ -463,7 +478,8 @@
     "wisdom_2": {
       "id": "Hushery"
     },
-    "level": 2
+    "level": 2,
+    "committed": true
   },
   {
     "id": "Path & Pilgrim",
@@ -479,7 +495,8 @@
     "wisdom_2": {
       "id": "Nyctodromy"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Pearl & Tide",
@@ -495,7 +512,8 @@
     "wisdom_2": {
       "id": "Nyctodromy"
     },
-    "level": 4
+    "level": 4,
+    "committed": true
   },
   {
     "id": "Pentiments & Precursors",
@@ -511,7 +529,8 @@
     "wisdom_2": {
       "id": "Skolekosophy"
     },
-    "level": 2
+    "level": 2,
+    "committed": true
   },
   {
     "id": "Preliminal Meter",
@@ -527,7 +546,8 @@
     "wisdom_2": {
       "id": "Ithastry"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Purifications & Exaltations",
@@ -573,7 +593,8 @@
     "wisdom_2": {
       "id": "Ithastry"
     },
-    "level": 5
+    "level": 5,
+    "committed": true
   },
   {
     "id": "Quenchings & Quellings",
@@ -589,7 +610,8 @@
     "wisdom_2": {
       "id": "Preservation"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Ragged Crossroads",
@@ -621,7 +643,8 @@
     "wisdom_2": {
       "id": "Preservation"
     },
-    "level": 2
+    "level": 2,
+    "committed": true
   },
   {
     "id": "Rhyme & Remembrance",
@@ -652,7 +675,8 @@
     "wisdom_2": {
       "id": "Preservation"
     },
-    "level": 2
+    "level": 2,
+    "committed": true
   },
   {
     "id": "Sacra Limiae",
@@ -668,7 +692,8 @@
     "wisdom_2": {
       "id": "Hushery"
     },
-    "level": 1
+    "level": 1,
+    "committed": true
   },
   {
     "id": "Sacra Solis Invicti",
@@ -700,7 +725,8 @@
     "wisdom_2": {
       "id": "Skolekosophy"
     },
-    "level": 2
+    "level": 2,
+    "committed": true
   },
   {
     "id": "Sea Stories",
@@ -762,7 +788,8 @@
     "wisdom_2": {
       "id": "Preservation"
     },
-    "level": 4
+    "level": 4,
+    "committed": true
   },
   {
     "id": "Sights & Sensations",
@@ -778,7 +805,8 @@
     "wisdom_2": {
       "id": "Nyctodromy"
     },
-    "level": 1
+    "level": 1,
+    "committed": true
   },
   {
     "id": "Sky Stories",
@@ -794,7 +822,8 @@
     "wisdom_2": {
       "id": "Horomachistry"
     },
-    "level": 1
+    "level": 1,
+    "committed": true
   },
   {
     "id": "Snow Stories",
@@ -810,7 +839,8 @@
     "wisdom_2": {
       "id": "Hushery"
     },
-    "level": 4
+    "level": 4,
+    "committed": true
   },
   {
     "id": "Solutions & Separations",
@@ -842,7 +872,8 @@
     "wisdom_2": {
       "id": "Ithastry"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   },
   {
     "id": "Stitching & Binding",
@@ -858,7 +889,8 @@
     "wisdom_2": {
       "id": "Preservation"
     },
-    "level": 2
+    "level": 2,
+    "committed": true
   },
   {
     "id": "Stone Stories",
@@ -904,7 +936,8 @@
     "wisdom_2": {
       "id": "Preservation"
     },
-    "level": 2
+    "level": 2,
+    "committed": true
   },
   {
     "id": "Transformations & Liberations",
@@ -936,7 +969,8 @@
     "wisdom_2": {
       "id": "Preservation"
     },
-    "level": 6
+    "level": 6,
+    "committed": true
   },
   {
     "id": "Watchman's Paradoxes",
@@ -982,6 +1016,7 @@
     "wisdom_2": {
       "id": "Skolekosophy"
     },
-    "level": 3
+    "level": 3,
+    "committed": true
   }
 ]
