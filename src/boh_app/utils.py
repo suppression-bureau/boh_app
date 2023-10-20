@@ -52,14 +52,22 @@ def find_steam_lib_dirs() -> Generator[Path, None, None]:
     yield steam_data_dir
 
     steam_config = get_steam_config()
-    yield (base_install_dir := Path(steam_config["BaseInstallFolder_1"]))
+    if "BaseInstallFolder_1" in steam_config:
+        yield (base_install_dir := Path(steam_config["BaseInstallFolder_1"]))
+    else:
+        base_install_dir = None
 
     lib_dirs_path = steam_data_dir / "steamapps/libraryfolders.vdf"
     lib_dirs = vdf.loads(lib_dirs_path.read_text())["libraryfolders"]
     for lib_dir_info in lib_dirs.values():
         lib_dir = Path(lib_dir_info["path"])
-        if lib_dir != base_install_dir:
+        if lib_dir not in (steam_data_dir, base_install_dir):
             yield lib_dir
+
+
+# $ ls '/Users/ded/Library/Application Support/Steam/steamapps/common/Book of Hours/OSX.app/Contents'
+# BOOK OF HOURS Perpetual Edition wallpapers.zip  Info.plist                                      MonoBleedingEdge                                Resources
+# Frameworks                                      MacOS                                           PlugIns                                         _CodeSignature
 
 
 def find_app_dirs(app_id=1028310, app_name="Book of Hours") -> Generator[Path, None, None]:
