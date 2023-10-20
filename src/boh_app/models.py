@@ -19,6 +19,7 @@ class Base(DeclarativeBase):
     # added in serializers.py
     __marshmallow__: ClassVar[type[SQLAlchemyAutoSchema]]
     __pydantic__: ClassVar[type[BaseModel]]
+    __pydantic_put__: ClassVar[type[BaseModel]]
 
 
 def get_tablename_model_mapping() -> dict[str, type[Base]]:

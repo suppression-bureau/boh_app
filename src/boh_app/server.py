@@ -3,7 +3,7 @@ from typing import Any
 import rich.traceback
 from ariadne.asgi import GraphQL
 from ariadne.asgi.handlers import GraphQLTransportWSHandler
-from fastapi import Depends, FastAPI, Request, status
+from fastapi import Depends, FastAPI, Request, Response, status
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -61,11 +61,12 @@ def register_model(table_name: str, model: type[Base]):
         response_model=model.__pydantic__,
         summary=f"Get a {table_name} by ID",
     )
-    def _get_by_id(id: str | int, session: Session = Depends(get_sess)):
+    def _get_by_id(id: str | int, response: Response, session: Session = Depends(get_sess)):
         with session.begin():
             data = session.get(model, id)
             if data is None:
-                return None  # TODO: 404
+                response.status_code = status.HTTP_404_NOT_FOUND
+                return None
             return model.__pydantic__.model_validate(data)
 
     @app.post(
@@ -75,13 +76,12 @@ def register_model(table_name: str, model: type[Base]):
         status_code=status.HTTP_201_CREATED,
     )
     def _create(
-        data: dict[str, Any],
-        # data: model.__pydantic__,
+        data: model.__pydantic_put__,
         session: Session = Depends(get_sess),
     ):
         with session.begin():
             serializer = model.__marshmallow__(session=session)
-            item: Base = serializer.load(data)
+            item: Base = serializer.load(data.model_dump())
             session.add(item)
             session.flush()
             resp = model.__pydantic__.model_validate(item)
@@ -95,15 +95,47 @@ def register_model(table_name: str, model: type[Base]):
     )
     def _put(
         id: str | int,
-        # data: model.__pydantic__,
-        data: dict[str, Any],
+        data: model.__pydantic_put__,  # NB: cannot use PUT for `IdMixin`-derived models
         session: Session = Depends(get_sess),
     ):
-        # TODO: check that ID is missing or matching
         with session.begin():
+            assert id == data.id, data.model_dump()
             # https://docs.sqlalchemy.org/en/20/orm/contextual.html#sqlalchemy.orm.scoped_session.get
+            if item := session.get(model, id):
+                # marshmallow loads nested items as model objects, which can be set on model
+                serializer = model.__marshmallow__(session=session)
+                m_item: Base = serializer.load(data.model_dump())
+                for field in data.model_fields_set:
+                    setattr(item, field, getattr(m_item, field))
+            else:
+                item = model(**data.model_dump())
+            session.add(item)
+            session.flush()
+            resp = model.__pydantic__.model_validate(item)
+            session.commit()
+        return resp
+
+    @app.patch(
+        f"/{table_name}/{{id}}",
+        response_model=model.__pydantic__,
+        status_code=status.HTTP_200_OK,
+        summary=f"Update a {table_name}",
+    )
+    def _patch(
+        id: str | int,
+        data: dict[str, Any],
+        response: Response,
+        session: Session = Depends(get_sess),
+    ):
+        with session.begin():
+            if not (item := session.get(model, id)):
+                response.status_code = status.HTTP_404_NOT_FOUND
+                return None
+
             serializer = model.__marshmallow__(session=session)
-            item: Base = serializer.load(data)
+            m_item: Base = serializer.load({**data, "id": id}, transient=True)
+            for field in data:
+                setattr(item, field, getattr(m_item, field))
             session.add(item)
             session.flush()
             resp = model.__pydantic__.model_validate(item)
