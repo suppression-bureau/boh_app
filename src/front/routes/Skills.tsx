@@ -1,4 +1,6 @@
 import { useQuery } from "urql"
+import axios from "axios"
+import { useState } from "react"
 
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
@@ -9,6 +11,8 @@ import CardActions from "@mui/material/CardActions"
 
 import { PrincipleCard } from "../routes/Principles"
 import { graphql } from "../gql"
+
+const API_URL = "http://localhost:8000"
 
 const skillQueryDocument = graphql(`
     query Skills {
@@ -26,24 +30,36 @@ const skillQueryDocument = graphql(`
 `)
 
 function Skill(props) {
+    const [skill, setSkill] = useState(props)
+
+    function upgradeSkill() {
+        axios
+            .patch(`${API_URL}/skill/${props.id}`, {
+                level: props.level + 1,
+            })
+            .then((response) => {
+                setSkill(response.data)
+            })
+    }
+
     return (
-        <Card key={props.id}>
-            <CardHeader title={props.id} />
+        <Card key={skill.id}>
+            <CardHeader title={skill.id} />
             <CardContent sx={{ display: "inline-flex" }}>
                 <PrincipleCard
-                    key={props.primary_principle.id}
-                    id={props.primary_principle.id}
-                    title={props.level + 1}
+                    key={skill.primary_principle.id}
+                    id={skill.primary_principle.id}
+                    title={skill.level + 1}
                 />
                 <PrincipleCard
-                    key={props.secondary_principle.id}
-                    id={props.secondary_principle.id}
-                    title={props.level}
+                    key={skill.secondary_principle.id}
+                    id={skill.secondary_principle.id}
+                    title={skill.level}
                 />
             </CardContent>
             <CardActions>
                 {/* TODO: PUT change to database */}
-                <Button>Upgrade Skill</Button>
+                <Button onClick={upgradeSkill}>Upgrade Skill</Button>
             </CardActions>
         </Card>
     )
