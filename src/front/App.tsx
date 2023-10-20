@@ -21,7 +21,7 @@ import ElevationScroll from "./ElevationScroll.tsx"
 import Home from "./routes/Home"
 import Aspects from "./routes/Aspects"
 import Principles from "./routes/Principles.tsx"
-import Skills from "./routes/Skills"
+import SkillsView from "./routes/Skills"
 import React from "react"
 
 const ROUTE_LINKS = [
@@ -101,7 +101,7 @@ const App = () => {
                         <Route index element={<Home />} />
                         <Route path="aspects" element={<Aspects />} />
                         <Route path="principles" element={<Principles />} />
-                        <Route path="skills" element={<Skills />} />
+                        <Route path="skills" element={<SkillsView />} />
                         <Route path="*" element={<Navigate replace to="/" />} />
                     </SlideRoutes>
                 </React.Suspense>

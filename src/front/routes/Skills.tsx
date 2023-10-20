@@ -1,13 +1,16 @@
 import { useQuery } from "urql"
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
+import Autocomplete from "@mui/material/Autocomplete"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 import CardContent from "@mui/material/CardContent"
 import CardActions from "@mui/material/CardActions"
+import Dialog from "@mui/material/Dialog"
+import TextField from "@mui/material/TextField"
 
 import { PrincipleCard } from "../routes/Principles"
 import { graphql } from "../gql"
@@ -65,8 +68,34 @@ function Skill(props) {
     )
 }
 
-const Skills = () => {
+// TODO: reload after updates
+const SkillsView = () => {
     const [{ data }] = useQuery({ query: skillQueryDocument })
+    // const [data, setData] = useQuery({ query: skillQueryDocument })
+
+    const [open, setOpen] = useState(false)
+    const [newSkill, setNewSkill] = useState("")
+
+    const handleClickOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        setOpen(false)
+    }
+
+    const handleNewSkill = (event, value) => {
+        setNewSkill(value)
+    }
+    function learnSkill() {
+        axios
+            .patch(`${API_URL}/skill/${newSkill}`, { level: 1 })
+            .then((response) => {
+                console.log(response.data)
+                setOpen(false)
+            })
+    }
+
     return (
         <Box
             sx={{
@@ -78,6 +107,23 @@ const Skills = () => {
                 rowGap: 1,
             }}
         >
+            <Button onClick={handleClickOpen}>Learn new Skill</Button>
+            {/* TODO: style that baby */}
+            <Dialog open={open} onClose={handleClose}>
+                <Autocomplete
+                    id="skill-selector"
+                    options={data!.skill
+                        .filter(({ level }) => level == 0)
+                        .map((s) => s.id)}
+                    sx={{ width: 300 }}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Skill" />
+                    )}
+                    onChange={handleNewSkill}
+                />
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={learnSkill}>Learn</Button>
+            </Dialog>
             {data!.skill
                 .filter(({ level }) => level > 0)
                 .map(({ ...skill }) => (
@@ -87,4 +133,4 @@ const Skills = () => {
     )
 }
 
-export default Skills
+export default SkillsView
