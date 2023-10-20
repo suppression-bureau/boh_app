@@ -1,4 +1,4 @@
-import { UseQueryState, useQuery } from "urql"
+import { useQuery } from "urql"
 import axios from "axios"
 import { useReducer, useState } from "react"
 
@@ -90,6 +90,7 @@ function Skill(props: SkillProps) {
 }
 
 const SkillsView = () => {
+    // TODO: move into reducer
     const [{ data }] = useQuery({ query: skillQueryDocument })
 
     const [state, dispatch] = useReducer(skillReducer, data!.skill)
@@ -108,7 +109,7 @@ const SkillsView = () => {
     const handleSkillIncrement = (skill: types.Skill["id"]) => {
         dispatch({ type: "increment", skill })
     }
-    const handleNewSkill = (event, value) => {
+    const handleNewSkill = (event, value: string) => {
         setNewSkill(value)
     }
     // TODO: move into reducer
