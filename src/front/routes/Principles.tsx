@@ -15,11 +15,17 @@ const principleQueryDocument = graphql(`
     }
 `)
 
-function PrincipleCard({ id, title = id }: { id: string; title?: string }) {
+function PrincipleCard({
+    id,
+    title = id,
+}: {
+    id: string
+    title?: object | string | number
+}) {
     return (
         <Card key={id}>
             <CardHeader
-                title={title}
+                title={title.toString()}
                 avatar={
                     <Avatar variant="square" src={`/data/${id}.png`}></Avatar>
                 }
