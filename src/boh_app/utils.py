@@ -81,6 +81,10 @@ def find_app_dirs(*, app_id: int, app_name: str) -> Generator[Path, None, None]:
 
 
 def find_boh_dir() -> Path:
+    """
+    Find the Book of Hours Unity directory.
+    It contains the `.assets` files and the `StreamingAssets` directory.
+    """
     for boh_dir in find_app_dirs(app_id=1028310, app_name="Book of Hours"):
         if (osx_dir := boh_dir / "OSX.app/Contents/Resources/Data").is_dir():
             return osx_dir
