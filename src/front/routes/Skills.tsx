@@ -4,16 +4,19 @@ import { useCallback, useReducer, useState } from "react"
 
 import Autocomplete from "@mui/material/Autocomplete"
 import Button from "@mui/material/Button"
-import Card from "@mui/material/Card"
-import CardHeader from "@mui/material/CardHeader"
-import CardContent from "@mui/material/CardContent"
-import CardActions from "@mui/material/CardActions"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
 import Divider from "@mui/material/Divider"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemButton from "@mui/material/ListItemButton"
+import ListItemIcon from "@mui/material/ListItemIcon"
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction"
+import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
+import UpgradeIcon from "@mui/icons-material/Upgrade"
 
 import { PrincipleCard } from "../routes/Principles"
 import { graphql } from "../gql"
@@ -72,10 +75,9 @@ function Skill(props: SkillProps) {
     }
 
     return (
-        <Card key={skill.id}>
-            <CardHeader title={skill.id} />
-            <CardContent>
-                <Stack direction="row" gap={2}>
+        <ListItem>
+            <ListItemIcon>
+                <Stack direction="row" gap={2} sx={{ pr: 2 }}>
                     <PrincipleCard
                         key={skill.primary_principle!.id}
                         id={skill.primary_principle!.id}
@@ -83,7 +85,7 @@ function Skill(props: SkillProps) {
                         sx={{ boxShadow: "none" }}
                         disablePadding
                     />
-                    <Divider orientation="vertical" variant="middle" flexItem />
+                    <Divider orientation="vertical" flexItem />
                     <PrincipleCard
                         key={skill.secondary_principle!.id}
                         id={skill.secondary_principle!.id}
@@ -92,11 +94,16 @@ function Skill(props: SkillProps) {
                         disablePadding
                     />
                 </Stack>
-            </CardContent>
-            <CardActions>
-                <Button onClick={upgradeSkill}>Upgrade Skill</Button>
-            </CardActions>
-        </Card>
+            </ListItemIcon>
+            <ListItemText primary={skill.id} />
+            <ListItemSecondaryAction>
+                <ListItemButton onClick={upgradeSkill}>
+                    <ListItemIcon>
+                        <UpgradeIcon />
+                    </ListItemIcon>
+                </ListItemButton>
+            </ListItemSecondaryAction>
+        </ListItem>
     )
 }
 
@@ -139,36 +146,38 @@ const SkillsView = () => {
     }, [dispatch, newSkill, setOpen])
 
     return (
-        <Stack
-            spacing={2}
+        <List
             sx={{
-                maxWidth: "450px",
-                marginBlock: 1,
+                maxWidth: "800px",
                 marginInline: "auto",
             }}
         >
-            <Button onClick={handleClickOpen}>Learn new Skill</Button>
-            <Dialog open={open} onClose={handleClose}>
-                <DialogContent>
-                    <Autocomplete
-                        id="skill-selector"
-                        options={state
-                            .filter(({ level }) => level == 0)
-                            .map((s) => s.id)}
-                        sx={{ width: 300 }}
-                        renderInput={(params) => (
-                            <TextField {...params} label="Skill" />
-                        )}
-                        onChange={handleNewSkill}
-                    />
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={learnSkill} disabled={!newSkill}>
-                            Learn
-                        </Button>
-                    </DialogActions>
-                </DialogContent>
-            </Dialog>
+            <ListItem>
+                <ListItemButton>
+                    <Button onClick={handleClickOpen}>Learn new Skill</Button>
+                </ListItemButton>
+                <Dialog open={open} onClose={handleClose}>
+                    <DialogContent>
+                        <Autocomplete
+                            id="skill-selector"
+                            options={state
+                                .filter(({ level }) => level == 0)
+                                .map((s) => s.id)}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Skill" />
+                            )}
+                            onChange={handleNewSkill}
+                        />
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button onClick={learnSkill} disabled={!newSkill}>
+                                Learn
+                            </Button>
+                        </DialogActions>
+                    </DialogContent>
+                </Dialog>
+            </ListItem>
             {state
                 .filter(({ level }) => level > 0)
                 .map(({ ...skill }) => (
@@ -178,7 +187,7 @@ const SkillsView = () => {
                         {...skill}
                     />
                 ))}
-        </Stack>
+        </List>
     )
 }
 
