@@ -1753,6 +1753,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mui/icons-material@npm:^5.14.14":
+  version: 5.14.14
+  resolution: "@mui/icons-material@npm:5.14.14"
+  dependencies:
+    "@babel/runtime": ^7.23.1
+  peerDependencies:
+    "@mui/material": ^5.0.0
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: f69689a2c4ea26a8bf5602d3688922f867155c32393eff2b0722c84cd0dabac8d1fd5ed3d54cf2b8e35157967fb2f99c373ba663d5ca3bf741934e221b5227d8
+  languageName: node
+  linkType: hard
+
 "@mui/material@npm:^5.14.12":
   version: 5.14.12
   resolution: "@mui/material@npm:5.14.12"
@@ -2815,6 +2831,7 @@ __metadata:
     "@graphql-codegen/cli": ^5.0.0
     "@graphql-codegen/client-preset": ^4.1.0
     "@graphql-typed-document-node/core": ^3.2.0
+    "@mui/icons-material": ^5.14.14
     "@mui/material": ^5.14.12
     "@parcel/watcher": ^2.3.0
     "@types/node": ^20.8.3

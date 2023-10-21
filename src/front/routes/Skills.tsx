@@ -14,6 +14,7 @@ import DialogContent from "@mui/material/DialogContent"
 import Divider from "@mui/material/Divider"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
+import UpgradeIcon from "@mui/icons-material/Upgrade"
 
 import { PrincipleCard } from "../routes/Principles"
 import { graphql } from "../gql"
@@ -74,27 +75,29 @@ function Skill(props: SkillProps) {
     return (
         <Card key={skill.id}>
             <CardHeader title={skill.id} />
-            <CardContent>
-                <Stack direction="row" gap={2}>
-                    <PrincipleCard
-                        key={skill.primary_principle!.id}
-                        id={skill.primary_principle!.id}
-                        title={skill.level + 1}
-                        sx={{ boxShadow: "none" }}
-                        disablePadding
-                    />
-                    <Divider orientation="vertical" variant="middle" flexItem />
-                    <PrincipleCard
-                        key={skill.secondary_principle!.id}
-                        id={skill.secondary_principle!.id}
-                        title={skill.level}
-                        sx={{ boxShadow: "none" }}
-                        disablePadding
-                    />
-                </Stack>
-            </CardContent>
-            <CardActions>
-                <Button onClick={upgradeSkill}>Upgrade Skill</Button>
+            <CardActions sx={{ gap: 2 }}>
+                <PrincipleCard
+                    key={skill.primary_principle!.id}
+                    id={skill.primary_principle!.id}
+                    title={skill.level + 1}
+                    sx={{ boxShadow: "none" }}
+                    disablePadding
+                />
+                <Divider orientation="vertical" variant="middle" flexItem />
+                <PrincipleCard
+                    key={skill.secondary_principle!.id}
+                    id={skill.secondary_principle!.id}
+                    title={skill.level}
+                    sx={{ boxShadow: "none" }}
+                    disablePadding
+                />
+                <Button
+                    endIcon={<UpgradeIcon />}
+                    onClick={upgradeSkill}
+                    sx={{ ml: "auto" }}
+                >
+                    Upgrade Skill
+                </Button>
             </CardActions>
         </Card>
     )
