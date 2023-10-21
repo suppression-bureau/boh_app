@@ -8,9 +8,6 @@ import anyio
 import typer
 from graphql import IntrospectionQuery, build_client_schema, get_introspection_query, print_schema
 
-# Only imports with no dependencies here. E.g. no importing server, database, or db
-from .settings import DEBUG
-
 HERE = Path(__file__).parent
 
 app = typer.Typer(no_args_is_help=True)
@@ -28,7 +25,10 @@ def run_async(func):
 
 
 @app.command()
-def api() -> None:
+def api(
+    *,
+    reload: Annotated[bool, typer.Option(envvar="DEBUG")] = False,
+) -> None:
     """Start the API server."""
     import uvicorn
 
@@ -36,7 +36,8 @@ def api() -> None:
         "boh_app.server:app",
         host="127.0.0.1",
         port=8000,
-        reload=DEBUG,
+        reload=reload,
+        use_colors=True,
     )
 
 
