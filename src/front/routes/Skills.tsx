@@ -18,9 +18,11 @@ import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import UpgradeIcon from "@mui/icons-material/Upgrade"
 
-import { PrincipleCard } from "../routes/Principles"
+import { PrincipleCard, PrincipleIcon } from "../routes/Principles"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
+import Badge from "@mui/material/Badge"
+import Avatar from "@mui/material/Avatar"
 
 const API_URL = "http://localhost:8000"
 
@@ -78,21 +80,12 @@ function Skill(props: SkillProps) {
         <ListItem>
             <ListItemIcon>
                 <Stack direction="row" gap={2} sx={{ pr: 2 }}>
-                    <PrincipleCard
-                        key={skill.primary_principle!.id}
-                        id={skill.primary_principle!.id}
-                        title={skill.level + 1}
-                        sx={{ boxShadow: "none" }}
-                        disablePadding
-                    />
-                    <Divider orientation="vertical" flexItem />
-                    <PrincipleCard
-                        key={skill.secondary_principle!.id}
-                        id={skill.secondary_principle!.id}
-                        title={skill.level}
-                        sx={{ boxShadow: "none" }}
-                        disablePadding
-                    />
+                    <Badge badgeContent={skill.level + 1} color="primary">
+                        <PrincipleIcon id={skill.primary_principle!.id} />
+                    </Badge>
+                    <Badge badgeContent={skill.level} color="secondary">
+                        <PrincipleIcon id={skill.secondary_principle!.id} />
+                    </Badge>
                 </Stack>
             </ListItemIcon>
             <ListItemText primary={skill.id} />
