@@ -6,7 +6,6 @@ import Autocomplete from "@mui/material/Autocomplete"
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
-import CardContent from "@mui/material/CardContent"
 import CardActions from "@mui/material/CardActions"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
@@ -92,7 +91,9 @@ function Skill(props: SkillProps) {
                     disablePadding
                 />
                 <Button
-                    endIcon={<UpgradeIcon />}
+                    endIcon={
+                        <UpgradeIcon stroke="currentColor" strokeWidth={0.5} />
+                    }
                     onClick={upgradeSkill}
                     sx={{ ml: "auto" }}
                 >

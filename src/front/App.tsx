@@ -47,10 +47,27 @@ function useRouteMatch(patterns: readonly string[]) {
 const App = () => {
     const dark = useMediaQuery("(prefers-color-scheme: dark)")
     const theme = useMemo(() => {
+        const buttonStyle = { fontWeight: "bold" }
         const baseTheme = createTheme({
             palette: {
                 mode: dark ? "dark" : "light",
                 primary: amber,
+            },
+            typography: {
+                button: buttonStyle,
+            },
+            components: {
+                MuiButton: {
+                    styleOverrides: {
+                        text: buttonStyle,
+                        textPrimary: buttonStyle,
+                    },
+                },
+                MuiButtonBase: {
+                    styleOverrides: {
+                        root: buttonStyle,
+                    },
+                },
             },
         })
         return responsiveFontSizes(baseTheme)
