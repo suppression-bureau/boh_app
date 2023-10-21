@@ -17,6 +17,9 @@ repos:
     rev: v3.0.3
     hooks:
       - id: prettier
+        additional_dependencies:
+          - prettier
+          - "@trivago/prettier-plugin-sort-imports"
         exclude: |
           (?x)^(
             yarn\.lock|

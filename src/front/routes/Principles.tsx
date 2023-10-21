@@ -1,9 +1,9 @@
 import { useQuery } from "urql"
 
+import Avatar from "@mui/material/Avatar"
 import Box from "@mui/material/Box"
 import Card, { CardProps } from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
-import Avatar from "@mui/material/Avatar"
 
 import { graphql } from "../gql"
 
