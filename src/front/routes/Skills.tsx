@@ -2,7 +2,6 @@ import axios from "axios"
 import { useCallback, useReducer, useState } from "react"
 import { useQuery } from "urql"
 
-import UpgradeIcon from "@mui/icons-material/Upgrade"
 import Autocomplete from "@mui/material/Autocomplete"
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
@@ -14,6 +13,8 @@ import DialogContent from "@mui/material/DialogContent"
 import Divider from "@mui/material/Divider"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
+
+import UpgradeIcon from "@mui/icons-material/Upgrade"
 
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"

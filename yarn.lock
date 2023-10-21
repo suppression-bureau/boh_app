@@ -2911,6 +2911,9 @@ __metadata:
     typescript: ^5.2.2
     urql: ^4.0.5
     vite: ^4.4.11
+  dependenciesMeta:
+    "@trivago/prettier-plugin-sort-imports@4.2.0":
+      unplugged: true
   languageName: unknown
   linkType: soft
 

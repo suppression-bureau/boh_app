@@ -6,7 +6,12 @@ module.exports = {
     plugins: [require.resolve("@trivago/prettier-plugin-sort-imports")],
     semi: false,
     trailingComma: "all",
-    importOrder: ["<THIRD_PARTY_MODULES>", "^@mui/(.*)$", "^[./]"],
+    importOrder: [
+        "<THIRD_PARTY_MODULES>",
+        "^@mui/material/(.*)$",
+        "^@mui/icons-material/(.*)$",
+        "^[./]",
+    ],
     importOrderSeparation: true,
     importOrderSortSpecifiers: true,
     overrides: [
