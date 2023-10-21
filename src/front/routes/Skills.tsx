@@ -132,7 +132,6 @@ const SkillsView = () => {
             }}
         >
             <Button onClick={handleClickOpen}>Learn new Skill</Button>
-            {/* TODO: style that baby */}
             <Dialog open={open} onClose={handleClose}>
                 <DialogContent>
                     <Autocomplete
