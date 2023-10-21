@@ -123,6 +123,8 @@ class Skill(Base, NameMixin):
     def _additional_fields(cls):
         return {"wisdoms": Nested(Wisdom.__marshmallow__, many=True)}
 
+    level: Mapped[int] = mapped_column(default=0)
+    committed: Mapped[bool] = mapped_column(default=False)
     primary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     primary_principle: Mapped[Principle] = relationship(back_populates="primary_skills", foreign_keys=[primary_principle_id])
 
@@ -169,14 +171,6 @@ class Item(Base, NameMixin):
     product_recipe: Mapped[list[Recipe]] = relationship(back_populates="source", primaryjoin="Item.id==Recipe.source_id")
 
 
-class SkillLevel(Base, IdMixin):
-    __tablename__ = "skill_level"
-
-    skill_id: Mapped[int] = mapped_column(ForeignKey("skill.id"))
-    # skill: Mapped[Skill] = relationship(back_populates="skill_level")
-    level: Mapped[int]
-
-
 class Recipe(Base, IdMixin):
     __tablename__ = "recipe"
 
@@ -186,7 +180,7 @@ class Recipe(Base, IdMixin):
     source_id: Mapped[int | None] = mapped_column(ForeignKey("item.id"))
     source: Mapped[Item] = relationship(back_populates="product_recipe", foreign_keys=[source_id])
 
-    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
+    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))  # TODO:  make nullable
     principle: Mapped[Principle] = relationship()
 
     principle_amount: Mapped[int]
@@ -203,7 +197,7 @@ class WorkstationType(Base, NameMixin):
 class WorkstationSlot(Base, IdMixin):
     __tablename__ = "workstation_slot"
 
-    name: Mapped[str]
+    name: Mapped[str]  # TODO: make NameMixin, why would we need int id?
 
     workstations: Mapped[list[Workstation]] = relationship(
         back_populates="workstation_slots",

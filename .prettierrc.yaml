@@ -1,4 +1,5 @@
 semi: false
+trailingComma: all
 overrides:
   # JSON with comments and trailing commas
   - files:
