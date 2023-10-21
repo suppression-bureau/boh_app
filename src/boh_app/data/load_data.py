@@ -7,12 +7,13 @@ from sqlalchemy.exc import SAWarning
 from sqlalchemy.orm import Session
 
 from ..models import Base, get_tablename_model_mapping
+from ..settings import CACHE_DIR
 
 HERE = Path(__file__).parent
 
 
-def get_data(name: str):
-    with (HERE / f"{name}.json").open() as a:
+def get_data(path: Path):
+    with path.open() as a:
         data = json.load(a)
         return data
 
@@ -31,9 +32,16 @@ def add_data(data: Any, _class: type[Base], *, session: Session):
 
 
 def load_all(session: Session) -> None:
-    data_file_names = [f.stem for f in HERE.glob("*.json")]
+    from .generate_items import gen_items_json
+
+    gen_items_json()
+
+    data_file_paths = {f.stem: f for f in HERE.glob("*.json")}
+    cached_file_paths = {f.stem: f for f in CACHE_DIR.glob("*.json")}
+    data_file_paths = {**data_file_paths, **cached_file_paths}
     sorted_table_names = [t.fullname for t in Base.metadata.sorted_tables]
     tablename2model = get_tablename_model_mapping()
     for name in sorted_table_names:
-        if name in data_file_names:
-            add_data(get_data(name), tablename2model[name], session=session)
+        if name in data_file_paths:
+            path = data_file_paths[name]
+            add_data(get_data(path), tablename2model[name], session=session)

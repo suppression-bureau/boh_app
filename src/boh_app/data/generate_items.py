@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from ..settings import CACHE_DIR
 from ..utils import find_boh_dir
 
 HERE = Path(__file__).parent
@@ -10,7 +11,8 @@ HERE = Path(__file__).parent
 def gen_items_json():
     data = prune_data(get_steam_data())
     model_data = [make_model_data(item) for item in data]
-    with (HERE / "items.json").open("w") as a:
+    model_data = dedup(model_data)
+    with (CACHE_DIR / "item.json").open("w") as a:
         json.dump(model_data, a)
 
 
@@ -76,3 +78,8 @@ def make_model_data(item: dict[str, Any]):
     if name in our_items:
         model["known"] = True
     return model
+
+
+def dedup(items: list[dict[str, Any]]):
+    seen = set()
+    return [item for item in items if item["id"] not in seen and not seen.add(item["id"])]
