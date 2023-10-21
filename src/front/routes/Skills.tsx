@@ -3,7 +3,6 @@ import axios from "axios"
 import { useCallback, useReducer, useState } from "react"
 
 import Autocomplete from "@mui/material/Autocomplete"
-import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
@@ -12,6 +11,8 @@ import CardActions from "@mui/material/CardActions"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
+import Divider from "@mui/material/Divider"
+import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 
 import { PrincipleCard } from "../routes/Principles"
@@ -73,17 +74,24 @@ function Skill(props: SkillProps) {
     return (
         <Card key={skill.id}>
             <CardHeader title={skill.id} />
-            <CardContent sx={{ display: "inline-flex" }}>
-                <PrincipleCard
-                    key={skill.primary_principle!.id}
-                    id={skill.primary_principle!.id}
-                    title={skill.level + 1}
-                />
-                <PrincipleCard
-                    key={skill.secondary_principle!.id}
-                    id={skill.secondary_principle!.id}
-                    title={skill.level}
-                />
+            <CardContent>
+                <Stack direction="row" gap={2}>
+                    <PrincipleCard
+                        key={skill.primary_principle!.id}
+                        id={skill.primary_principle!.id}
+                        title={skill.level + 1}
+                        sx={{ boxShadow: "none" }}
+                        disablePadding
+                    />
+                    <Divider orientation="vertical" variant="middle" flexItem />
+                    <PrincipleCard
+                        key={skill.secondary_principle!.id}
+                        id={skill.secondary_principle!.id}
+                        title={skill.level}
+                        sx={{ boxShadow: "none" }}
+                        disablePadding
+                    />
+                </Stack>
             </CardContent>
             <CardActions>
                 <Button onClick={upgradeSkill}>Upgrade Skill</Button>
@@ -131,14 +139,12 @@ const SkillsView = () => {
     }, [dispatch, newSkill, setOpen])
 
     return (
-        <Box
+        <Stack
+            spacing={2}
             sx={{
                 maxWidth: "450px",
                 marginBlock: 1,
                 marginInline: "auto",
-                display: "flex",
-                flexDirection: "column",
-                rowGap: 1,
             }}
         >
             <Button onClick={handleClickOpen}>Learn new Skill</Button>
@@ -172,7 +178,7 @@ const SkillsView = () => {
                         {...skill}
                     />
                 ))}
-        </Box>
+        </Stack>
     )
 }
 

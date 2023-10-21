@@ -1,7 +1,7 @@
 import { useQuery } from "urql"
 
 import Box from "@mui/material/Box"
-import Card from "@mui/material/Card"
+import Card, { CardProps } from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 import Avatar from "@mui/material/Avatar"
 
@@ -15,20 +15,26 @@ const principleQueryDocument = graphql(`
     }
 `)
 
+interface PrincipleCardProps extends Omit<CardProps, "title"> {
+    id: string
+    title?: object | string | number
+    disablePadding?: boolean
+}
+
 function PrincipleCard({
     id,
     title = id,
-}: {
-    id: string
-    title?: object | string | number
-}) {
+    disablePadding = false,
+    ...cardProps
+}: PrincipleCardProps) {
     return (
-        <Card key={id}>
+        <Card key={id} {...cardProps}>
             <CardHeader
                 title={title.toString()}
                 avatar={
                     <Avatar variant="square" src={`/data/${id}.png`}></Avatar>
                 }
+                sx={{ padding: disablePadding ? 0 : 2 }}
             />
         </Card>
     )
