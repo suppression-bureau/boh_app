@@ -1,5 +1,6 @@
 import { useMemo } from "react"
-import { Link, Route, Navigate, useLocation, matchPath } from "react-router-dom"
+import React from "react"
+import { Link, Navigate, Route, matchPath, useLocation } from "react-router-dom"
 import SlideRoutes from "react-slide-routes"
 
 import AppBar from "@mui/material/AppBar"
@@ -10,19 +11,18 @@ import Tabs from "@mui/material/Tabs"
 import Toolbar from "@mui/material/Toolbar"
 import { amber } from "@mui/material/colors"
 import {
+    ThemeProvider,
     alpha,
     createTheme,
     responsiveFontSizes,
-    ThemeProvider,
 } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 import ElevationScroll from "./ElevationScroll.tsx"
-import Home from "./routes/Home"
 import Aspects from "./routes/Aspects"
+import Home from "./routes/Home"
 import Principles from "./routes/Principles.tsx"
 import SkillsView from "./routes/Skills"
-import React from "react"
 
 const ROUTE_LINKS = [
     { label: "Home", href: "/", pattern: "/" },
