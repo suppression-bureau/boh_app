@@ -6,11 +6,11 @@ from typing import Any, LiteralString
 from graphql import graphql_sync
 from sqlalchemy.orm import Session
 
-from .database import SessionLocal
-from .graphql import gql_schema
-
 
 def gql_query(src: LiteralString, *, db_session: Session | None = None) -> dict[str, Any]:
+    from .database import SessionLocal
+    from .graphql import gql_schema
+
     if oneshot_session := (db_session is None):
         db_session = SessionLocal()
     with db_session.begin():
