@@ -43,22 +43,36 @@ def get_valid_refs(name: str):
     return data
 
 
+def get_our_items():
+    with (HERE / "our_items.txt").open() as a:
+        data = a.read().split("\n")
+        data = [d.strip() for d in data]
+        return data
+
+
 def make_model_data(item: dict[str, Any]):
     principles = get_valid_refs("principle")
     valid_aspects = get_valid_refs("aspect")
-    model = {"id": item["Label"]}
+    name = item["Label"].split(" (")[0]
+    model = {"id": name}
     model_aspects = []
+
     for aspect, value in item["aspects"].items():
         if aspect in principles:
             model[aspect] = value
         elif aspect not in valid_aspects:
             continue
         else:
-            model_aspects.append(value)
+            model_aspects.append(aspect)
+
     inherits = item["inherits"].split(".")[0].lstrip("_")
     if inherits == "numen":
         model_aspects.append("memory")
     elif inherits in valid_aspects and inherits not in model_aspects:
         model_aspects.append(inherits)
     model["aspects"] = [{"id": a} for a in model_aspects]
+
+    our_items = get_our_items()
+    if name in our_items:
+        model["known"] = True
     return model
