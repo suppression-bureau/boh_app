@@ -1,5 +1,5 @@
 /* This sadly needs to be both JS and even CJS
- * @see https://github.com/prettier/prettier/issues/15085
+ * @see https://github.com/prettier/prettier/issues/15388
  */
 /** @type {import("prettier").Config} */
 module.exports = {
