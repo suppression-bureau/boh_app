@@ -15,6 +15,10 @@ const principleQueryDocument = graphql(`
     }
 `)
 
+function PrincipleIcon({ id }: { id: string }) {
+    return <Avatar variant="square" src={`/data/${id}.png`}></Avatar>
+}
+
 interface PrincipleCardProps extends Omit<CardProps, "title"> {
     id: string
     title?: object | string | number
@@ -31,9 +35,7 @@ function PrincipleCard({
         <Card key={id} {...cardProps}>
             <CardHeader
                 title={title.toString()}
-                avatar={
-                    <Avatar variant="square" src={`/data/${id}.png`}></Avatar>
-                }
+                avatar={<PrincipleIcon id={id} />}
                 sx={{ padding: disablePadding ? 0 : 2 }}
             />
         </Card>
@@ -60,4 +62,4 @@ const Principles = () => {
     )
 }
 
-export { PrincipleCard, Principles as default }
+export { PrincipleIcon, PrincipleCard, Principles as default }
