@@ -20,13 +20,15 @@ import useMediaQuery from "@mui/material/useMediaQuery"
 import ElevationScroll from "./ElevationScroll.tsx"
 import Home from "./routes/Home"
 import Aspects from "./routes/Aspects"
-import Principles from "./routes/Principles"
+import Principles from "./routes/Principles.tsx"
+import SkillsView from "./routes/Skills"
 import React from "react"
 
 const ROUTE_LINKS = [
     { label: "Home", href: "/", pattern: "/" },
     { label: "Aspects", href: "/aspects", pattern: "/aspects" },
     { label: "Principles", href: "/principles", pattern: "/principles" },
+    { label: "Skills", href: "/skills", pattern: "/skills" },
 ]
 
 function useRouteMatch(patterns: readonly string[]) {
@@ -45,10 +47,27 @@ function useRouteMatch(patterns: readonly string[]) {
 const App = () => {
     const dark = useMediaQuery("(prefers-color-scheme: dark)")
     const theme = useMemo(() => {
+        const buttonStyle = { fontWeight: "bold" }
         const baseTheme = createTheme({
             palette: {
                 mode: dark ? "dark" : "light",
                 primary: amber,
+            },
+            typography: {
+                button: buttonStyle,
+            },
+            components: {
+                MuiButton: {
+                    styleOverrides: {
+                        text: buttonStyle,
+                        textPrimary: buttonStyle,
+                    },
+                },
+                MuiButtonBase: {
+                    styleOverrides: {
+                        root: buttonStyle,
+                    },
+                },
             },
         })
         return responsiveFontSizes(baseTheme)
@@ -99,6 +118,7 @@ const App = () => {
                         <Route index element={<Home />} />
                         <Route path="aspects" element={<Aspects />} />
                         <Route path="principles" element={<Principles />} />
+                        <Route path="skills" element={<SkillsView />} />
                         <Route path="*" element={<Navigate replace to="/" />} />
                     </SlideRoutes>
                 </React.Suspense>

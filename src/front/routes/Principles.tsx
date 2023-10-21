@@ -1,14 +1,13 @@
 import { useQuery } from "urql"
 
 import Box from "@mui/material/Box"
-import Card from "@mui/material/Card"
+import Card, { CardProps } from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 import Avatar from "@mui/material/Avatar"
-import Typography from "@mui/material/Typography"
 
 import { graphql } from "../gql"
 
-const postsQueryDocument = graphql(`
+const principleQueryDocument = graphql(`
     query Principle {
         principle {
             id
@@ -16,24 +15,35 @@ const postsQueryDocument = graphql(`
     }
 `)
 
-function Principle(props) {
+function PrincipleIcon({ id }: { id: string }) {
+    return <Avatar variant="square" src={`/data/${id}.png`}></Avatar>
+}
+
+interface PrincipleCardProps extends Omit<CardProps, "title"> {
+    id: string
+    title?: object | string | number
+    disablePadding?: boolean
+}
+
+function PrincipleCard({
+    id,
+    title = id,
+    disablePadding = false,
+    ...cardProps
+}: PrincipleCardProps) {
     return (
-        <Card key={props.id}>
+        <Card key={id} {...cardProps}>
             <CardHeader
-                title={props.id}
-                avatar={
-                    <Avatar
-                        variant="square"
-                        src={`/data/${props.id}.png`}
-                    ></Avatar>
-                }
+                title={title.toString()}
+                avatar={<PrincipleIcon id={id} />}
+                sx={{ padding: disablePadding ? 0 : 2 }}
             />
         </Card>
     )
 }
 
 const Principles = () => {
-    const [{ data }] = useQuery({ query: postsQueryDocument })
+    const [{ data }] = useQuery({ query: principleQueryDocument })
     return (
         <Box
             sx={{
@@ -46,10 +56,10 @@ const Principles = () => {
             }}
         >
             {data!.principle.map(({ id }) => (
-                <Principle key={id} id={id} />
+                <PrincipleCard key={id} id={id} />
             ))}
         </Box>
     )
 }
 
-export default Principles
+export { PrincipleIcon, PrincipleCard, Principles as default }

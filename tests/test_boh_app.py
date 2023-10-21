@@ -1,6 +1,5 @@
 from typing import Any
 
-import pytest
 from fastapi.testclient import TestClient
 
 from boh_app import models
@@ -12,7 +11,13 @@ def get_loaded_data(data: dict[str, Any], model: type[models.Base]) -> dict[str,
     # transient=True indicates we are Not touching the Database
     model_sqla: type[models.Base] = model.__marshmallow__(transient=True, many=False).load(data)
     model_python = model.__pydantic__.model_validate(model_sqla, from_attributes=True)
-    return model.__pydantic__.model_dump(model_python, mode="json")
+    return model_python.model_dump(mode="json")
+
+
+def test_get_by_id_404(client: TestClient):
+    result = client.get("aspect/dne")
+    assert result.status_code == 404
+    assert result.json() == {"detail": "No aspect with ID dne"}
 
 
 def test_post_no_fk(client: TestClient):
@@ -35,10 +40,17 @@ def test_post_w_generated_id(client: TestClient):
     assert data == expected_data
 
 
+def test_put_id_mismatch(client: TestClient):
+    fake_data = {"id": "test_value"}
+    result = client.put("aspect/dne", json=fake_data)
+    assert result.status_code == 400
+    assert result.json() == {"detail": "routing ID dne does not match ID in data test_value"}
+
+
 def test_put_new_entry(client: TestClient):
     fake_data = {"id": "test_value"}
     result = client.put(f"aspect/{fake_data['id']}", json=fake_data)
-    assert result.status_code == 200, result.json()
+    assert result.status_code == 201, result.json()
     assert result.json() == get_loaded_data(fake_data, models.Aspect)
 
 
@@ -54,17 +66,22 @@ def test_put_replace_fk(client: TestClient):
     assert result.json() == get_loaded_data(updated_data, models.Skill)
 
 
-@pytest.mark.skip(reason="fails due to response data validation, no simple enough model")
-def test_patch_field(client: TestClient):
-    assistant_data = get_data("assistant")
-    og_assistant_data = assistant_data[0]
+def test_patch_404(client: TestClient):
+    fake_data = {"id": "test_value"}
+    result = client.patch(f"aspect/{fake_data['id']}", json=fake_data)
+    assert result.status_code == 404
+    assert result.json() == {"detail": "No aspect with ID test_value"}
 
-    fake_data = {"season": "autumn"}
-    updated_data = {**og_assistant_data, **fake_data}
-    result = client.patch(f"assistant/{og_assistant_data['id']}", json=fake_data)
+
+def test_patch_field(client: TestClient):
+    skill_data = get_data("skill")
+    og_skill_data = skill_data[0]
+
+    fake_data = {"level": 9}
+    updated_data = {**og_skill_data, **fake_data}
+    result = client.patch(f"skill/{og_skill_data['id']}", json=fake_data)
     assert result.status_code == 200, result.json()
-    assert result.json() == get_loaded_data(updated_data, models.Assistant)
-    # doesn't work because of `accepted_aspects` and `base_principlees`
+    assert result.json() == get_loaded_data(updated_data, models.Skill)
 
 
 def test_patch_fk(client: TestClient):
