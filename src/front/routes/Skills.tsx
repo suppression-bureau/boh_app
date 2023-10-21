@@ -150,7 +150,9 @@ const SkillsView = () => {
                 marginInline: "auto",
             }}
         >
-            <Button onClick={handleClickOpen}>Learn new Skill</Button>
+            <Button onClick={handleClickOpen} variant="contained">
+                Learn new Skill
+            </Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogContent>
                     <Autocomplete
