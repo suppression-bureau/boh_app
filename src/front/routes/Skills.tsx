@@ -37,12 +37,14 @@ const skillQueryDocument = graphql(`
     }
 `)
 
+type SkillFromQuery = types.SkillsQuery["skill"][number]
+
 type SkillAction = { type: "increment"; skill: types.Skill["id"] }
 
 function skillReducer(
-    state: types.SkillsQuery["skill"],
+    state: SkillFromQuery[],
     action: SkillAction,
-): types.SkillsQuery["skill"] {
+): SkillFromQuery[] {
     switch (action.type) {
         case "increment": {
             return state.map((skill) => {
@@ -56,7 +58,7 @@ function skillReducer(
     }
 }
 
-interface SkillProps extends types.Skill {
+interface SkillProps extends SkillFromQuery {
     onIncrement(): void
 }
 
