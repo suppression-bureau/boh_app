@@ -11,7 +11,7 @@ def get_loaded_data(data: dict[str, Any], model: type[models.Base]) -> dict[str,
     # transient=True indicates we are Not touching the Database
     model_sqla: type[models.Base] = model.__marshmallow__(transient=True, many=False).load(data)
     model_python = model.__pydantic__.model_validate(model_sqla, from_attributes=True)
-    return model.__pydantic__.model_dump(model_python, mode="json")
+    return model_python.model_dump(mode="json")
 
 
 def test_get_by_id_404(client: TestClient):

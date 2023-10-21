@@ -1,6 +1,6 @@
 import { useQuery } from "urql"
 import axios from "axios"
-import { useReducer, useState } from "react"
+import { useCallback, useReducer, useState } from "react"
 
 import Autocomplete from "@mui/material/Autocomplete"
 import Box from "@mui/material/Box"
@@ -10,7 +10,8 @@ import CardHeader from "@mui/material/CardHeader"
 import CardContent from "@mui/material/CardContent"
 import CardActions from "@mui/material/CardActions"
 import Dialog from "@mui/material/Dialog"
-import { DialogActions, DialogContent } from "@mui/material"
+import DialogActions from "@mui/material/DialogActions"
+import DialogContent from "@mui/material/DialogContent"
 import TextField from "@mui/material/TextField"
 
 import { PrincipleCard } from "../routes/Principles"
@@ -34,9 +35,11 @@ const skillQueryDocument = graphql(`
     }
 `)
 
+type SkillAction = { type: "increment"; skill: types.Skill["id"] }
+
 function skillReducer(
     state: types.SkillsQuery["skill"],
-    action: { type: "increment"; skill: types.Skill["id"] },
+    action: SkillAction,
 ): types.SkillsQuery["skill"] {
     switch (action.type) {
         case "increment": {
@@ -96,29 +99,36 @@ const SkillsView = () => {
     const [state, dispatch] = useReducer(skillReducer, data!.skill)
 
     const [open, setOpen] = useState(false)
-    const [newSkill, setNewSkill] = useState("")
+    const [newSkill, setNewSkill] = useState<string | null>(null)
 
-    const handleClickOpen = () => {
+    const handleClickOpen = useCallback(() => {
         setOpen(true)
-    }
+    }, [setOpen])
 
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         setOpen(false)
-    }
+    }, [setOpen])
 
-    const handleSkillIncrement = (skill: types.Skill["id"]) => {
-        dispatch({ type: "increment", skill })
-    }
-    const handleNewSkill = (event, value: string) => {
-        setNewSkill(value)
-    }
+    const handleSkillIncrement = useCallback(
+        (skill: types.Skill["id"]) => {
+            dispatch({ type: "increment", skill })
+        },
+        [dispatch],
+    )
+    const handleNewSkill = useCallback(
+        (_event: React.SyntheticEvent, value: string | null) => {
+            setNewSkill(value)
+        },
+        [setNewSkill],
+    )
     // TODO: move into reducer
-    function learnSkill() {
+    const learnSkill = useCallback(() => {
+        if (!newSkill) throw new Error("No skill selected")
         axios.patch(`${API_URL}/skill/${newSkill}`, { level: 1 }).then(() => {
             dispatch({ type: "increment", skill: newSkill })
             setOpen(false)
         })
-    }
+    }, [dispatch, newSkill, setOpen])
 
     return (
         <Box
@@ -147,7 +157,9 @@ const SkillsView = () => {
                     />
                     <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={learnSkill}>Learn</Button>
+                        <Button onClick={learnSkill} disabled={!newSkill}>
+                            Learn
+                        </Button>
                     </DialogActions>
                 </DialogContent>
             </Dialog>
