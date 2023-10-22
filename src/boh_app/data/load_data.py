@@ -32,10 +32,6 @@ def add_data(data: Any, _class: type[Base], *, session: Session):
 
 
 def load_all(session: Session) -> None:
-    from .generate_items import gen_items_json
-
-    gen_items_json()
-
     data_file_paths = {f.stem: f for f in HERE.glob("*.json")}
     cached_file_paths = {f.stem: f for f in CACHE_DIR.glob("*.json")}
     data_file_paths = {**data_file_paths, **cached_file_paths}

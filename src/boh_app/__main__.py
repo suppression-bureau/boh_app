@@ -85,7 +85,8 @@ def empty_db() -> None:
 
 @app.command()
 def gen_items() -> None:
-    """Generate `items.json`."""
+    """Generate `items.json`. NB: Overwrites existing file and
+    is not run by default during `boh_app.data.load_data.load_all`."""
     from .data.generate_items import gen_items_json
 
     gen_items_json()
