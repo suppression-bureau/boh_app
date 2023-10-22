@@ -7,12 +7,17 @@ from sqlalchemy.exc import SAWarning
 from sqlalchemy.orm import Session
 
 from ..models import Base, get_tablename_model_mapping
+from ..settings import CACHE_DIR
 
 HERE = Path(__file__).parent
 
 
-def get_data(name: str):
-    with (HERE / f"{name}.json").open() as a:
+def get_data(name: str = "", *, path: Path | None = None) -> list[dict[str, Any]]:
+    assert not (name and path), "Cannot specify both name and path"
+    if name and not path:
+        path = HERE / f"{name}.json"
+    assert path, "Either name or path must be provided"
+    with path.open() as a:
         data = json.load(a)
         return data
 
@@ -30,10 +35,17 @@ def add_data(data: Any, _class: type[Base], *, session: Session):
         session.commit()
 
 
+def find_files():
+    here_file_paths = {f.stem: f for f in HERE.glob("*.json")}
+    cached_file_paths = {f.stem: f for f in CACHE_DIR.glob("*.json")}
+    return {**here_file_paths, **cached_file_paths}
+
+
 def load_all(session: Session) -> None:
-    data_file_names = [f.stem for f in HERE.glob("*.json")]
-    sorted_table_names = [t.fullname for t in Base.metadata.sorted_tables]
+    """Load sorted data into database."""
+    data_file_paths = find_files()
     tablename2model = get_tablename_model_mapping()
-    for name in sorted_table_names:
-        if name in data_file_names:
-            add_data(get_data(name), tablename2model[name], session=session)
+    for name in [t.fullname for t in Base.metadata.sorted_tables]:
+        if name in data_file_paths:
+            path = data_file_paths[name]
+            add_data(get_data(path=path), tablename2model[name], session=session)

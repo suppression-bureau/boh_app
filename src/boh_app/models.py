@@ -150,6 +150,7 @@ class Item(Base, NameMixin):
 
     aspects: Mapped[list[Aspect]] = relationship(back_populates="items", secondary=item_aspect_association)
 
+    known: Mapped[bool] = mapped_column(default=False)
     # principles
     edge: Mapped[int | None]
     forge: Mapped[int | None]
@@ -165,6 +166,7 @@ class Item(Base, NameMixin):
     sky: Mapped[int | None]
     winter: Mapped[int | None]
 
+    # TODO: derived from has(product_recipe)
     is_craftable: Mapped[bool] = mapped_column(default=False)
 
     source_recipe: Mapped[list[Recipe]] = relationship(back_populates="product", primaryjoin="Item.id==Recipe.product_id")
