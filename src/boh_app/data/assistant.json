@@ -29,6 +29,7 @@
   },
   {
     "id": "Smithy",
+    "special_aspect": { "id": "metal" },
     "base_principles": [
       {
         "principle_id": "edge",
@@ -186,6 +187,7 @@
   },
   {
     "id": "Unusual Nun",
+    "special_aspect": { "id": "omen" },
     "base_principles": [
       {
         "principle_id": "knock",
