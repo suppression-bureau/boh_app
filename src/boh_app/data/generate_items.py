@@ -19,6 +19,7 @@ def gen_items_json():
     item_handler = ItemHandler()
     model_data = [item_handler.mk_model_data(item) for item in data]
     model_data = dedup(model_data)
+    print(CACHE_DIR / "item.json")
     with (CACHE_DIR / "item.json").open("w") as a:
         json.dump(model_data, a)
 
@@ -33,11 +34,13 @@ def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
 
 
 def prune_data(data: list[dict[str, Any]]):
-    # TODO: handle beasts
-    discarded = ["beast", "comfort", "bust", "cache", "spintria", "wallart"]
+    discarded = ["comfort", "bust", "cache", "spintria", "wallart"]
+    beast_discarded = ["wild", "hungry", "savage"]
     pruned = []
     for item in data:
         if any(d in item["inherits"] for d in discarded):
+            continue
+        if any(d in item["ID"] for d in beast_discarded):
             continue
         if "distributable" in item["aspects"].keys():
             continue

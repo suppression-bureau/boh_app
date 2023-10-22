@@ -69,7 +69,7 @@ function Item({ ...item }: ItemFromQuery) {
                             <PrincipleCard
                                 key={principle}
                                 id={principle}
-                                title={item[principle]}
+                                title={item[principle]} // displays amount
                             />
                         )
                 })}
