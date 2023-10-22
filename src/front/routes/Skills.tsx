@@ -1,23 +1,25 @@
-import { useQuery } from "urql"
 import axios from "axios"
-import { useCallback, useReducer, useState } from "react"
+import { useCallback, useState } from "react"
+import { useQuery } from "urql"
+import { AsyncActionHandlers, useReducerAsync } from "use-reducer-async"
 
 import Autocomplete from "@mui/material/Autocomplete"
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
-import CardHeader from "@mui/material/CardHeader"
 import CardActions from "@mui/material/CardActions"
+import CardHeader from "@mui/material/CardHeader"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
 import Divider from "@mui/material/Divider"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
+
 import UpgradeIcon from "@mui/icons-material/Upgrade"
 
-import { PrincipleCard } from "../routes/Principles"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
+import { PrincipleCard } from "../routes/Principles"
 
 const API_URL = "http://localhost:8000"
 
@@ -36,41 +38,57 @@ const skillQueryDocument = graphql(`
     }
 `)
 
-type SkillAction = { type: "increment"; skill: types.Skill["id"] }
+type SkillFromQuery = types.SkillsQuery["skill"][number]
+
+/** Actions that can be handled synchronously in the reducer */
+type SkillAction = SkillActionInner | SkillActionOuter
+/** Synchronously handleable actions that are dispatched by the async action handler */
+type SkillActionInner = { type: "update"; skill: SkillFromQuery }
+/** Synchronously handleable actions that we dispatch manually */
+type SkillActionOuter = never
 
 function skillReducer(
-    state: types.SkillsQuery["skill"],
+    state: SkillFromQuery[],
     action: SkillAction,
-): types.SkillsQuery["skill"] {
+): SkillFromQuery[] {
     switch (action.type) {
-        case "increment": {
+        case "update": {
             return state.map((skill) => {
-                if (skill.id !== action.skill) return skill
-                return {
-                    ...skill,
-                    level: skill.level + 1,
-                }
+                if (skill.id !== action.skill.id) return skill
+                return action.skill
             })
         }
     }
 }
 
-interface SkillProps extends types.Skill {
-    onIncrement(): void
+/** Actions that are handled asynchronously by the action handler */
+type SkillActionAsync = { type: "increment"; skill: SkillFromQuery }
+
+const skillHandlers: AsyncActionHandlers<
+    typeof skillReducer,
+    SkillActionAsync
+> = {
+    increment:
+        ({ dispatch }) =>
+        async ({ skill }) => {
+            const { data: updatedSkill } = await axios.patch<SkillFromQuery>(
+                `${API_URL}/skill/${skill.id}`,
+                {
+                    level: skill.level + 1,
+                },
+            )
+            dispatch({ type: "update", skill: updatedSkill })
+        },
 }
 
-function Skill(props: SkillProps) {
-    // TODO: move into reducer
-    const [skill, setSkill] = useState(props)
+interface SkillProps extends SkillFromQuery {
+    onIncrement(skill: SkillFromQuery): void
+}
 
-    async function upgradeSkill() {
-        const response = await axios.patch(`${API_URL}/skill/${props.id}`, {
-            level: props.level + 1,
-        })
-        setSkill(response.data)
-        props.onIncrement()
-    }
-
+function Skill({ onIncrement, ...skill }: SkillProps) {
+    const handleIncrement = useCallback(() => {
+        onIncrement(skill)
+    }, [skill])
     return (
         <Card key={skill.id}>
             <CardHeader title={skill.id} />
@@ -94,7 +112,7 @@ function Skill(props: SkillProps) {
                     endIcon={
                         <UpgradeIcon stroke="currentColor" strokeWidth={0.5} />
                     }
-                    onClick={upgradeSkill}
+                    onClick={handleIncrement}
                     sx={{ ml: "auto" }}
                 >
                     Upgrade Skill
@@ -105,42 +123,34 @@ function Skill(props: SkillProps) {
 }
 
 const SkillsView = () => {
-    // TODO: move into reducer
     const [{ data }] = useQuery({ query: skillQueryDocument })
 
-    const [state, dispatch] = useReducer(skillReducer, data!.skill)
+    const [state, dispatch] = useReducerAsync(
+        skillReducer,
+        data!.skill,
+        skillHandlers,
+    )
 
     const [open, setOpen] = useState(false)
-    const [newSkill, setNewSkill] = useState<string | null>(null)
+    const [newSkill, setNewSkill] = useState<SkillFromQuery | null>(null)
 
-    const handleClickOpen = useCallback(() => {
-        setOpen(true)
-    }, [setOpen])
-
-    const handleClose = useCallback(() => {
-        setOpen(false)
-    }, [setOpen])
-
-    const handleSkillIncrement = useCallback(
-        (skill: types.Skill["id"]) => {
-            dispatch({ type: "increment", skill })
-        },
-        [dispatch],
-    )
+    const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
+    const handleClose = useCallback(() => setOpen(false), [setOpen])
     const handleNewSkill = useCallback(
-        (_event: React.SyntheticEvent, value: string | null) => {
-            setNewSkill(value)
+        (_event: React.SyntheticEvent, skill: SkillFromQuery | null) => {
+            setNewSkill(skill)
         },
         [setNewSkill],
     )
-    // TODO: move into reducer
     const learnSkill = useCallback(() => {
         if (!newSkill) throw new Error("No skill selected")
-        axios.patch(`${API_URL}/skill/${newSkill}`, { level: 1 }).then(() => {
-            dispatch({ type: "increment", skill: newSkill })
-            setOpen(false)
-        })
+        dispatch({ type: "increment", skill: newSkill })
+        setOpen(false)
     }, [dispatch, newSkill, setOpen])
+    const handleSkillIncrement = useCallback(
+        (skill: SkillFromQuery) => dispatch({ type: "increment", skill }),
+        [dispatch],
+    )
 
     return (
         <Stack
@@ -158,10 +168,10 @@ const SkillsView = () => {
                 <DialogContent>
                     <Autocomplete
                         id="skill-selector"
-                        options={state
-                            .filter(({ level }) => level == 0)
-                            .map((s) => s.id)}
+                        options={state.filter(({ level }) => level == 0)}
                         sx={{ width: 300 }}
+                        getOptionLabel={(skill) => skill.id}
+                        isOptionEqualToValue={(a, b) => a.id === b.id}
                         renderInput={(params) => (
                             <TextField {...params} label="Skill" />
                         )}
@@ -169,6 +179,7 @@ const SkillsView = () => {
                     />
                     <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
+                        {/* TODO: also reset autocomplete state to avoid warning */}
                         <Button onClick={learnSkill} disabled={!newSkill}>
                             Learn
                         </Button>
@@ -180,7 +191,7 @@ const SkillsView = () => {
                 .map(({ ...skill }) => (
                     <Skill
                         key={skill.id}
-                        onIncrement={() => handleSkillIncrement(skill.id)}
+                        onIncrement={handleSkillIncrement}
                         {...skill}
                     />
                 ))}

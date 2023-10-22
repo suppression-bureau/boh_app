@@ -9,6 +9,9 @@ const config: CodegenConfig = {
             preset: "client",
         },
     },
+    // Let’s hope this starts working soon
+    // https://github.com/dotansimha/graphql-code-generator/issues/8973
+    errorsOnly: true,
 }
 
 export default config

@@ -4,16 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -c auto npm:dev:generate:schema npm:dev:generate:query npm:dev:api npm:dev:vite",
+    "dev": "concurrently -kc auto npm:dev:generate:schema npm:dev:generate:query npm:dev:api npm:dev:vite",
     "dev:generate:schema": "yarn run generate:schema -w",
     "dev:generate:query": "yarn run generate:query -w",
-    "dev:api": "DEBUG=1 hatch run boh api",
+    "dev:api": "hatch run boh api --reload",
     "dev:vite": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "generate": "yarn run generate:schema && yarn run generate:query",
     "generate:schema": "mkdir -p src/front/gql && hatch run boh schema src/front/gql/schema.graphql",
-    "generate:query": "graphql-codegen --config=.graphqlrc.ts"
+    "generate:query": "LISTR_FORCE_TTY=1 graphql-codegen --config=.graphqlrc.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -28,20 +28,28 @@
     "react-router": "^6.16.0",
     "react-router-dom": "^6.16.0",
     "react-slide-routes": "^3.0.3",
-    "urql": "^4.0.5"
+    "urql": "^4.0.5",
+    "use-reducer-async": "^2.1.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
     "@parcel/watcher": "^2.3.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "@types/node": "^20.8.3",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@vitejs/plugin-react": "^4.1.0",
     "@yarnpkg/sdks": "*",
     "concurrently": "^8.2.1",
+    "prettier": "^3.0.3",
     "typescript": "^5.2.2",
     "vite": "^4.4.11"
   },
-  "packageManager": "yarn@3.6.4"
+  "packageManager": "yarn@3.6.4",
+  "dependenciesMeta": {
+    "@trivago/prettier-plugin-sort-imports@4.2.0": {
+      "unplugged": true
+    }
+  }
 }

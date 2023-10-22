@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
-import { Provider, createClient, cacheExchange, fetchExchange } from "urql"
 import { BrowserRouter as Router } from "react-router-dom"
+import { Provider, cacheExchange, createClient, fetchExchange } from "urql"
 
 import App from "./App.tsx"
 
