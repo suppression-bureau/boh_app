@@ -16,7 +16,8 @@ class SteamFiles(StrEnum):
 
 def gen_items_json():
     data = prune_data(get_steam_data(SteamFiles.ITEM))
-    model_data = [make_model_data(item) for item in data]
+    item_handler = ItemHandler()
+    model_data = [item_handler.mk_model_data(item) for item in data]
     model_data = dedup(model_data)
     with (CACHE_DIR / "item.json").open("w") as a:
         json.dump(model_data, a)
@@ -58,33 +59,40 @@ def get_our_items():
     return data
 
 
-def make_model_data(item: dict[str, Any]):
-    principles = get_valid_refs("principle")
-    valid_aspects = get_valid_refs("aspect")
+class InheritanceHandler:
+    def __init__(self):
+        data = get_steam_data(SteamFiles.INHERIT)
+        self.data = {i["id"]: i for i in data}
 
-    name = item["Label"].split(" (")[0]
-    model = {"id": name}
-    model_aspects = []
+    def get_aspects(self, item: dict[str, Any]):
+        inherits_from = self.data[item["inherits"]]
+        return inherits_from["aspects"]
 
-    for aspect, value in item["aspects"].items():
-        if aspect in principles:
-            model[aspect] = value
-        elif aspect not in valid_aspects:
-            continue
-        else:
-            model_aspects.append(aspect)
 
-    inherits = item["inherits"].split(".")[0].lstrip("_")
-    if inherits == "numen":
-        model_aspects.append("memory")
-    elif inherits in valid_aspects and inherits not in model_aspects:
-        model_aspects.append(inherits)
-    model["aspects"] = [{"id": a} for a in model_aspects]
+class ItemHandler:
+    def __init__(self):
+        self.principles = get_valid_refs("principle")
+        self.valid_aspects = get_valid_refs("aspect")
+        self.inheritance_handler = InheritanceHandler()
+        self.known_items = get_our_items()
 
-    our_items = get_our_items()
-    if name in our_items:
-        model["known"] = True
-    return model
+    def mk_model_data(self, item: dict[str, Any]):
+        name = item["Label"].split(" (")[0]
+        model = {"id": name}
+        model_aspects = []
+
+        for aspect, value in item["aspects"].items():
+            if aspect in self.principles:
+                model[aspect] = value
+            else:
+                model_aspects.append(aspect)
+        model_aspects += self.inheritance_handler.get_aspects(item)
+
+        model["aspects"] = [{"id": a} for a in set(model_aspects) if a in self.valid_aspects]
+
+        if name in self.known_items:
+            model["known"] = True
+        return model
 
 
 def dedup(items: list[dict[str, Any]]):
