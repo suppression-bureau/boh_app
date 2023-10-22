@@ -61,7 +61,7 @@ function skillReducer(
     }
 }
 
-/** Actions that are handled asynchronously action handler */
+/** Actions that are handled asynchronously by the action handler */
 type SkillActionAsync = { type: "increment"; skill: SkillFromQuery }
 
 const skillHandlers: AsyncActionHandlers<
