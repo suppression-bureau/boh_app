@@ -46,11 +46,9 @@ def prune_data(data: list[dict[str, Any]]):
 
 
 def get_valid_refs(name: str):
-    # TODO: use `load_data.get_data`
-    with (HERE / f"{name}.json").open() as a:
-        json_data = json.load(a)
-        data = [d["id"] for d in json_data]
-    return data
+    from boh_app.data.load_data import get_data
+
+    return [d["id"] for d in get_data(name)]
 
 
 def get_our_items():
@@ -76,7 +74,7 @@ class ItemHandler:
         self.inheritance_handler = InheritanceHandler()
         self.known_items = get_our_items()
 
-    def mk_model_data(self, item: dict[str, Any]):
+    def mk_model_data(self, item: dict[str, Any]) -> dict[str, Any]:
         name = item["Label"].split(" (")[0]
         model = {"id": name}
         model_aspects = []
@@ -95,6 +93,6 @@ class ItemHandler:
         return model
 
 
-def dedup(items: list[dict[str, Any]]):
+def dedup(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     seen = set()
     return [item for item in items if item["id"] not in seen and not seen.add(item["id"])]
