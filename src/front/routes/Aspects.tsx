@@ -75,4 +75,4 @@ const AspectsView = () => {
     )
 }
 
-export default AspectsView
+export { Aspect, AspectsView as default }

@@ -1,3 +1,4 @@
+import { CardContent } from "@mui/material"
 import { useQuery } from "urql"
 
 import Card from "@mui/material/Card"
@@ -6,6 +7,8 @@ import CardHeader from "@mui/material/CardHeader"
 import Stack from "@mui/material/Stack"
 
 import { graphql } from "../gql"
+import * as types from "../gql/graphql"
+import { Aspect } from "../routes/Aspects"
 import { PrincipleCard } from "../routes/Principles"
 
 const itemsQueryDocument = graphql(`
@@ -54,6 +57,11 @@ function Item({ ...item }: ItemFromQuery) {
     return (
         <Card key={item.id}>
             <CardHeader title={item.id} />
+            <CardContent>
+                {item.aspects!.map(({ id }) => (
+                    <Aspect key={id} id={id} />
+                ))}
+            </CardContent>
             <CardActions>
                 {principles.map((principle) => {
                     if (item[principle] !== null)
@@ -71,7 +79,6 @@ function Item({ ...item }: ItemFromQuery) {
 }
 const ItemsView = () => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
-    console.log(data)
     return (
         <Stack
             spacing={2}
