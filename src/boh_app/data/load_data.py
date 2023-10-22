@@ -12,7 +12,10 @@ from ..settings import CACHE_DIR
 HERE = Path(__file__).parent
 
 
-def get_data(path: Path):
+def get_data(name: str = "", *, path: Path | None = None) -> list[dict[str, Any]]:
+    if name and not path:
+        path = HERE / f"{name}.json"
+    assert path, "Either name or path must be provided"
     with path.open() as a:
         data = json.load(a)
         return data
@@ -40,4 +43,4 @@ def load_all(session: Session) -> None:
     for name in sorted_table_names:
         if name in data_file_paths:
             path = data_file_paths[name]
-            add_data(get_data(path), tablename2model[name], session=session)
+            add_data(get_data(path=path), tablename2model[name], session=session)
