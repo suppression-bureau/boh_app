@@ -85,7 +85,7 @@ interface SkillProps extends SkillFromQuery {
     onIncrement(skill: SkillFromQuery): void
 }
 
-const Skill = ({ onIncrement, ...skill }: SkillProps) => {
+function Skill({ onIncrement, ...skill }: SkillProps) {
     const handleIncrement = useCallback(() => {
         onIncrement(skill)
     }, [skill])
