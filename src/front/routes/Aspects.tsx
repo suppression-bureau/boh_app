@@ -9,8 +9,9 @@ import ListItemText from "@mui/material/ListItemText"
 import Typography from "@mui/material/Typography"
 
 import { graphql } from "../gql"
+import * as types from "../gql/graphql"
 
-const postsQueryDocument = graphql(`
+const aspectQueryDocument = graphql(`
     query Aspects {
         aspect {
             id
@@ -21,8 +22,34 @@ const postsQueryDocument = graphql(`
     }
 `)
 
-const Posts = () => {
-    const [{ data }] = useQuery({ query: postsQueryDocument })
+type AspectFromQuery = types.AspectsQuery["aspect"][number]
+
+interface AspectProps extends AspectFromQuery {
+    showAssistant?: boolean
+}
+function Aspect({ showAssistant, ...aspect }: AspectProps) {
+    return (
+        <Card key={aspect.id}>
+            <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                    {aspect.id}
+                </Typography>
+                {showAssistant && aspect.assistants!.length > 0 && (
+                    <List disablePadding>
+                        {aspect.assistants!.map(({ id }) => (
+                            <ListItem key={id} sx={{ pl: 4 }}>
+                                <ListItemText primary={id} />
+                            </ListItem>
+                        ))}
+                    </List>
+                )}
+            </CardContent>
+        </Card>
+    )
+}
+
+const AspectsView = () => {
+    const [{ data }] = useQuery({ query: aspectQueryDocument })
     return (
         <Box
             sx={{
@@ -37,27 +64,15 @@ const Posts = () => {
             {data!.aspect
                 .filter(({ assistants }) => assistants!.length > 0)
                 .map(({ assistants, id }) => (
-                    <Card key={id}>
-                        <CardContent>
-                            <Typography
-                                gutterBottom
-                                variant="h5"
-                                component="div"
-                            >
-                                {id}
-                            </Typography>
-                            <List disablePadding>
-                                {assistants!.map(({ id }) => (
-                                    <ListItem key={id} sx={{ pl: 4 }}>
-                                        <ListItemText primary={id} />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </CardContent>
-                    </Card>
+                    <Aspect
+                        key={id}
+                        showAssistant={true}
+                        id={id}
+                        assistants={assistants}
+                    />
                 ))}
         </Box>
     )
 }
 
-export default Posts
+export default AspectsView
