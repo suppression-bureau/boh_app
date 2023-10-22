@@ -35,7 +35,7 @@ def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
 
 def prune_data(data: list[dict[str, Any]]):
     discarded = ["comfort", "bust", "cache", "spintria", "wallart"]
-    beast_discarded = ["wild", "hungry", "savage"]
+    beast_discarded = [".wild", ".hungry", "savage."]
     pruned = []
     for item in data:
         if any(d in item["inherits"] for d in discarded):
