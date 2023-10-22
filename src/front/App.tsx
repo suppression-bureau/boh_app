@@ -21,6 +21,7 @@ import useMediaQuery from "@mui/material/useMediaQuery"
 import ElevationScroll from "./ElevationScroll.tsx"
 import Aspects from "./routes/Aspects"
 import Home from "./routes/Home"
+import ItemsView from "./routes/Items.tsx"
 import Principles from "./routes/Principles.tsx"
 import SkillsView from "./routes/Skills"
 
@@ -29,6 +30,7 @@ const ROUTE_LINKS = [
     { label: "Aspects", href: "/aspects", pattern: "/aspects" },
     { label: "Principles", href: "/principles", pattern: "/principles" },
     { label: "Skills", href: "/skills", pattern: "/skills" },
+    { label: "Items", href: "/items", pattern: "/items" },
 ]
 
 function useRouteMatch(patterns: readonly string[]) {
@@ -119,6 +121,7 @@ const App = () => {
                         <Route path="aspects" element={<Aspects />} />
                         <Route path="principles" element={<Principles />} />
                         <Route path="skills" element={<SkillsView />} />
+                        <Route path="items" element={<ItemsView />} />
                         <Route path="*" element={<Navigate replace to="/" />} />
                     </SlideRoutes>
                 </React.Suspense>
