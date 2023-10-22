@@ -2910,6 +2910,7 @@ __metadata:
     react-slide-routes: ^3.0.3
     typescript: ^5.2.2
     urql: ^4.0.5
+    use-reducer-async: ^2.1.1
     vite: ^4.4.11
   dependenciesMeta:
     "@trivago/prettier-plugin-sort-imports@4.2.0":
@@ -6722,6 +6723,15 @@ __metadata:
   peerDependencies:
     react: ">= 16.8.0"
   checksum: e8fe5ee624970d289f5832d3f62bab980e26d2e1b141cc6f82d4c1d009f6481bf58ff5f27971fac55bc8f953dbed6d7aaf62f005782bfd9d130c5c3e4033188b
+  languageName: node
+  linkType: hard
+
+"use-reducer-async@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "use-reducer-async@npm:2.1.1"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 3ffae953eb5f2a19bb8b2e419d7857bfa32f399b9c87910d9d547752f8f6cef6992570a683078df2b3c17adf4fc0ab583eb361fe2d07ec0460850d37c3aa6316
   languageName: node
   linkType: hard
 
