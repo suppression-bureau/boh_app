@@ -90,6 +90,9 @@ function filterItems(
             filtered_state = filtered_state.filter((item) => {
                 return item[principle] !== null
             })
+            filtered_state.sort((a, b) => {
+                return b[principle]! - a[principle]!
+            })
         }
     })
     if (filters?.aspect) {

@@ -92,7 +92,7 @@ const AssistantView = () => {
     )
 
     return (
-        <div>
+        <>
             <Card sx={{ padding: 2 }}>
                 <Autocomplete
                     key="assistant-selector"
@@ -135,7 +135,7 @@ const AssistantView = () => {
                     assistant={selectedAssistant}
                 />
             )}
-        </div>
+        </>
     )
 }
 export default AssistantView
