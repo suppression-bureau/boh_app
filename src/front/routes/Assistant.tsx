@@ -1,3 +1,4 @@
+import { Divider } from "@mui/material"
 import { useCallback, useState } from "react"
 import { useQuery } from "urql"
 
@@ -5,10 +6,13 @@ import Autocomplete from "@mui/material/Autocomplete"
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
+import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
+import Typography from "@mui/material/Typography"
 
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
+import ItemsView from "./Items"
 import { PrincipleIcon } from "./Principles"
 
 const assistantQueryDocument = graphql(`
@@ -22,7 +26,7 @@ const assistantQueryDocument = graphql(`
                 }
                 count
             }
-            special_aspect {
+            aspects {
                 id
             }
         }
@@ -53,6 +57,7 @@ const AssistantView = () => {
 
     const handlePrinciple = useCallback(
         (principle: PrincipleFromQuery) => {
+            console.log(principle)
             setPrinciple(principle)
         },
         [setPrinciple],
@@ -61,6 +66,7 @@ const AssistantView = () => {
     return (
         <Card sx={{ padding: 2 }}>
             <Autocomplete
+                key="assistant-selector"
                 id="assistant-selector"
                 options={data!.assistant}
                 getOptionLabel={({ id }) => id}
@@ -72,7 +78,7 @@ const AssistantView = () => {
             />
             <CardActions>
                 {selectedAssistant &&
-                    selectedAssistant.base_principles?.map(
+                    selectedAssistant.base_principles!.map(
                         ({ principle, count }) => (
                             <Button
                                 key={principle.id}
@@ -84,6 +90,28 @@ const AssistantView = () => {
                         ),
                     )}
             </CardActions>
+            <Stack maxWidth={"auto"}>
+                {selectedPrinciple &&
+                    selectedAssistant?.aspects?.map((aspect) => (
+                        <div key={aspect.id + "grouping"}>
+                            <Typography
+                                key={aspect.id + "header"}
+                                variant="h5"
+                                color={"secondary"}
+                            >
+                                {aspect.id}
+                            </Typography>
+                            <ItemsView
+                                key={aspect.id + selectedPrinciple}
+                                filters={{
+                                    [selectedPrinciple]: true,
+                                    aspect: aspect?.id,
+                                }}
+                            />
+                            <Divider />
+                        </div>
+                    ))}
+            </Stack>
         </Card>
     )
 }
