@@ -1,4 +1,3 @@
-import { Divider } from "@mui/material"
 import { useCallback, useState } from "react"
 import { useQuery } from "urql"
 
@@ -37,6 +36,36 @@ type AssistantFromQuery = types.AssistantQuery["assistant"][number]
 type PrincipleFromQuery =
     types.AssistantQuery["assistant"][number]["base_principles"][number]["principle"][number]
 
+type AssistantItemProps = {
+    principle: PrincipleFromQuery["id"]
+    assistant: AssistantFromQuery
+}
+
+function AssistantItems({ principle, assistant }: AssistantItemProps) {
+    return (
+        <Stack maxWidth={"auto"}>
+            {assistant?.aspects?.map((aspect) => (
+                <div key={aspect?.id + "grouping"}>
+                    <Typography
+                        key={aspect?.id + "header"}
+                        variant="h5"
+                        color={"secondary"}
+                    >
+                        {aspect?.id}
+                    </Typography>
+                    <ItemsView
+                        key={aspect?.id + principle}
+                        filters={{
+                            [principle]: true,
+                            aspect: aspect?.id,
+                        }}
+                    />
+                </div>
+            ))}
+        </Stack>
+    )
+}
+
 const AssistantView = () => {
     const [{ data }] = useQuery({ query: assistantQueryDocument })
     const [selectedAssistant, setAssistant] =
@@ -57,62 +86,56 @@ const AssistantView = () => {
 
     const handlePrinciple = useCallback(
         (principle: PrincipleFromQuery) => {
-            console.log(principle)
             setPrinciple(principle)
         },
         [setPrinciple],
     )
 
     return (
-        <Card sx={{ padding: 2 }}>
-            <Autocomplete
-                key="assistant-selector"
-                id="assistant-selector"
-                options={data!.assistant}
-                getOptionLabel={({ id }) => id}
-                isOptionEqualToValue={(a, b) => a.id === b.id}
-                renderInput={(params) => (
-                    <TextField {...params} label="Select your Assistant" />
-                )}
-                onChange={handleNewAssistant}
-            />
-            <CardActions>
-                {selectedAssistant &&
-                    selectedAssistant.base_principles!.map(
-                        ({ principle, count }) => (
-                            <Button
-                                key={principle.id}
-                                startIcon={<PrincipleIcon id={principle.id} />}
-                                onClick={() => handlePrinciple(principle.id)}
-                            >
-                                {count}
-                            </Button>
-                        ),
+        <div>
+            <Card sx={{ padding: 2 }}>
+                <Autocomplete
+                    key="assistant-selector"
+                    id="assistant-selector"
+                    options={data!.assistant}
+                    getOptionLabel={({ id }) => id}
+                    isOptionEqualToValue={(a, b) => a.id === b.id}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Select your Assistant" />
                     )}
-            </CardActions>
-            <Stack maxWidth={"auto"}>
-                {selectedPrinciple &&
-                    selectedAssistant?.aspects?.map((aspect) => (
-                        <div key={aspect.id + "grouping"}>
-                            <Typography
-                                key={aspect.id + "header"}
-                                variant="h5"
-                                color={"secondary"}
-                            >
-                                {aspect.id}
-                            </Typography>
-                            <ItemsView
-                                key={aspect.id + selectedPrinciple}
-                                filters={{
-                                    [selectedPrinciple]: true,
-                                    aspect: aspect?.id,
-                                }}
-                            />
-                            <Divider />
-                        </div>
-                    ))}
-            </Stack>
-        </Card>
+                    onChange={handleNewAssistant}
+                />
+                <CardActions>
+                    {selectedAssistant &&
+                        selectedAssistant.base_principles!.map(
+                            ({ principle, count }) => (
+                                <Button
+                                    key={principle.id}
+                                    startIcon={
+                                        <PrincipleIcon id={principle.id} />
+                                    }
+                                    onClick={() =>
+                                        handlePrinciple(principle.id)
+                                    }
+                                    variant={
+                                        selectedPrinciple === principle.id
+                                            ? "contained"
+                                            : "outlined"
+                                    }
+                                >
+                                    {count}
+                                </Button>
+                            ),
+                        )}
+                </CardActions>
+            </Card>
+            {selectedAssistant && selectedPrinciple && (
+                <AssistantItems
+                    principle={selectedPrinciple}
+                    assistant={selectedAssistant}
+                />
+            )}
+        </div>
     )
 }
 export default AssistantView
