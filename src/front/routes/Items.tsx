@@ -130,7 +130,7 @@ function Item({ ...item }: ItemFromQuery) {
                         )
                 })}
                 {item.aspects!.map(({ id }) => (
-                    <Aspect key={id} id={id} />
+                    <Aspect key={id} id={id} nameAspect={false} />
                 ))}
             </Stack>
         </Card>

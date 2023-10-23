@@ -16,7 +16,7 @@ const principleQueryDocument = graphql(`
 `)
 
 function PrincipleIcon({ id }: { id: string }) {
-    return <Avatar variant="square" src={`/data/${id}.png`}></Avatar>
+    return <Avatar variant="square" src={`/data/principle/${id}.png`}></Avatar>
 }
 
 interface PrincipleCardProps extends Omit<CardProps, "title"> {
