@@ -1,7 +1,13 @@
 [
   {
     "id": "Coffinmaker",
-    "special_aspect": { "id": "wood" },
+    "aspects": [
+      { "id": "wood" },
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "sky",
@@ -15,7 +21,13 @@
   },
   {
     "id": "Midwife",
-    "special_aspect": { "id": "fabric" },
+    "aspects": [
+      { "id": "fabric" },
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "grail",
@@ -29,7 +41,13 @@
   },
   {
     "id": "Smithy",
-    "special_aspect": { "id": "metal" },
+    "aspects": [
+      { "id": "metal" },
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "edge",
@@ -43,7 +61,13 @@
   },
   {
     "id": "Rector",
-    "special_aspect": { "id": "candle" },
+    "aspects": [
+      { "id": "candle" },
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "knock",
@@ -57,6 +81,12 @@
   },
   {
     "id": "Miner",
+    "aspects": [
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "season": "spring",
     "base_principles": [
       {
@@ -75,6 +105,12 @@
   },
   {
     "id": "Barber",
+    "aspects": [
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "season": "summer",
     "base_principles": [
       {
@@ -89,6 +125,12 @@
   },
   {
     "id": "Orchard Keeper",
+    "aspects": [
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "season": "fall",
     "base_principles": [
       {
@@ -103,6 +145,12 @@
   },
   {
     "id": "Fisherman",
+    "aspects": [
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "season": "winter",
     "base_principles": [
       {
@@ -117,7 +165,13 @@
   },
   {
     "id": "Consulting Engineer",
-    "special_aspect": { "id": "fuel" },
+    "aspects": [
+      { "id": "fuel" },
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "forge",
@@ -135,6 +189,12 @@
   },
   {
     "id": "Fugitive",
+    "aspects": [
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "edge",
@@ -152,7 +212,13 @@
   },
   {
     "id": "Elegiac Poet",
-    "special_aspect": { "id": "flower" },
+    "aspects": [
+      { "id": "flower" },
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "winter",
@@ -170,6 +236,12 @@
   },
   {
     "id": "Musician",
+    "aspects": [
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "rose",
@@ -187,7 +259,13 @@
   },
   {
     "id": "Unusual Nun",
-    "special_aspect": { "id": "omen" },
+    "aspects": [
+      { "id": "omen" },
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "knock",
@@ -205,7 +283,13 @@
   },
   {
     "id": "Surrealist Painter",
-    "special_aspect": { "id": "pigment" },
+    "aspects": [
+      { "id": "pigment" },
+      { "id": "sustenance" },
+      { "id": "beverage" },
+      { "id": "memory" },
+      { "id": "tool" }
+    ],
     "base_principles": [
       {
         "principle_id": "grail",
