@@ -1,10 +1,9 @@
-import { CardContent } from "@mui/material"
-import { useReducer, useState } from "react"
+import { useReducer } from "react"
 import { useQuery } from "urql"
 
 import Card from "@mui/material/Card"
-import CardActions from "@mui/material/CardActions"
 import CardHeader from "@mui/material/CardHeader"
+import Container from "@mui/material/Container"
 import Stack from "@mui/material/Stack"
 
 import { graphql } from "../gql"
@@ -103,7 +102,7 @@ function filterItems(
     return filtered_state
 }
 
-function ItemsReducer(
+function itemsReducer(
     state: ItemsFromQuery[],
     action: ItemsAction,
 ): ItemsFromQuery[] {
@@ -141,21 +140,23 @@ const ItemsView = ({ filters }: ItemsProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
 
     const [state, dispatch] = useReducer(
-        ItemsReducer,
+        itemsReducer,
         filterItems({ known: true, ...filters }, data!.item),
     )
 
     return (
-        <Stack
-            spacing={2}
-            sx={{
-                maxWidth: "auto",
-                marginBlock: 1,
-                marginInline: "auto",
-            }}
-        >
-            {state?.map((item) => <Item key={item.id} {...item} />)}
-        </Stack>
+        <Container maxWidth="sm">
+            <Stack
+                spacing={2}
+                sx={{
+                    maxWidth: "auto",
+                    marginBlock: 1,
+                    marginInline: "auto",
+                }}
+            >
+                {state?.map((item) => <Item key={item.id} {...item} />)}
+            </Stack>
+        </Container>
     )
 }
 export default ItemsView

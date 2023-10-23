@@ -109,26 +109,17 @@ const App = () => {
                     </Toolbar>
                 </AppBar>
             </ElevationScroll>
-            <Box
-                component="main"
-                sx={{
-                    maxWidth: "42rem",
-                    mx: "auto",
-                    p: 3,
-                }}
-            >
-                <React.Suspense fallback={"Loading..."}>
-                    <SlideRoutes>
-                        <Route index element={<Home />} />
-                        <Route path="aspects" element={<Aspects />} />
-                        <Route path="principles" element={<Principles />} />
-                        <Route path="skills" element={<SkillsView />} />
-                        <Route path="items" element={<ItemsView />} />
-                        <Route path="assistance" element={<AssistantView />} />
-                        <Route path="*" element={<Navigate replace to="/" />} />
-                    </SlideRoutes>
-                </React.Suspense>
-            </Box>
+            <React.Suspense fallback={"Loading..."}>
+                <SlideRoutes>
+                    <Route index element={<Home />} />
+                    <Route path="aspects" element={<Aspects />} />
+                    <Route path="principles" element={<Principles />} />
+                    <Route path="skills" element={<SkillsView />} />
+                    <Route path="items" element={<ItemsView />} />
+                    <Route path="assistance" element={<AssistantView />} />
+                    <Route path="*" element={<Navigate replace to="/" />} />
+                </SlideRoutes>
+            </React.Suspense>
         </ThemeProvider>
     )
 }

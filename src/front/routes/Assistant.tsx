@@ -1,10 +1,11 @@
-import { useCallback, useState } from "react"
+import { Suspense, useCallback, useState } from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
+import Container from "@mui/material/Container"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
@@ -80,6 +81,9 @@ const AssistantView = () => {
             assistant: AssistantFromQuery | null,
         ) => {
             setAssistant(assistant)
+            if (selectedPrinciple) {
+                setPrinciple(null)
+            }
         },
         [setAssistant],
     )
@@ -92,7 +96,7 @@ const AssistantView = () => {
     )
 
     return (
-        <>
+        <Container maxWidth="sm">
             <Card sx={{ padding: 2 }}>
                 <Autocomplete
                     key="assistant-selector"
@@ -129,13 +133,15 @@ const AssistantView = () => {
                         )}
                 </CardActions>
             </Card>
-            {selectedAssistant && selectedPrinciple && (
-                <AssistantItems
-                    principle={selectedPrinciple}
-                    assistant={selectedAssistant}
-                />
-            )}
-        </>
+            <Suspense fallback={"Loading..."}>
+                {selectedAssistant && selectedPrinciple && (
+                    <AssistantItems
+                        principle={selectedPrinciple}
+                        assistant={selectedAssistant}
+                    />
+                )}
+            </Suspense>
+        </Container>
     )
 }
 export default AssistantView
