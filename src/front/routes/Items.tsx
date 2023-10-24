@@ -3,7 +3,6 @@ import { useQuery } from "urql"
 
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
-import Container from "@mui/material/Container"
 import Stack from "@mui/material/Stack"
 
 import { graphql } from "../gql"
@@ -49,9 +48,9 @@ const principles = [
     "scale",
     "sky",
     "winter",
-]
-type ItemsFromQuery = types.ItemsQuery["item"]
-type ItemFromQuery = ItemsFromQuery[number]
+] as const
+
+type ItemFromQuery = types.ItemsQuery["item"][number]
 
 interface ItemsProps {
     filters?: {
@@ -78,8 +77,8 @@ type ItemsActionOuter = { type: "filter"; filters: ItemsProps["filters"] }
 
 function filterItems(
     filters: ItemsProps["filters"],
-    state: ItemsFromQuery[],
-): ItemsFromQuery[] {
+    state: ItemFromQuery[],
+): ItemFromQuery[] {
     let filtered_state = state
     if (filters?.known) {
         filtered_state = state.filter(({ known }) => known === true)
@@ -103,9 +102,9 @@ function filterItems(
 }
 
 function itemsReducer(
-    state: ItemsFromQuery[],
+    state: ItemFromQuery[],
     action: ItemsAction,
-): ItemsFromQuery[] {
+): ItemFromQuery[] {
     switch (action.type) {
         case "filter": {
             const { filters } = action
