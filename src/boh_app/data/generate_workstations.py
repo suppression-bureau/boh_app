@@ -38,6 +38,8 @@ class SlotHandler:
             if aspects == self.known_slots[id]:
                 return {"id": id, "name": name}
             id = f"{workstation_name}.{id}"
+            if id in self.known_slots:
+                id += "2"
 
         self.known_slots[id] = aspects
         self.full_slots.append({"id": id, "name": name, "accepts": [{"id": a} for a in aspects]})
