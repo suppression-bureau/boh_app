@@ -1,8 +1,9 @@
 [
   { "id": "desk" },
-  { "id": "shrine" },
+  { "id": "altar" },
   { "id": "instrument" },
-  { "id": "kitchen range" },
+  { "id": "kitchen" },
   { "id": "workbench" },
-  { "id": "prospect" }
+  { "id": "prospect" },
+  { "id": "generic" }
 ]

@@ -93,5 +93,14 @@ def gen_items() -> None:
     gen_items_json()
 
 
+@app.command()
+def gen_workstations() -> None:
+    """Generate `workstations.json`. NB: Overwrites existing file and
+    is not run by default during `boh_app.data.load_data.load_all`."""
+    from .data.generate_workstations import gen_workstation_json
+
+    gen_workstation_json()
+
+
 if __name__ == "__main__":
     app()
