@@ -6,7 +6,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {
@@ -26,7 +27,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {
@@ -46,7 +48,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {
@@ -66,7 +69,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {
@@ -85,7 +89,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "season": "spring",
     "base_principles": [
@@ -109,7 +114,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "season": "summer",
     "base_principles": [
@@ -129,7 +135,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "season": "fall",
     "base_principles": [
@@ -149,7 +156,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "season": "winter",
     "base_principles": [
@@ -170,7 +178,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {
@@ -193,7 +202,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {
@@ -217,7 +227,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {
@@ -240,7 +251,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {
@@ -264,7 +276,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {
@@ -288,7 +301,8 @@
       { "id": "sustenance" },
       { "id": "beverage" },
       { "id": "memory" },
-      { "id": "tool" }
+      { "id": "tool" },
+      { "id": "soul" }
     ],
     "base_principles": [
       {

@@ -158,6 +158,7 @@ class Item(Base, NameMixin):
     aspects: Mapped[list[Aspect]] = relationship(back_populates="items", secondary=item_aspect_association)
 
     known: Mapped[bool] = mapped_column(default=False)
+
     # principles
     edge: Mapped[int | None]
     forge: Mapped[int | None]
