@@ -27,4 +27,4 @@ def test_qgl_serializer(query):
         }""",
     )["assistant"]
     assert assistant["id"] == "Coffinmaker"
-    assert {a["id"] for a in assistant["aspects"]} == {"wood", "sustenance", "beverage", "memory", "tool"}
+    assert {a["id"] for a in assistant["aspects"]} == {"wood", "sustenance", "beverage", "memory", "tool", "soul"}
