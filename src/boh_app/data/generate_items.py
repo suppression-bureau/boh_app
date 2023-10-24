@@ -1,9 +1,7 @@
-import json
 from pathlib import Path
 from typing import Any
 
-from ..settings import CACHE_DIR
-from .gen_utils import SteamFiles, get_steam_data, get_valid_refs
+from .gen_utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
 
@@ -16,10 +14,7 @@ def gen_items_json():
     model_data += [item_handler.mk_model_data(item, inherits=False) for item in get_soul_data()]
     model_data = dedup(model_data)
 
-    outpath = CACHE_DIR / "item.json"
-    print(f"Writing {len(model_data)} items to {outpath}")
-    with outpath.open("w") as a:
-        json.dump(model_data, a)
+    write_gen_file("item", model_data)
 
 
 def get_soul_data():

@@ -2,6 +2,7 @@ import json
 from enum import StrEnum
 from typing import Any
 
+from ..settings import CACHE_DIR
 from ..utils import find_boh_dir
 
 
@@ -29,3 +30,11 @@ def get_valid_refs(name: str) -> list[str]:
     from boh_app.data.load_data import get_data
 
     return [d["id"] for d in get_data(name)]
+
+
+def write_gen_file(name: str, data: list[dict[str, Any]]):
+    outpath = CACHE_DIR / f"{name}.json"
+    print(f"Writing {len(data)} items to {outpath}")
+
+    with outpath.open("w") as a:
+        json.dump(data, a)
