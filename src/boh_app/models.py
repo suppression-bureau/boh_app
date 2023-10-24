@@ -204,10 +204,10 @@ class WorkstationType(Base, NameMixin):
     workstations: Mapped[list[Workstation]] = relationship(back_populates="workstation_type")
 
 
-class WorkstationSlot(Base, IdMixin):
+class WorkstationSlot(Base, NameMixin):
     __tablename__ = "workstation_slot"
 
-    name: Mapped[str]  # TODO: make NameMixin, why would we need int id?
+    name: Mapped[str]
 
     workstations: Mapped[list[Workstation]] = relationship(
         back_populates="workstation_slots",
