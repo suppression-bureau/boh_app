@@ -60,7 +60,6 @@ function AssistantItems({ principle, assistant }: AssistantItemProps) {
                             [principle]: true,
                             aspect: aspect?.id,
                         }}
-                        sx={{ marginInline: "auto" }}
                     />
                 </div>
             ))}
