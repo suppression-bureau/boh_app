@@ -44,7 +44,7 @@ type AssistantItemProps = {
 
 function AssistantItems({ principle, assistant }: AssistantItemProps) {
     return (
-        <Stack maxWidth={"auto"}>
+        <Stack>
             {assistant?.aspects?.map((aspect) => (
                 <div key={aspect?.id + "grouping"}>
                     <Typography
@@ -60,6 +60,7 @@ function AssistantItems({ principle, assistant }: AssistantItemProps) {
                             [principle]: true,
                             aspect: aspect?.id,
                         }}
+                        sx={{ marginInline: "auto" }}
                     />
                 </div>
             ))}

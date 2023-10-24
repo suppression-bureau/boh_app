@@ -118,7 +118,7 @@ function Item({ ...item }: ItemFromQuery) {
     return (
         <Card key={item.id}>
             <CardHeader title={item.id} />
-            <Stack direction={"row"} sx={{ maxWidth: "auto" }}>
+            <Stack direction={"row"}>
                 {principles.map((principle) => {
                     if (item[principle] !== null)
                         return (
@@ -145,18 +145,15 @@ const ItemsView = ({ filters }: ItemsProps) => {
     )
 
     return (
-        <Container maxWidth="sm">
-            <Stack
-                spacing={2}
-                sx={{
-                    maxWidth: "auto",
-                    marginBlock: 1,
-                    marginInline: "auto",
-                }}
-            >
-                {state?.map((item) => <Item key={item.id} {...item} />)}
-            </Stack>
-        </Container>
+        <Stack
+            spacing={2}
+            sx={{
+                maxWidth: "sm",
+                marginInline: "auto",
+            }}
+        >
+            {state?.map((item) => <Item key={item.id} {...item} />)}
+        </Stack>
     )
 }
 export default ItemsView
