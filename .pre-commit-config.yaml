@@ -39,6 +39,7 @@ repos:
         files: \.[jt]sx?$
         types: [file]
         args:
+          - --fix
           - --max-warnings=0
           - --ignore-pattern=!.*.ts
         language_version: system

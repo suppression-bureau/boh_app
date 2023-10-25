@@ -90,11 +90,10 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
         onIncrement(skill)
     }, [skill, onIncrement])
     return (
-        <Card key={skill.id}>
+        <Card>
             <CardHeader title={skill.id} />
             <CardActions sx={{ gap: 2 }}>
                 <PrincipleCard
-                    key={skill.primary_principle!.id}
                     id={skill.primary_principle!.id}
                     title={skill.level + 1}
                     sx={{ boxShadow: "none" }}
@@ -102,7 +101,6 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
                 />
                 <Divider orientation="vertical" variant="middle" flexItem />
                 <PrincipleCard
-                    key={skill.secondary_principle!.id}
                     id={skill.secondary_principle!.id}
                     title={skill.level}
                     sx={{ boxShadow: "none" }}
