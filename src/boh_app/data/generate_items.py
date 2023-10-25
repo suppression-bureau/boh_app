@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from .gen_utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
+from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
 
