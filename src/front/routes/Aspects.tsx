@@ -1,5 +1,7 @@
+import { CardHeader } from "@mui/material"
 import { useQuery } from "urql"
 
+import Avatar from "@mui/material/Avatar"
 import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
@@ -22,18 +24,24 @@ const aspectQueryDocument = graphql(`
     }
 `)
 
+function AspectIcon({ id }: { id: string }) {
+    return <Avatar variant="square" src={`/data/aspect/${id}.png`}></Avatar>
+}
+
 type AspectFromQuery = types.AspectsQuery["aspect"][number]
 
 interface AspectProps extends AspectFromQuery {
+    nameAspect?: boolean
     showAssistant?: boolean
 }
-function Aspect({ showAssistant, ...aspect }: AspectProps) {
+function Aspect({ nameAspect = true, showAssistant, ...aspect }: AspectProps) {
     return (
         <Card key={aspect.id}>
+            <CardHeader
+                title={nameAspect ? aspect.id : ""}
+                avatar={<AspectIcon id={aspect.id} />}
+            />
             <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                    {aspect.id}
-                </Typography>
                 {showAssistant && aspect.assistants!.length > 0 && (
                     <List disablePadding>
                         {aspect.assistants!.map(({ id }) => (
@@ -61,16 +69,14 @@ const AspectsView = () => {
                 rowGap: 1,
             }}
         >
-            {data!.aspect
-                .filter(({ assistants }) => assistants!.length > 0)
-                .map(({ assistants, id }) => (
-                    <Aspect
-                        key={id}
-                        showAssistant={true}
-                        id={id}
-                        assistants={assistants}
-                    />
-                ))}
+            {data!.aspect.map(({ assistants, id }) => (
+                <Aspect
+                    key={id}
+                    showAssistant={true}
+                    id={id}
+                    assistants={assistants}
+                />
+            ))}
         </Box>
     )
 }

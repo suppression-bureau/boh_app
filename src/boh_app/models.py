@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, ClassVar, cast
 from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, object_session, registry, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
 if TYPE_CHECKING:
     from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -79,12 +79,19 @@ assistant_principle_count_association = Table(
     Column("principle_count_id", ForeignKey("principle_count.id"), primary_key=True),
 )
 
+assistant_aspect_association = Table(
+    "assistant_aspect",
+    Base.metadata,
+    Column("assistant_id", ForeignKey("assistant.id"), primary_key=True),
+    Column("aspect_id", ForeignKey("aspect.id"), primary_key=True),
+)
+
 
 class Aspect(Base, NameMixin):
     __tablename__ = "aspect"
 
     items: Mapped[list[Item]] = relationship(back_populates="aspects", secondary=item_aspect_association)
-    assistants: Mapped[list[Assistant]] = relationship(back_populates="special_aspect")
+    assistants: Mapped[list[Assistant]] = relationship(back_populates="aspects", secondary=assistant_aspect_association)
 
 
 class Principle(Base, NameMixin):
@@ -151,6 +158,7 @@ class Item(Base, NameMixin):
     aspects: Mapped[list[Aspect]] = relationship(back_populates="items", secondary=item_aspect_association)
 
     known: Mapped[bool] = mapped_column(default=False)
+
     # principles
     edge: Mapped[int | None]
     forge: Mapped[int | None]
@@ -237,25 +245,8 @@ class Workstation(Base, NameMixin):
 class Assistant(Base, NameMixin):
     __tablename__ = "assistant"
 
-    @classmethod
-    def _additional_fields(cls):
-        return {"accepted_aspects": Nested(Aspect.__marshmallow__, many=True)}
-
-    base_aspects: ClassVar = frozenset(["sustenance", "beverage", "memory", "tool", "device"])
-
     season: Mapped[str | None]
-    aspect_id: Mapped[str | None] = mapped_column(ForeignKey("aspect.id"))
-    special_aspect: Mapped[Aspect | None] = relationship(back_populates="assistants")
+    aspects: Mapped[list[Aspect]] = relationship(back_populates="assistants", secondary=assistant_aspect_association)
     base_principles: Mapped[list[PrincipleCount]] = relationship(
         back_populates="assistants", secondary=assistant_principle_count_association
     )
-
-    @hybrid_property
-    def accepted_aspects(self) -> list[Aspect]:
-        db_session = object_session(self)
-        assert db_session
-        base_aspects = db_session.query(Aspect).filter(Aspect.id.in_(self.base_aspects)).all()
-        if not self.special_aspect:
-            return base_aspects
-        else:
-            return [self.special_aspect, *base_aspects]

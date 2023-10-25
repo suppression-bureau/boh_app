@@ -20,13 +20,11 @@ def test_qgl_serializer(query):
                 where: { id: { _eq: "Coffinmaker" } }
             ) {
                 id
-                special_aspect {
+                aspects {
                     id
                 }
             }
         }""",
     )["assistant"]
-    assert assistant == {
-        "id": "Coffinmaker",
-        "special_aspect": {"id": "wood"},
-    }
+    assert assistant["id"] == "Coffinmaker"
+    assert {a["id"] for a in assistant["aspects"]} == {"wood", "sustenance", "beverage", "memory", "tool", "soul"}
