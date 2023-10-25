@@ -1,3 +1,4 @@
+
 from pathlib import Path
 from typing import Any
 
@@ -19,11 +20,12 @@ def gen_items_json():
 
 def get_soul_data():
     soul_items = []
+    prune_altered = ["[", ":"]  # e.g. "{soul} [fatigued]" | "{soul}: {disease}"
     for file in [SteamFiles.SOUL1, SteamFiles.SOUL2, SteamFiles.SOUL3, SteamFiles.SOUL4]:
         data = get_steam_data(file)
         for item in data:
             item["aspects"].update({"soul": 1})
-            if not item.get("label") or any(d in item["label"] for d in ["[", ":"]):
+            if not item.get("label") or any(d in item["label"] for d in prune_altered):
                 continue
             soul_items.append(item)
     return soul_items
@@ -69,7 +71,8 @@ class ItemHandler:
 
     def mk_model_data(self, item: dict[str, Any], *, inherits: bool = True) -> dict[str, Any]:
         label = "Label" if inherits else "label"
-        name = item[label].split(" (")[0]
+
+        name = item[label].split(" (")[0]  # e.g. "{drink} (Bottle)" | "{drink} (Half-Full)"
         model = {"id": name}
         model_aspects = []
 

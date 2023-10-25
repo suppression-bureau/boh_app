@@ -50,26 +50,14 @@ const principles = [
     "winter",
 ] as const
 
+type Principle = (typeof principles)[number]
 type ItemFromQuery = types.ItemsQuery["item"][number]
 
 interface ItemsProps {
     filters?: {
         known?: boolean
-        edge?: boolean
-        forge?: boolean
-        grail?: boolean
-        heart?: boolean
-        knock?: boolean
-        lantern?: boolean
-        moon?: boolean
-        moth?: boolean
-        nectar?: boolean
-        rose?: boolean
-        scale?: boolean
-        sky?: boolean
-        winter?: boolean
         aspect?: string
-    }
+    } & Partial<{ [principle in Principle]: boolean }>
 }
 type ItemsAction = ItemsActionInner | ItemsActionOuter
 type ItemsActionInner = never
@@ -83,7 +71,7 @@ function filterItems(
     if (filters?.known) {
         filtered_state = state.filter(({ known }) => known === true)
     }
-    principles.forEach((principle) => {
+    for (const principle of principles) {
         if (filters?.[principle]) {
             filtered_state = filtered_state.filter((item) => {
                 return item[principle] !== null
@@ -92,7 +80,7 @@ function filterItems(
                 return b[principle]! - a[principle]!
             })
         }
-    })
+    }
     if (filters?.aspect) {
         filtered_state = filtered_state.filter((item) => {
             return item.aspects!.some(({ id }) => id === filters.aspect)
@@ -117,7 +105,7 @@ function Item({ ...item }: ItemFromQuery) {
     return (
         <Card key={item.id}>
             <CardHeader title={item.id} />
-            <Stack direction={"row"}>
+            <Stack direction="row">
                 {principles.map((principle) => {
                     if (item[principle] !== null)
                         return (
