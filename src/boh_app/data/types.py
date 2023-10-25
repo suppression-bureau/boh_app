@@ -14,7 +14,7 @@ class Workstation(TypedDict):
 class Slot(TypedDict):
     id: str
     name: str
-    accepts: NotRequired[list[dict[str, str]]]
+    accepts: NotRequired[list[Aspect]]
 
 
 class Principle(TypedDict):
@@ -27,3 +27,26 @@ class Wisdom(TypedDict):
 
 class WorkstationType(TypedDict):
     id: str
+
+
+class Aspect(TypedDict):
+    id: str
+
+
+class Item(TypedDict):
+    id: str
+    aspects: NotRequired[list[Aspect]]
+    known: NotRequired[bool]
+    edge: NotRequired[int]
+    forge: NotRequired[int]
+    grail: NotRequired[int]
+    heart: NotRequired[int]
+    knock: NotRequired[int]
+    lantern: NotRequired[int]
+    moon: NotRequired[int]
+    moth: NotRequired[int]
+    nectar: NotRequired[int]
+    rose: NotRequired[int]
+    scale: NotRequired[int]
+    sky: NotRequired[int]
+    winter: NotRequired[int]

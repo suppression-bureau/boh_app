@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any
 
+from .types import Aspect, Item
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
@@ -68,11 +69,11 @@ class ItemHandler:
         self.inheritance_handler = InheritanceHandler()
         self.known_items = get_our_items()
 
-    def mk_model_data(self, item: dict[str, Any], *, inherits: bool = True) -> dict[str, Any]:
+    def mk_model_data(self, item: dict[str, Any], *, inherits: bool = True) -> Item:
         label = "Label" if inherits else "label"
 
         name = item[label].split(" (")[0]  # e.g. "{drink} (Bottle)" | "{drink} (Half-Full)"
-        model = {"id": name}
+        model = Item(id=name)
         model_aspects = []
 
         for aspect, value in item["aspects"].items():
@@ -83,13 +84,13 @@ class ItemHandler:
         if inherits:
             model_aspects += self.inheritance_handler.get_aspects(item)
 
-        model["aspects"] = [{"id": a} for a in set(model_aspects) if a in self.valid_aspects]
+        model["aspects"] = [Aspect(id=a) for a in set(model_aspects) if a in self.valid_aspects]
 
         if name in self.known_items:
             model["known"] = True
         return model
 
 
-def dedup(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def dedup(items: list[Item]) -> list[Item]:
     seen = set()
     return [item for item in items if item["id"] not in seen and not seen.add(item["id"])]

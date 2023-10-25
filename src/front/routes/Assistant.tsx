@@ -101,7 +101,6 @@ const AssistantView = () => {
                 setPrinciple(null)
             }
         },
-
         [setAssistant, selectedPrinciple, setPrinciple],
     )
 

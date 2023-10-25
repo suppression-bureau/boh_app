@@ -1,6 +1,6 @@
 from typing import Any
 
-from .types import Principle, Slot, Wisdom, Workstation, WorkstationType
+from .types import Aspect, Principle, Slot, Wisdom, Workstation, WorkstationType
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 
@@ -43,7 +43,7 @@ class SlotHandler:
                 id += "2"
 
         self.known_slots[id] = aspects
-        self.full_slots.append(Slot(id=id, name=name, accepts=[{"id": a} for a in aspects]))
+        self.full_slots.append(Slot(id=id, name=name, accepts=[Aspect(id=a) for a in aspects]))
         return Slot(id=id, name=name)
 
 

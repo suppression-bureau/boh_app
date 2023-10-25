@@ -1,10 +1,11 @@
 import json
+import logging
 from enum import StrEnum
 from typing import Any
 
 from ..settings import CACHE_DIR
 from ..utils import find_boh_dir
-from .types import Slot, Workstation
+from .types import Item, Slot, Workstation
 
 
 class SteamFiles(StrEnum):
@@ -33,9 +34,9 @@ def get_valid_refs(name: str) -> list[str]:
     return [d["id"] for d in get_data(name)]
 
 
-def write_gen_file(name: str, data: list[Slot] | list[Workstation]):
+def write_gen_file(name: str, data: list[Slot] | list[Workstation] | list[Item]):
     outpath = CACHE_DIR / f"{name}.json"
-    print(f"Writing {len(data)} items to {outpath}")
+    logging.info(f"Writing {len(data)} items to {outpath}")
 
     with outpath.open("w") as a:
         json.dump(data, a)
