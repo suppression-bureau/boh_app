@@ -108,7 +108,6 @@ const AssistantView = () => {
         },
 
         [setAssistant, selectedPrinciple, setPrinciple],
-
     )
 
     const handlePrinciple = useCallback(
@@ -134,7 +133,6 @@ const AssistantView = () => {
                     {selectedAssistant &&
                         selectedAssistant.base_principles!.map(
                             ({ principle, count }) => (
-
                                 <PrincipleFilterButton
                                     principle={principle}
                                     selectedPrinciple={selectedPrinciple}
