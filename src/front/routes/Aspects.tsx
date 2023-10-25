@@ -8,7 +8,6 @@ import CardContent from "@mui/material/CardContent"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
-import Typography from "@mui/material/Typography"
 
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
@@ -36,7 +35,7 @@ interface AspectProps extends AspectFromQuery {
 }
 function Aspect({ nameAspect = true, showAssistant, ...aspect }: AspectProps) {
     return (
-        <Card key={aspect.id}>
+        <Card>
             <CardHeader
                 title={nameAspect ? aspect.id : ""}
                 avatar={<AspectIcon id={aspect.id} />}

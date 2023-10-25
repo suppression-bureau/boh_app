@@ -4,7 +4,6 @@ import { Link, Navigate, Route, matchPath, useLocation } from "react-router-dom"
 import SlideRoutes from "react-slide-routes"
 
 import AppBar from "@mui/material/AppBar"
-import Box from "@mui/material/Box"
 import CssBaseline from "@mui/material/CssBaseline"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"

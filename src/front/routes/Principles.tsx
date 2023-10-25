@@ -32,7 +32,7 @@ function PrincipleCard({
     ...cardProps
 }: PrincipleCardProps) {
     return (
-        <Card key={id} {...cardProps}>
+        <Card {...cardProps}>
             <CardHeader
                 title={title.toString()}
                 avatar={<PrincipleIcon id={id} />}

@@ -103,16 +103,16 @@ function itemsReducer(
 
 function Item({ ...item }: ItemFromQuery) {
     return (
-        <Card key={item.id}>
+        <Card>
             <CardHeader title={item.id} />
             <Stack direction="row">
                 {principles.map((principle) => {
-                    if (item[principle] !== null)
+                    if (item[principle] != null)
                         return (
                             <PrincipleCard
                                 key={principle}
                                 id={principle}
-                                title={item[principle]} // displays amount
+                                title={item[principle]!} // displays amount
                             />
                         )
                 })}
@@ -126,7 +126,7 @@ function Item({ ...item }: ItemFromQuery) {
 const ItemsView = ({ filters }: ItemsProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
 
-    const [state, dispatch] = useReducer(
+    const [state] = useReducer(
         itemsReducer,
         filterItems({ known: true, ...filters }, data!.item),
     )
