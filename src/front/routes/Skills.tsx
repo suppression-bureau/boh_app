@@ -88,7 +88,7 @@ interface SkillProps extends SkillFromQuery {
 function Skill({ onIncrement, ...skill }: SkillProps) {
     const handleIncrement = useCallback(() => {
         onIncrement(skill)
-    }, [skill])
+    }, [skill, onIncrement])
     return (
         <Card key={skill.id}>
             <CardHeader title={skill.id} />
