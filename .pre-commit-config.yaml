@@ -39,7 +39,7 @@ repos:
         types: [file]
         args:
           - --max-warnings=0
-          - --ignore-path=!.*.ts
+          - --ignore-pattern=!.*.ts
         additional_dependencies:
           - eslint
           - eslint-plugin-react
