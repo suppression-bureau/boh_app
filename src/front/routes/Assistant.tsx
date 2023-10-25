@@ -45,8 +45,8 @@ type AssistantItemProps = {
 function AssistantItems({ principle, assistant }: AssistantItemProps) {
     return (
         <Stack>
-            {assistant?.aspects?.map((aspect) => (
-                <div key={aspect?.id + "grouping"}>
+            {assistant?.aspects!.map((aspect) => (
+                <div key={`${aspect!.id}grouping`}>
                     <Typography
                         key={aspect?.id + "header"}
                         variant="h5"
@@ -85,7 +85,7 @@ const AssistantView = () => {
                 setPrinciple(null)
             }
         },
-        [setAssistant],
+        [setAssistant, selectedPrinciple, setPrinciple],
     )
 
     const handlePrinciple = useCallback(
@@ -99,8 +99,6 @@ const AssistantView = () => {
         <Container maxWidth="sm">
             <Card sx={{ padding: 2 }}>
                 <Autocomplete
-                    key="assistant-selector"
-                    id="assistant-selector"
                     options={data!.assistant}
                     getOptionLabel={({ id }) => id}
                     isOptionEqualToValue={(a, b) => a.id === b.id}

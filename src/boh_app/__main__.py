@@ -1,3 +1,4 @@
+import logging
 import sys
 from asyncio.subprocess import create_subprocess_exec
 from functools import wraps
@@ -7,6 +8,7 @@ from typing import Annotated, LiteralString, Optional, cast
 import anyio
 import typer
 from graphql import IntrospectionQuery, build_client_schema, get_introspection_query, print_schema
+from rich.logging import RichHandler
 
 HERE = Path(__file__).parent
 
@@ -94,4 +96,5 @@ def gen_items() -> None:
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, handlers=[RichHandler()])
     app()
