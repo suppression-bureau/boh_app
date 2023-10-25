@@ -20,7 +20,7 @@ def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
     boh_data_dir = find_boh_dir() / "StreamingAssets/bhcontent/core"
     boh_file = boh_data_dir / selection.value
 
-    with boh_file.open() as a:
+    with boh_file.open("r") as a:
         data = json.load(a)
     inner = selection.value.split("/")[0]
     return data[inner]

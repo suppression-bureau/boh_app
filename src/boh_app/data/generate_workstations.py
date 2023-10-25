@@ -48,15 +48,22 @@ class SlotHandler:
 
 class WorkstationHandler:
     def __init__(self):
-        self.valid_types = get_valid_refs("workstation_type")
-        self.valid_types.remove("generic")
         self.principles = get_valid_refs("principle")
+        self.wisdoms = get_valid_refs("wisdom")
+        self.valid_types = get_valid_refs("workstation_type")
         self.slot_handler = SlotHandler()
 
     def get_principles(self, item: dict[str, Any]) -> list[dict[str, Any]]:
         principles = item["hints"]
         assert all(p in self.principles for p in principles)
         return [{"id": p} for p in principles]
+
+    def get_wisdom(self, item: dict[str, Any]) -> dict[str, Any] | None:
+        aspects = {a.split(".")[1].capitalize(): v for a, v in item["aspects"].items() if "." in a}
+        for wisdom in self.wisdoms:
+            if wisdom in aspects:
+                return {"id": wisdom}
+        return None
 
     def get_type(self, item: dict[str, Any]) -> dict[str, Any]:
         for label in self.valid_types:
@@ -74,5 +81,7 @@ class WorkstationHandler:
             "workstation_type": self.get_type(item),
             "workstation_slots": self.get_slots(item),
         }
+        if wisdom := self.get_wisdom(item):
+            model["evolves"] = wisdom
 
         return model
