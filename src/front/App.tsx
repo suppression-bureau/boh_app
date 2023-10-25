@@ -24,6 +24,7 @@ import Home from "./routes/Home"
 import ItemsView from "./routes/Items.tsx"
 import Principles from "./routes/Principles.tsx"
 import SkillsView from "./routes/Skills"
+import WorkstationView from "./routes/Workstation.tsx"
 
 const ROUTE_LINKS = [
     { label: "Home", href: "/", pattern: "/" },
@@ -32,6 +33,7 @@ const ROUTE_LINKS = [
     { label: "Skills", href: "/skills", pattern: "/skills" },
     { label: "Items", href: "/items", pattern: "/items" },
     { label: "Assistance", href: "/assistance", pattern: "/assistance" },
+    { label: "Workstations", href: "/workstations", pattern: "/workstations" },
 ]
 
 function useRouteMatch(patterns: readonly string[]) {
@@ -116,6 +118,7 @@ const App = () => {
                     <Route path="skills" element={<SkillsView />} />
                     <Route path="items" element={<ItemsView />} />
                     <Route path="assistance" element={<AssistantView />} />
+                    <Route path="workstations" element={<WorkstationView />} />
                     <Route path="*" element={<Navigate replace to="/" />} />
                 </SlideRoutes>
             </React.Suspense>

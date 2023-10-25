@@ -33,7 +33,11 @@ interface AspectProps extends AspectFromQuery {
     nameAspect?: boolean
     showAssistant?: boolean
 }
-function Aspect({ nameAspect = true, showAssistant, ...aspect }: AspectProps) {
+function Aspect({
+    nameAspect = true,
+    showAssistant = false,
+    ...aspect
+}: AspectProps) {
     return (
         <Card>
             <CardHeader
