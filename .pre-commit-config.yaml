@@ -22,6 +22,7 @@ repos:
     rev: v3.0.3
     hooks:
       - id: prettier
+        language_version: system
         additional_dependencies:
           - prettier
           - "@trivago/prettier-plugin-sort-imports"
@@ -40,6 +41,7 @@ repos:
         args:
           - --max-warnings=0
           - --ignore-pattern=!.*.ts
+        language_version: system
         additional_dependencies:
           - eslint
           - eslint-plugin-react
