@@ -6,23 +6,24 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[python]": {
-    "editor.wordBasedSuggestions": false,
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.codeActionsOnSave": {
       "source.fixAll": true,
       "source.organizeImports": true,
     },
   },
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true,
+  },
+  "editor.wordBasedSuggestions": false,
   "python.analysis.typeCheckingMode": "basic",
   "python.terminal.activateEnvironment": false,
   "python.testing.pytestArgs": [],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
-  "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true,
-  },
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+  "eslint.nodePath": ".yarn/sdks",
 }

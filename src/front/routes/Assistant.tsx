@@ -46,15 +46,10 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
     <Stack>
         {assistant?.aspects!.map((aspect) => (
             <div key={`${aspect!.id}grouping`}>
-                <Typography
-                    key={`${aspect!.id}header`}
-                    variant="h5"
-                    color={"secondary"}
-                >
+                <Typography variant="h5" color={"secondary"}>
                     {aspect?.id}
                 </Typography>
                 <ItemsView
-                    key={`${aspect!.id}${principle}`}
                     filters={{
                         [principle]: true,
                         aspect: aspect!.id,
@@ -133,6 +128,7 @@ const AssistantView = () => {
                         selectedAssistant.base_principles!.map(
                             ({ principle, count }) => (
                                 <PrincipleFilterButton
+                                    key={principle.id}
                                     principle={principle}
                                     selectedPrinciple={selectedPrinciple}
                                     count={count}
