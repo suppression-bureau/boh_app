@@ -48,17 +48,17 @@ function AssistantItems({ principle, assistant }: AssistantItemProps) {
             {assistant?.aspects!.map((aspect) => (
                 <div key={`${aspect!.id}grouping`}>
                     <Typography
-                        key={aspect?.id + "header"}
+                        key={`${aspect!.id}header`}
                         variant="h5"
                         color={"secondary"}
                     >
                         {aspect?.id}
                     </Typography>
                     <ItemsView
-                        key={aspect?.id + principle}
+                        key={`${aspect!.id}${principle}`}
                         filters={{
                             [principle]: true,
-                            aspect: aspect?.id,
+                            aspect: aspect!.id,
                         }}
                     />
                 </div>

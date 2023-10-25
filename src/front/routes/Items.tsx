@@ -70,7 +70,7 @@ function filterItems(
     if (filters?.known) {
         filtered_state = state.filter(({ known }) => known === true)
     }
-    principles.map((principle) => {
+    for (const principle of principles) {
         if (filters?.[principle]) {
             filtered_state = filtered_state.filter((item) => {
                 return item[principle] !== null
@@ -79,7 +79,7 @@ function filterItems(
                 return b[principle]! - a[principle]!
             })
         }
-    })
+    }
     if (filters?.aspect) {
         filtered_state = filtered_state.filter((item) => {
             return item.aspects!.some(({ id }) => id === filters.aspect)
