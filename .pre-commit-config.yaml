@@ -46,4 +46,4 @@ repos:
           - eslint-plugin-react-hooks
           - "@typescript-eslint/eslint-plugin"
           - "@typescript-eslint/parser"
-          - react  # to “detect” the version
+          - react # to “detect” the version
