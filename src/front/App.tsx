@@ -20,6 +20,7 @@ import useMediaQuery from "@mui/material/useMediaQuery"
 
 import ElevationScroll from "./ElevationScroll.tsx"
 import Aspects from "./routes/Aspects"
+import AssistantView from "./routes/Assistant.tsx"
 import Home from "./routes/Home"
 import ItemsView from "./routes/Items.tsx"
 import Principles from "./routes/Principles.tsx"
@@ -31,6 +32,7 @@ const ROUTE_LINKS = [
     { label: "Principles", href: "/principles", pattern: "/principles" },
     { label: "Skills", href: "/skills", pattern: "/skills" },
     { label: "Items", href: "/items", pattern: "/items" },
+    { label: "Assistance", href: "/assistance", pattern: "/assistance" },
 ]
 
 function useRouteMatch(patterns: readonly string[]) {
@@ -107,25 +109,17 @@ const App = () => {
                     </Toolbar>
                 </AppBar>
             </ElevationScroll>
-            <Box
-                component="main"
-                sx={{
-                    maxWidth: "42rem",
-                    mx: "auto",
-                    p: 3,
-                }}
-            >
-                <React.Suspense fallback={"Loading..."}>
-                    <SlideRoutes>
-                        <Route index element={<Home />} />
-                        <Route path="aspects" element={<Aspects />} />
-                        <Route path="principles" element={<Principles />} />
-                        <Route path="skills" element={<SkillsView />} />
-                        <Route path="items" element={<ItemsView />} />
-                        <Route path="*" element={<Navigate replace to="/" />} />
-                    </SlideRoutes>
-                </React.Suspense>
-            </Box>
+            <React.Suspense fallback={"Loading..."}>
+                <SlideRoutes>
+                    <Route index element={<Home />} />
+                    <Route path="aspects" element={<Aspects />} />
+                    <Route path="principles" element={<Principles />} />
+                    <Route path="skills" element={<SkillsView />} />
+                    <Route path="items" element={<ItemsView />} />
+                    <Route path="assistance" element={<AssistantView />} />
+                    <Route path="*" element={<Navigate replace to="/" />} />
+                </SlideRoutes>
+            </React.Suspense>
         </ThemeProvider>
     )
 }
