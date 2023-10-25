@@ -42,30 +42,28 @@ type AssistantItemProps = {
     assistant: AssistantFromQuery
 }
 
-function AssistantItems({ principle, assistant }: AssistantItemProps) {
-    return (
-        <Stack>
-            {assistant?.aspects!.map((aspect) => (
-                <div key={`${aspect!.id}grouping`}>
-                    <Typography
-                        key={`${aspect!.id}header`}
-                        variant="h5"
-                        color={"secondary"}
-                    >
-                        {aspect?.id}
-                    </Typography>
-                    <ItemsView
-                        key={`${aspect!.id}${principle}`}
-                        filters={{
-                            [principle]: true,
-                            aspect: aspect!.id,
-                        }}
-                    />
-                </div>
-            ))}
-        </Stack>
-    )
-}
+const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
+    <Stack>
+        {assistant?.aspects!.map((aspect) => (
+            <div key={`${aspect!.id}grouping`}>
+                <Typography
+                    key={`${aspect!.id}header`}
+                    variant="h5"
+                    color={"secondary"}
+                >
+                    {aspect?.id}
+                </Typography>
+                <ItemsView
+                    key={`${aspect!.id}${principle}`}
+                    filters={{
+                        [principle]: true,
+                        aspect: aspect!.id,
+                    }}
+                />
+            </div>
+        ))}
+    </Stack>
+)
 
 type PrincipleFilterButtonProps = {
     principle: PrincipleFromQuery
@@ -79,20 +77,16 @@ const PrincipleFilterButton = ({
     selectedPrinciple,
     count,
     handlePrincipleFilter,
-}: PrincipleFilterButtonProps) => {
-    return (
-        <Button
-            key={principle.id}
-            startIcon={<PrincipleIcon id={principle.id} />}
-            onClick={() => handlePrincipleFilter(principle.id)}
-            variant={
-                selectedPrinciple === principle.id ? "contained" : "outlined"
-            }
-        >
-            {count}
-        </Button>
-    )
-}
+}: PrincipleFilterButtonProps) => (
+    <Button
+        key={principle.id}
+        startIcon={<PrincipleIcon id={principle.id} />}
+        onClick={() => handlePrincipleFilter(principle.id)}
+        variant={selectedPrinciple === principle.id ? "contained" : "outlined"}
+    >
+        {count}
+    </Button>
+)
 
 const AssistantView = () => {
     const [{ data }] = useQuery({ query: assistantQueryDocument })
