@@ -67,6 +67,33 @@ function AssistantItems({ principle, assistant }: AssistantItemProps) {
     )
 }
 
+type PrincipleFilterButtonProps = {
+    principle: PrincipleFromQuery
+    selectedPrinciple: PrincipleFromQuery["id"]
+    count: number
+    handlePrincipleFilter(principle: PrincipleFromQuery): void
+}
+
+const PrincipleFilterButton = ({
+    principle,
+    selectedPrinciple,
+    count,
+    handlePrincipleFilter,
+}: PrincipleFilterButtonProps) => {
+    return (
+        <Button
+            key={principle.id}
+            startIcon={<PrincipleIcon id={principle.id} />}
+            onClick={() => handlePrincipleFilter(principle.id)}
+            variant={
+                selectedPrinciple === principle.id ? "contained" : "outlined"
+            }
+        >
+            {count}
+        </Button>
+    )
+}
+
 const AssistantView = () => {
     const [{ data }] = useQuery({ query: assistantQueryDocument })
     const [selectedAssistant, setAssistant] =
@@ -111,22 +138,12 @@ const AssistantView = () => {
                     {selectedAssistant &&
                         selectedAssistant.base_principles!.map(
                             ({ principle, count }) => (
-                                <Button
-                                    key={principle.id}
-                                    startIcon={
-                                        <PrincipleIcon id={principle.id} />
-                                    }
-                                    onClick={() =>
-                                        handlePrinciple(principle.id)
-                                    }
-                                    variant={
-                                        selectedPrinciple === principle.id
-                                            ? "contained"
-                                            : "outlined"
-                                    }
-                                >
-                                    {count}
-                                </Button>
+                                <PrincipleFilterButton
+                                    principle={principle}
+                                    selectedPrinciple={selectedPrinciple}
+                                    count={count}
+                                    handlePrincipleFilter={handlePrinciple}
+                                />
                             ),
                         )}
                 </CardActions>
