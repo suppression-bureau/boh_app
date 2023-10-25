@@ -37,7 +37,7 @@ type WorkstationFromQuery = types.WorkstationQuery["workstation"][number]
 type WorkstationSlotFromQuery =
     WorkstationFromQuery["workstation_slots"][number]
 
-const WorkstationSlot = ({ workstation_slot }: WorkstationSlotFromQuery) => (
+const WorkstationSlot = (workstation_slot: WorkstationSlotFromQuery) => (
     <Card>
         <CardHeader title={workstation_slot.name} />
         <Stack direction="row" gap={1}>
@@ -65,7 +65,7 @@ const Workstation = ({
             divider={<Divider orientation="vertical" flexItem />}
         >
             {workstation.workstation_slots!.map((slot) => (
-                <WorkstationSlot key={slot.name} workstation_slot={slot} />
+                <WorkstationSlot key={slot.name} {...slot} />
             ))}
         </Stack>
     </Card>

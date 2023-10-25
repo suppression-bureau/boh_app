@@ -29,25 +29,27 @@ function AspectIcon({ id }: { id: string }) {
 
 type AspectFromQuery = types.AspectsQuery["aspect"][number]
 
-interface AspectProps extends AspectFromQuery {
+interface AspectProps extends Omit<AspectFromQuery, "assistants"> {
     nameAspect?: boolean
     showAssistant?: boolean
+    assistants?: AspectFromQuery["assistants"]
 }
 function Aspect({
     nameAspect = true,
     showAssistant = false,
-    ...aspect
+    id,
+    assistants = [],
 }: AspectProps) {
     return (
         <Card>
             <CardHeader
-                title={nameAspect ? aspect.id : ""}
-                avatar={<AspectIcon id={aspect.id} />}
+                title={nameAspect ? id : ""}
+                avatar={<AspectIcon id={id} />}
             />
             <CardContent>
-                {showAssistant && aspect.assistants!.length > 0 && (
+                {showAssistant && assistants.length > 0 && (
                     <List disablePadding>
-                        {aspect.assistants!.map(({ id }) => (
+                        {assistants.map(({ id }) => (
                             <ListItem key={id} sx={{ pl: 4 }}>
                                 <ListItemText primary={id} />
                             </ListItem>
