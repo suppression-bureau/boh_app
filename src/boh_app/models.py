@@ -208,6 +208,7 @@ class WorkstationSlot(Base, NameMixin):
     __tablename__ = "workstation_slot"
 
     name: Mapped[str]
+    index: Mapped[int]
 
     workstations: Mapped[list[Workstation]] = relationship(
         back_populates="workstation_slots",

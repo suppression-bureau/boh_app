@@ -14,6 +14,7 @@ class Workstation(TypedDict):
 class Slot(TypedDict):
     id: str
     name: str
+    index: int
     accepts: NotRequired[list[Aspect]]
 
 

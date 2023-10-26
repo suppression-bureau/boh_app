@@ -31,20 +31,20 @@ class SlotHandler:
             aspects["soul"] = 1
         return [a for a in aspects if a in self.aspects]
 
-    def get_slot(self, item_slot: dict[str, Any], workstation_name: str) -> Slot:
+    def get_slot(self, item_slot: dict[str, Any], workstation_name: str, index: int) -> Slot:
         aspects = self._get_aspects(item_slot)
         id = name = item_slot["label"]
 
         if id in self.known_slots:
             if aspects == self.known_slots[id]:
-                return Slot(id=id, name=name)
+                return Slot(id=id, name=name, index=index)
             id = f"{workstation_name}.{id}"
             if id in self.known_slots:
                 id += "2"
 
         self.known_slots[id] = aspects
-        self.full_slots.append(Slot(id=id, name=name, accepts=[Aspect(id=a) for a in aspects]))
-        return Slot(id=id, name=name)
+        self.full_slots.append(Slot(id=id, name=name, index=index, accepts=[Aspect(id=a) for a in aspects]))
+        return Slot(id=id, name=name, index=index)
 
 
 class WorkstationHandler:
@@ -73,7 +73,7 @@ class WorkstationHandler:
         return WorkstationType(id="generic")
 
     def get_slots(self, item: dict[str, Any]) -> list[Slot]:
-        return [self.slot_handler.get_slot(s, item["label"]) for s in item["slots"]]
+        return [self.slot_handler.get_slot(slot, item["label"], index) for index, slot in enumerate(item["slots"])]
 
     def mk_model_data(self, item: dict[str, Any]) -> Workstation:
         model = Workstation(
