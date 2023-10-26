@@ -52,7 +52,7 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
                 <ItemsView
                     filters={{
                         [principle.id]: true,
-                        aspect: aspect!.id,
+                        aspects: [aspect],
                     }}
                 />
             </div>

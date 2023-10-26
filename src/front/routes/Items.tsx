@@ -52,11 +52,12 @@ const principles = [
 
 type Principle = (typeof principles)[number]
 type ItemFromQuery = types.ItemsQuery["item"][number]
+type AspectFromQuery = ItemFromQuery["aspects"][number]
 
 interface ItemsProps {
     filters?: {
         known?: boolean
-        aspect?: string
+        aspects?: AspectFromQuery[]
     } & Partial<{ [principle in Principle]: boolean }>
 }
 type ItemsAction = ItemsActionInner | ItemsActionOuter
@@ -81,9 +82,10 @@ function filterItems(
             })
         }
     }
-    if (filters?.aspect) {
+    if (filters?.aspects) {
+        const aspects = filters.aspects.map((aspect) => aspect.id)
         filtered_state = filtered_state.filter((item) => {
-            return item.aspects!.some(({ id }) => id === filters.aspect)
+            return item.aspects!.some(({ id }) => aspects.includes(id))
         })
     }
     return filtered_state

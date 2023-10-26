@@ -39,8 +39,11 @@ type WorkstationSlotFromQuery =
 
 const WorkstationSlot = (workstation_slot: WorkstationSlotFromQuery) => (
     <Card sx={{ boxShadow: "none" }}>
-        <CardHeader title={workstation_slot.name} />
-        <AspectIconGroup aspects={workstation_slot.accepts} />
+        <CardHeader
+            title={workstation_slot.name}
+            titleTypographyProps={{ variant: "h6" }}
+            avatar={<AspectIconGroup aspects={workstation_slot.accepts} />}
+        />
     </Card>
 )
 
@@ -57,11 +60,10 @@ const Workstation = ({
         />
         <Stack
             direction="row"
-            // divider={<Divider orientation="vertical" flexItem />}
             justifyContent={"space-between"}
             spacing={2}
-            // useFlexGap  // not sure that I want to use this
-            // flexWrap="wrap"
+            useFlexGap
+            flexWrap="wrap"
         >
             {workstation
                 .workstation_slots!.sort((a, b) => a!.index - b!.index)
