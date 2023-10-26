@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { AspectIconGroup } from "./Aspects"
+// import ItemsView from "./Items"
 import { PrincipleIconGroup } from "./Principles"
 
 const workstationQueryDocument = graphql(`
@@ -20,6 +21,7 @@ const workstationQueryDocument = graphql(`
                 id
             }
             workstation_slots {
+                id
                 name
                 index
                 accepts {
@@ -44,6 +46,7 @@ const WorkstationSlot = (workstation_slot: WorkstationSlotFromQuery) => (
             titleTypographyProps={{ variant: "h6" }}
             avatar={<AspectIconGroup aspects={workstation_slot.accepts} />}
         />
+        {/* <ItemsView filters={{ aspects: workstation_slot.accepts }} /> */}
     </Card>
 )
 
@@ -68,7 +71,7 @@ const Workstation = ({
             {workstation
                 .workstation_slots!.sort((a, b) => a!.index - b!.index)
                 .map((slot) => (
-                    <WorkstationSlot key={slot.name} {...slot} />
+                    <WorkstationSlot key={slot.id} {...slot} />
                 ))}
         </Stack>
     </Card>

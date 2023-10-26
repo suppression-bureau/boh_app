@@ -25,6 +25,9 @@ const aspectQueryDocument = graphql(`
 `)
 
 type AspectFromQuery = types.AspectsQuery["aspect"][number]
+interface BasicAspect extends Omit<AspectFromQuery, "assistants"> {
+    assistants?: AspectFromQuery["assistants"]
+}
 
 interface AspectIconProps extends AvatarProps {
     id: string
@@ -33,7 +36,7 @@ const AspectIcon = ({ id, ...props }: AspectIconProps) => (
     <Avatar variant="square" src={`/data/aspect/${id}.png`} {...props}></Avatar>
 )
 
-const AspectIconGroup = ({ aspects }: { aspects: AspectFromQuery[] }) => (
+const AspectIconGroup = ({ aspects }: { aspects: BasicAspect[] }) => (
     <AvatarGroup variant="square" max={10}>
         {/* AvatarGroup spacing can only reduce overlap, max is 5 by default*/}
         {aspects.map(({ id }) => (
@@ -42,11 +45,11 @@ const AspectIconGroup = ({ aspects }: { aspects: AspectFromQuery[] }) => (
     </AvatarGroup>
 )
 
-interface AspectProps extends Omit<AspectFromQuery, "assistants"> {
+interface AspectProps extends BasicAspect {
     nameAspect?: boolean
     showAssistant?: boolean
-    assistants?: AspectFromQuery["assistants"]
 }
+
 function Aspect({
     nameAspect = true,
     showAssistant = false,
