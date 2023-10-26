@@ -1,7 +1,8 @@
 import { CardHeader } from "@mui/material"
 import { useQuery } from "urql"
 
-import Avatar from "@mui/material/Avatar"
+import Avatar, { AvatarProps } from "@mui/material/Avatar"
+import AvatarGroup from "@mui/material/AvatarGroup"
 import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
@@ -23,11 +24,23 @@ const aspectQueryDocument = graphql(`
     }
 `)
 
-function AspectIcon({ id }: { id: string }) {
-    return <Avatar variant="square" src={`/data/aspect/${id}.png`}></Avatar>
-}
-
 type AspectFromQuery = types.AspectsQuery["aspect"][number]
+
+interface AspectIconProps extends AvatarProps {
+    id: string
+}
+const AspectIcon = ({ id, ...props }: AspectIconProps) => (
+    <Avatar variant="square" src={`/data/aspect/${id}.png`} {...props}></Avatar>
+)
+
+const AspectIconGroup = ({ aspects }: { aspects: AspectFromQuery[] }) => (
+    <AvatarGroup variant="square">
+        {/* AvatarGroup spacing can only reduce overlap */}
+        {aspects.map(({ id }) => (
+            <AspectIcon key={id} id={id} sx={{ margin: 2 }} />
+        ))}
+    </AvatarGroup>
+)
 
 interface AspectProps extends Omit<AspectFromQuery, "assistants"> {
     nameAspect?: boolean
@@ -47,9 +60,9 @@ function Aspect({
                 avatar={<AspectIcon id={id} />}
             />
             <CardContent>
-                {showAssistant && assistants.length > 0 && (
+                {showAssistant && assistants!.length > 0 && (
                     <List disablePadding>
-                        {assistants.map(({ id }) => (
+                        {assistants!.map(({ id }) => (
                             <ListItem key={id} sx={{ pl: 4 }}>
                                 <ListItemText primary={id} />
                             </ListItem>
@@ -86,4 +99,4 @@ const AspectsView = () => {
     )
 }
 
-export { Aspect, AspectsView as default }
+export { Aspect, AspectIconGroup, AspectsView as default }
