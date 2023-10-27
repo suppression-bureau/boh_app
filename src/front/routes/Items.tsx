@@ -65,8 +65,8 @@ type ItemsActionInner = never
 type ItemsActionOuter = { type: "filter"; filters: ItemsProps["filters"] }
 
 function filterItems(
-    filters: ItemsProps["filters"],
     state: ItemFromQuery[],
+    filters: ItemsProps["filters"],
 ): ItemFromQuery[] {
     let filtered_state = state
     if (filters?.known) {
@@ -98,7 +98,7 @@ function itemsReducer(
     switch (action.type) {
         case "filter": {
             const { filters } = action
-            return filterItems(filters, state)
+            return filterItems(state, filters)
         }
     }
 }
@@ -130,7 +130,7 @@ const ItemsView = ({ filters }: ItemsProps) => {
 
     const [state] = useReducer(
         itemsReducer,
-        filterItems({ known: true, ...filters }, data!.item),
+        filterItems(data!.item, { known: true, ...filters }),
     )
 
     return (
