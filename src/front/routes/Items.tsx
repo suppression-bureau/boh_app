@@ -52,6 +52,9 @@ const PRINCIPLES = [
 
 type Principle = (typeof PRINCIPLES)[number]
 type ItemFromQuery = types.ItemsQuery["item"][number]
+interface VisibleItem extends ItemFromQuery {
+    isVisible: boolean
+}
 type AspectFromQuery = ItemFromQuery["aspects"][number]
 
 interface ItemsProps {
@@ -62,36 +65,48 @@ interface ItemsProps {
     }
 }
 
+function setVisible(item: ItemFromQuery, visible: boolean): VisibleItem {
+    return { ...item, isVisible: visible }
+}
+
 function filterItems(
     state: ItemFromQuery[],
     filters: ItemsProps["filters"],
-): ItemFromQuery[] {
-    let filtered_state = state
+): VisibleItem[] {
+    let filteredState = state
     if (filters?.known) {
-        filtered_state = state.filter(({ known }) => known === true)
+        filteredState = state.filter(({ known }) => known)
     }
     if (filters?.principles) {
         const filterPrinciples: Principle[] = filters.principles.map(
             (principle) => principle.id,
         ) as Principle[]
         for (const principle of filterPrinciples) {
-            filtered_state = filtered_state
+            filteredState = filteredState
                 .filter((item) => {
                     return item[principle] !== null
                 })
                 .toSorted((a, b) => {
                     return b[principle]! - a[principle]!
-                })
+                }) // note that this won't work once we have principles.length > 1
         }
     }
     if (filters?.aspects) {
         const aspects = filters.aspects.map((aspect) => aspect.id)
-        filtered_state = filtered_state.filter((item) => {
+        filteredState = filteredState.filter((item) => {
             return item.aspects!.some(({ id }) => aspects.includes(id))
         })
     }
-    console.log(filtered_state)
-    return filtered_state
+    // now we apply isVisible to all items which were filtered
+    const filteredItems = filteredState.map(({ id }) => id)
+    let finalState: VisibleItem[] = state.map((i) => setVisible(i, false))
+    finalState = finalState.map((item) => {
+        if (filteredItems.includes(item.id)) {
+            return setVisible(item, true)
+        }
+        return item
+    })
+    return finalState
 }
 
 function Item({ ...item }: ItemFromQuery) {
@@ -132,7 +147,9 @@ const ItemsView = ({ filters }: ItemsProps) => {
                 marginInline: "auto",
             }}
         >
-            {state?.map((item) => <Item key={item.id} {...item} />)}
+            {state
+                ?.filter(({ isVisible }) => isVisible)
+                .map((item) => <Item key={item.id} {...item} />)}
         </Stack>
     )
 }
