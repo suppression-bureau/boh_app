@@ -1,4 +1,4 @@
-import { useReducer } from "react"
+import { useMemo } from "react"
 import { useQuery } from "urql"
 
 import Card from "@mui/material/Card"
@@ -34,7 +34,7 @@ const itemsQueryDocument = graphql(`
         }
     }
 `)
-const principles = [
+const PRINCIPLES = [
     "edge",
     "forge",
     "grail",
@@ -50,7 +50,7 @@ const principles = [
     "winter",
 ] as const
 
-type Principle = (typeof principles)[number]
+type Principle = (typeof PRINCIPLES)[number]
 type ItemFromQuery = types.ItemsQuery["item"][number]
 type AspectFromQuery = ItemFromQuery["aspects"][number]
 
@@ -60,9 +60,6 @@ interface ItemsProps {
         aspects?: AspectFromQuery[]
     } & Partial<{ [principle in Principle]: boolean }>
 }
-type ItemsAction = ItemsActionInner | ItemsActionOuter
-type ItemsActionInner = never
-type ItemsActionOuter = { type: "filter"; filters: ItemsProps["filters"] }
 
 function filterItems(
     state: ItemFromQuery[],
@@ -72,14 +69,15 @@ function filterItems(
     if (filters?.known) {
         filtered_state = state.filter(({ known }) => known === true)
     }
-    for (const principle of principles) {
+    for (const principle of PRINCIPLES) {
         if (filters?.[principle]) {
-            filtered_state = filtered_state.filter((item) => {
-                return item[principle] !== null
-            })
-            filtered_state.sort((a, b) => {
-                return b[principle]! - a[principle]!
-            })
+            filtered_state = filtered_state
+                .filter((item) => {
+                    return item[principle] !== null
+                })
+                .toSorted((a, b) => {
+                    return b[principle]! - a[principle]!
+                })
         }
     }
     if (filters?.aspects) {
@@ -91,24 +89,12 @@ function filterItems(
     return filtered_state
 }
 
-function itemsReducer(
-    state: ItemFromQuery[],
-    action: ItemsAction,
-): ItemFromQuery[] {
-    switch (action.type) {
-        case "filter": {
-            const { filters } = action
-            return filterItems(state, filters)
-        }
-    }
-}
-
 function Item({ ...item }: ItemFromQuery) {
     return (
         <Card>
             <CardHeader title={item.id} />
             <Stack direction="row">
-                {principles.map((principle) => {
+                {PRINCIPLES.map((principle) => {
                     if (item[principle] != null)
                         return (
                             <PrincipleCard
@@ -128,9 +114,9 @@ function Item({ ...item }: ItemFromQuery) {
 const ItemsView = ({ filters }: ItemsProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
 
-    const [state] = useReducer(
-        itemsReducer,
-        filterItems(data!.item, { known: true, ...filters }),
+    const state = useMemo(
+        () => filterItems(data!.item, { known: true, ...filters }),
+        [data, filters],
     )
 
     return (

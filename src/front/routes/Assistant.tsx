@@ -107,13 +107,6 @@ const AssistantView = () => {
         [setAssistant, selectedPrinciple, setPrinciple],
     )
 
-    const handlePrinciple = useCallback(
-        (principle: PrincipleFromQuery) => {
-            setPrinciple(principle)
-        },
-        [setPrinciple],
-    )
-
     return (
         <Container maxWidth="sm">
             <Card sx={{ padding: 2 }}>
@@ -135,7 +128,7 @@ const AssistantView = () => {
                                     principle={principle}
                                     selectedPrinciple={selectedPrinciple}
                                     count={count}
-                                    handlePrincipleFilter={handlePrinciple}
+                                    handlePrincipleFilter={setPrinciple}
                                 />
                             ),
                         )}
