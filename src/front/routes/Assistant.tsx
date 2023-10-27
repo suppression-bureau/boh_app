@@ -51,7 +51,7 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
                 </Typography>
                 <ItemsView
                     filters={{
-                        [principle.id]: true,
+                        principles: [principle],
                         aspects: [aspect],
                     }}
                 />

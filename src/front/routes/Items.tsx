@@ -58,7 +58,8 @@ interface ItemsProps {
     filters?: {
         known?: boolean
         aspects?: AspectFromQuery[]
-    } & Partial<{ [principle in Principle]: boolean }>
+        principles?: Pick<types.Principle, "id">[]
+    }
 }
 
 function filterItems(
@@ -69,8 +70,11 @@ function filterItems(
     if (filters?.known) {
         filtered_state = state.filter(({ known }) => known === true)
     }
-    for (const principle of PRINCIPLES) {
-        if (filters?.[principle]) {
+    if (filters?.principles) {
+        const filterPrinciples: Principle[] = filters.principles.map(
+            (principle) => principle.id,
+        ) as Principle[]
+        for (const principle of filterPrinciples) {
             filtered_state = filtered_state
                 .filter((item) => {
                     return item[principle] !== null
@@ -86,6 +90,7 @@ function filterItems(
             return item.aspects!.some(({ id }) => aspects.includes(id))
         })
     }
+    console.log(filtered_state)
     return filtered_state
 }
 
