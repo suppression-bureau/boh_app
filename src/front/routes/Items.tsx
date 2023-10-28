@@ -77,43 +77,35 @@ function filterItems(
     filters: ItemsProps["filters"],
 ): VisibleItem[] {
     let filteredState = state
+    // now everything is visible
     if (filters?.known) {
         filteredState = state.filter(({ known }) => known)
     }
+    // now, if we filtered by known, the unknown items are no longer visible
     if (filters?.principles) {
-        const filterPrinciples: Principle[] = filters.principles.map(
-            (principle) => principle.id,
-        ) as Principle[]
-        const possiblities = []
-        for (const principle of filterPrinciples) {
-            possiblities.push(
+        filteredState = filters.principles
+            .map((principle) => principle.id as Principle)
+            .map((principle) =>
                 filteredState
-                    .filter((item) => {
-                        return item[principle] !== null
-                    })
-                    .toSorted((a, b) => {
-                        return b[principle]! - a[principle]!
-                    }), // NB: this doesn't work with principles.length > 1
+                    .filter((item) => item[principle] !== null)
+                    // NB: this doesn't work with principles.length > 1
+                    .toSorted(
+                        (a, b) => (b[principle] ?? 0) - (a[principle] ?? 0),
+                    ),
             )
-        }
-        filteredState = possiblities.reduce((a, b) => a.concat(b), [])
+            .reduce((a, b) => a.concat(b), [])
     }
+    // now, if we filtered by principles, the items lacking one or more of the principles are no longer visible
     if (filters?.aspects) {
-        const aspects = filters.aspects.map((aspect) => aspect.id)
-        filteredState = filteredState.filter((item) => {
-            return item.aspects!.some(({ id }) => aspects.includes(id))
-        })
+        const aspects = new Set(filters.aspects.map((aspect) => aspect.id))
+        filteredState = filteredState.filter((item) =>
+            item.aspects.some(({ id }) => aspects.has(id)),
+        )
     }
+    // now, if we filtered by aspects, the items lacking one or more of the aspects are no longer visible
     // now we apply isVisible to all items which were filtered
-    const filteredItems = filteredState.map(({ id }) => id)
-    let finalState: VisibleItem[] = state.map((i) => setVisible(i, false))
-    finalState = finalState.map((item) => {
-        if (filteredItems.includes(item.id)) {
-            return setVisible(item, true)
-        }
-        return item
-    })
-    return finalState
+    const filteredItems = new Set(filteredState.map(({ id }) => id))
+    return state.map((item) => setVisible(item, filteredItems.has(item.id)))
 }
 
 function Item({ ...item }: ItemFromQuery) {
