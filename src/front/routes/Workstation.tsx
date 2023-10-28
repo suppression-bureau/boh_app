@@ -1,9 +1,9 @@
-import { CardActions } from "@mui/material"
 import { useState } from "react"
 import { useQuery } from "urql"
 
 import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
+import CardActions from "@mui/material/CardActions"
 import CardHeader from "@mui/material/CardHeader"
 import Collapse from "@mui/material/Collapse"
 import Stack from "@mui/material/Stack"
@@ -45,8 +45,7 @@ const workstationQueryDocument = graphql(`
 type WorkstationFromQuery = types.WorkstationQuery["workstation"][number]
 type WorkstationSlotFromQuery =
     WorkstationFromQuery["workstation_slots"][number]
-
-type Principle = Pick<types.Principle, "id">
+type Principle = WorkstationFromQuery["principles"][number]
 
 interface WorkstationSlotProps {
     workstationSlot: WorkstationSlotFromQuery
@@ -54,14 +53,15 @@ interface WorkstationSlotProps {
 }
 
 const WorkstationSlotInfoCard = ({
-    ...workstationSlot
+    name,
+    accepts,
 }: WorkstationSlotFromQuery) => {
     return (
         <Card sx={{ boxShadow: "none" }}>
             <CardHeader
-                title={workstationSlot.name}
+                title={name}
                 titleTypographyProps={{ variant: "h6" }}
-                avatar={<AspectIconGroup aspects={workstationSlot.accepts} />}
+                avatar={<AspectIconGroup aspects={accepts} />}
             />
         </Card>
     )
@@ -81,14 +81,14 @@ const WorkstationSlot = ({
                     endIcon={expanded ? <ExpandLess /> : <ExpandMore />}
                     sx={{ ml: "auto" }}
                 >
-                    {"Show Items"}
+                    Show Items
                 </Button>
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <ItemsView
                     filters={{
                         aspects: workstationSlot.accepts,
-                        principles: principles,
+                        principles,
                     }}
                 />
             </Collapse>
@@ -96,11 +96,11 @@ const WorkstationSlot = ({
     )
 }
 
-const Workstation = ({
-    workstation,
-}: {
+interface WorkstationProps {
     workstation: WorkstationFromQuery
-}) => (
+}
+
+const Workstation = ({ workstation }: WorkstationProps) => (
     <Card sx={{ boxShadow: "none" }}>
         <CardHeader
             title={workstation.id}
@@ -108,8 +108,8 @@ const Workstation = ({
             avatar={<PrincipleIconGroup principles={workstation.principles} />}
         />
         <Stack spacing={2}>
-            {workstation
-                .workstation_slots!.sort((a, b) => a!.index - b!.index)
+            {workstation.workstation_slots
+                .toSorted((a, b) => a.index - b.index)
                 .map((slot) => (
                     <WorkstationSlot
                         key={slot.id}

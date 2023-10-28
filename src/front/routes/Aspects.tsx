@@ -1,10 +1,10 @@
-import { CardHeader } from "@mui/material"
 import { useQuery } from "urql"
 
 import Avatar, { AvatarProps } from "@mui/material/Avatar"
 import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
+import CardHeader from "@mui/material/CardHeader"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
@@ -32,8 +32,20 @@ interface BasicAspect extends Omit<AspectFromQuery, "assistants"> {
 interface AspectIconProps extends Omit<AvatarProps, "src"> {
     id: string
 }
-const AspectIcon = ({ id, variant = "square", ...props }: AspectIconProps) => (
-    <Avatar variant={variant} src={`/data/aspect/${id}.png`} {...props} />
+const AspectIcon = ({
+    id,
+    alt = id,
+    title = id,
+    variant = "square",
+    ...props
+}: AspectIconProps) => (
+    <Avatar
+        alt={alt}
+        title={title}
+        variant={variant}
+        src={`/data/aspect/${id}.png`}
+        {...props}
+    />
 )
 
 const AspectIconGroup = ({ aspects }: { aspects: BasicAspect[] }) => (

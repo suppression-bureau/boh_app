@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material"
 import { useMemo } from "react"
 import { useQuery } from "urql"
 
@@ -6,6 +5,7 @@ import List from "@mui/material/List"
 import ListItemButton from "@mui/material/ListItemButton"
 import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
+import Typography from "@mui/material/Typography"
 
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"

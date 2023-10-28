@@ -25,23 +25,25 @@ interface PrincipleIconProps extends Omit<AvatarProps, "src"> {
 
 const PrincipleIcon = ({
     id,
-    alt,
+    alt = id,
+    title = id,
     variant = "square",
     ...props
 }: PrincipleIconProps) => (
     <Avatar
-        alt={alt ?? id}
+        alt={alt}
+        title={title}
         variant={variant}
         src={`/data/principle/${id}.png`}
         {...props}
     />
 )
 
-function PrincipleIconGroup({
-    principles,
-}: {
+interface PrincipleIconGroupProps {
     principles: PrincipleFromQuery[]
-}) {
+}
+
+function PrincipleIconGroup({ principles }: PrincipleIconGroupProps) {
     return (
         <AvatarStack>
             {principles.map(({ id }) => (
