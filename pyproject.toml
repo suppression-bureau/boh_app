@@ -36,7 +36,7 @@ dependencies = [
     "uvicorn",     # server
     "watchfiles",  # uvicorn and schema reload
     "vdf",         # steam vdf file parser
-    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git",  # sqlchemy schema to graphql
+    "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@async",  # sqlchemy schema to graphql
     "ariadne",  # graphql API endpoint
     "marshmallow-sqlalchemy",
     "platformdirs",

@@ -1,22 +1,10 @@
-import json
-import logging
-from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
-from ..settings import CACHE_DIR
-from ..utils import find_boh_dir
+from .types import Aspect, Item
+from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
-
-
-class SteamFiles(StrEnum):
-    ITEM = "aspecteditems.json"
-    INHERIT = "_prototypes.json"
-    SOUL1 = "abilities.json"
-    SOUL2 = "abilities2.json"
-    SOUL3 = "abilities3.json"
-    SOUL4 = "abilities4.json"
 
 
 def gen_items_json():
@@ -27,32 +15,20 @@ def gen_items_json():
     model_data += [item_handler.mk_model_data(item, inherits=False) for item in get_soul_data()]
     model_data = dedup(model_data)
 
-    outpath = CACHE_DIR / "item.json"
-    logging.info(f"Writing {len(model_data)} items to {outpath}")
-    with outpath.open("w") as a:
-        json.dump(model_data, a)
+    write_gen_file("item", model_data)
 
 
 def get_soul_data():
     soul_items = []
+    prune_altered = ["[", ":"]  # e.g. "{soul} [fatigued]" | "{soul}: {disease}"
     for file in [SteamFiles.SOUL1, SteamFiles.SOUL2, SteamFiles.SOUL3, SteamFiles.SOUL4]:
         data = get_steam_data(file)
-        prune_altered = ["[", ":"]  # e.g. "{soul} [fatigued]" | "{soul}: {disease}"
         for item in data:
             item["aspects"].update({"soul": 1})
             if not item.get("label") or any(d in item["label"] for d in prune_altered):
                 continue
             soul_items.append(item)
     return soul_items
-
-
-def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
-    boh_data_dir = find_boh_dir() / "StreamingAssets/bhcontent/core/elements"
-    boh_file = boh_data_dir / selection.value
-
-    with boh_file.open() as a:
-        data = json.load(a)
-    return data["elements"]
 
 
 def prune_data(data: list[dict[str, Any]]):
@@ -68,12 +44,6 @@ def prune_data(data: list[dict[str, Any]]):
             continue
         pruned.append(item)
     return pruned
-
-
-def get_valid_refs(name: str):
-    from boh_app.data.load_data import get_data
-
-    return [d["id"] for d in get_data(name)]
 
 
 def get_our_items():
@@ -99,10 +69,11 @@ class ItemHandler:
         self.inheritance_handler = InheritanceHandler()
         self.known_items = get_our_items()
 
-    def mk_model_data(self, item: dict[str, Any], *, inherits: bool = True) -> dict[str, Any]:
+    def mk_model_data(self, item: dict[str, Any], *, inherits: bool = True) -> Item:
         label = "Label" if inherits else "label"
+
         name = item[label].split(" (")[0]  # e.g. "{drink} (Bottle)" | "{drink} (Half-Full)"
-        model = {"id": name}
+        model = Item(id=name)
         model_aspects = []
 
         for aspect, value in item["aspects"].items():
@@ -113,13 +84,13 @@ class ItemHandler:
         if inherits:
             model_aspects += self.inheritance_handler.get_aspects(item)
 
-        model["aspects"] = [{"id": a} for a in set(model_aspects) if a in self.valid_aspects]
+        model["aspects"] = [Aspect(id=a) for a in set(model_aspects) if a in self.valid_aspects]
 
         if name in self.known_items:
             model["known"] = True
         return model
 
 
-def dedup(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def dedup(items: list[Item]) -> list[Item]:
     seen = set()
     return [item for item in items if item["id"] not in seen and not seen.add(item["id"])]

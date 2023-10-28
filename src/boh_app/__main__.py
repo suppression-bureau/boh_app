@@ -95,6 +95,16 @@ def gen_items() -> None:
     gen_items_json()
 
 
+@app.command()
+def gen_workstations() -> None:
+    """Generate `workstation.json` and `workstation_slot.json`.
+    NB: Overwrites existing files and is not run by default
+    during `boh_app.data.load_data.load_all`."""
+    from .data.generate_workstations import gen_workstation_json
+
+    gen_workstation_json()
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, handlers=[RichHandler()])
     app()

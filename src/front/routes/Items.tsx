@@ -1,14 +1,16 @@
-import { useReducer } from "react"
+import { useMemo } from "react"
 import { useQuery } from "urql"
 
-import Card from "@mui/material/Card"
-import CardHeader from "@mui/material/CardHeader"
+import List from "@mui/material/List"
+import ListItemButton from "@mui/material/ListItemButton"
+import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
+import Typography from "@mui/material/Typography"
 
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
-import { Aspect } from "../routes/Aspects"
-import { PrincipleCard } from "../routes/Principles"
+import { AspectIconGroup } from "../routes/Aspects"
+import { PrincipleIcon } from "../routes/Principles"
 
 const itemsQueryDocument = graphql(`
     query Items {
@@ -34,7 +36,7 @@ const itemsQueryDocument = graphql(`
         }
     }
 `)
-const principles = [
+const PRINCIPLES = [
     "edge",
     "forge",
     "grail",
@@ -49,97 +51,126 @@ const principles = [
     "sky",
     "winter",
 ] as const
-type Principle = (typeof principles)[number]
+
+type Principle = (typeof PRINCIPLES)[number]
 type ItemFromQuery = types.ItemsQuery["item"][number]
+interface VisibleItem extends ItemFromQuery {
+    isVisible: boolean
+}
+type AspectFromQuery = ItemFromQuery["aspects"][number]
 
 interface ItemsProps {
     filters?: {
         known?: boolean
-        aspect?: string
-    } & Partial<{ [principle in Principle]: boolean }>
+        aspects?: AspectFromQuery[]
+        principles?: Pick<types.Principle, "id">[]
+    }
 }
-type ItemsAction = ItemsActionInner | ItemsActionOuter
-type ItemsActionInner = never
-type ItemsActionOuter = { type: "filter"; filters: ItemsProps["filters"] }
+
+function setVisible(item: ItemFromQuery, visible: boolean): VisibleItem {
+    return { ...item, isVisible: visible }
+}
 
 function filterItems(
-    filters: ItemsProps["filters"],
     state: ItemFromQuery[],
-): ItemFromQuery[] {
-    let filtered_state = state
+    filters: ItemsProps["filters"],
+): VisibleItem[] {
+    let filteredState = state
+    // now everything is visible
     if (filters?.known) {
-        filtered_state = state.filter(({ known }) => known === true)
+        filteredState = state.filter(({ known }) => known)
     }
-    for (const principle of principles) {
-        if (filters?.[principle]) {
-            filtered_state = filtered_state.filter((item) => {
-                return item[principle] !== null
-            })
-            filtered_state.sort((a, b) => {
-                return b[principle]! - a[principle]!
-            })
-        }
+    // now, if we filtered by known, the unknown items are no longer visible
+    if (filters?.principles) {
+        filteredState = filters.principles
+            .map((principle) => principle.id as Principle)
+            .map((principle) =>
+                filteredState
+                    .filter((item) => item[principle] !== null)
+                    // NB: this doesn't work with principles.length > 1
+                    .toSorted(
+                        (a, b) => (b[principle] ?? 0) - (a[principle] ?? 0),
+                    ),
+            )
+            .reduce((a, b) => a.concat(b), [])
     }
-    if (filters?.aspect) {
-        filtered_state = filtered_state.filter((item) => {
-            return item.aspects!.some(({ id }) => id === filters.aspect)
-        })
+    // now, if we filtered by principles, the items lacking one or more of the principles are no longer visible
+    if (filters?.aspects) {
+        const aspects = new Set(filters.aspects.map((aspect) => aspect.id))
+        filteredState = filteredState.filter((item) =>
+            item.aspects.some(({ id }) => aspects.has(id)),
+        )
     }
-    return filtered_state
+    // now, if we filtered by aspects, the items lacking one or more of the aspects are no longer visible
+    // now we apply isVisible to all items which were filtered
+    const filteredItems = new Set(filteredState.map(({ id }) => id))
+    return state.map((item) => setVisible(item, filteredItems.has(item.id)))
 }
 
-function itemsReducer(
-    state: ItemFromQuery[],
-    action: ItemsAction,
-): ItemFromQuery[] {
-    switch (action.type) {
-        case "filter": {
-            const { filters } = action
-            return filterItems(filters, state)
-        }
-    }
+const ItemPrincipleValue = ({
+    principle,
+    value,
+}: {
+    principle: Principle
+    value: number
+}) => {
+    return (
+        <>
+            <PrincipleIcon id={principle} />
+            <Typography
+                variant="h6"
+                sx={{
+                    paddingInline: 1,
+                }}
+            >
+                {value}
+            </Typography>
+        </>
+    )
 }
+
+const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
+    <Stack direction="row" alignItems="center">
+        {PRINCIPLES.filter((principle) => item[principle] != null).map(
+            (principle) => (
+                <ItemPrincipleValue
+                    key={principle}
+                    principle={principle}
+                    value={item[principle]!}
+                />
+            ),
+        )}
+        {<AspectIconGroup aspects={aspects} />}
+    </Stack>
+)
 
 function Item({ ...item }: ItemFromQuery) {
     return (
-        <Card>
-            <CardHeader title={item.id} />
-            <Stack direction="row">
-                {principles.map((principle) => {
-                    if (item[principle] != null)
-                        return (
-                            <PrincipleCard
-                                key={principle}
-                                id={principle}
-                                title={item[principle]!} // displays amount
-                            />
-                        )
-                })}
-                {item.aspects!.map(({ id }) => (
-                    <Aspect key={id} id={id} nameAspect={false} />
-                ))}
-            </Stack>
-        </Card>
+        <ListItemButton>
+            <ListItemText primary={item.id} />
+            <ItemValues {...item} />
+        </ListItemButton>
     )
 }
 const ItemsView = ({ filters }: ItemsProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
 
-    const [state] = useReducer(
-        itemsReducer,
-        filterItems({ known: true, ...filters }, data!.item),
+    const state = useMemo(
+        () => filterItems(data!.item, { known: true, ...filters }),
+        [data, filters],
     )
 
     return (
-        <Stack
-            spacing={2}
+        <List
             sx={{
                 maxWidth: "sm",
                 marginInline: "auto",
             }}
         >
-            {state?.map((item) => <Item key={item.id} {...item} />)}
-        </Stack>
+            {state
+                ?.filter(({ isVisible }) => isVisible)
+                .map((item) => <Item key={item.id} {...item} />)}
+        </List>
     )
 }
 export default ItemsView

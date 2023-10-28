@@ -1,14 +1,15 @@
-import { CardHeader } from "@mui/material"
 import { useQuery } from "urql"
 
-import Avatar from "@mui/material/Avatar"
+import Avatar, { AvatarProps } from "@mui/material/Avatar"
 import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
+import CardHeader from "@mui/material/CardHeader"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 
+import AvatarStack from "../components/AvatarStack"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 
@@ -23,27 +24,59 @@ const aspectQueryDocument = graphql(`
     }
 `)
 
-function AspectIcon({ id }: { id: string }) {
-    return <Avatar variant="square" src={`/data/aspect/${id}.png`}></Avatar>
+type AspectFromQuery = types.AspectsQuery["aspect"][number]
+interface BasicAspect extends Omit<AspectFromQuery, "assistants"> {
+    assistants?: AspectFromQuery["assistants"]
 }
 
-type AspectFromQuery = types.AspectsQuery["aspect"][number]
+interface AspectIconProps extends Omit<AvatarProps, "src"> {
+    id: string
+}
+const AspectIcon = ({
+    id,
+    alt = id,
+    title = id,
+    variant = "square",
+    ...props
+}: AspectIconProps) => (
+    <Avatar
+        alt={alt}
+        title={title}
+        variant={variant}
+        src={`/data/aspect/${id}.png`}
+        {...props}
+    />
+)
 
-interface AspectProps extends AspectFromQuery {
+const AspectIconGroup = ({ aspects }: { aspects: BasicAspect[] }) => (
+    <AvatarStack>
+        {aspects.map(({ id }) => (
+            <AspectIcon key={id} id={id} />
+        ))}
+    </AvatarStack>
+)
+
+interface AspectProps extends BasicAspect {
     nameAspect?: boolean
     showAssistant?: boolean
 }
-function Aspect({ nameAspect = true, showAssistant, ...aspect }: AspectProps) {
+
+function Aspect({
+    nameAspect = true,
+    showAssistant = false,
+    id,
+    assistants = [],
+}: AspectProps) {
     return (
         <Card>
             <CardHeader
-                title={nameAspect ? aspect.id : ""}
-                avatar={<AspectIcon id={aspect.id} />}
+                title={nameAspect ? id : ""}
+                avatar={<AspectIcon id={id} />}
             />
             <CardContent>
-                {showAssistant && aspect.assistants!.length > 0 && (
+                {showAssistant && assistants!.length > 0 && (
                     <List disablePadding>
-                        {aspect.assistants!.map(({ id }) => (
+                        {assistants!.map(({ id }) => (
                             <ListItem key={id} sx={{ pl: 4 }}>
                                 <ListItemText primary={id} />
                             </ListItem>
@@ -80,4 +113,4 @@ const AspectsView = () => {
     )
 }
 
-export { Aspect, AspectsView as default }
+export { Aspect, AspectIconGroup, AspectsView as default }

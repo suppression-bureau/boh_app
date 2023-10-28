@@ -204,10 +204,11 @@ class WorkstationType(Base, NameMixin):
     workstations: Mapped[list[Workstation]] = relationship(back_populates="workstation_type")
 
 
-class WorkstationSlot(Base, IdMixin):
+class WorkstationSlot(Base, NameMixin):
     __tablename__ = "workstation_slot"
 
-    name: Mapped[str]  # TODO: make NameMixin, why would we need int id?
+    name: Mapped[str]
+    index: Mapped[int]
 
     workstations: Mapped[list[Workstation]] = relationship(
         back_populates="workstation_slots",
@@ -220,15 +221,9 @@ class WorkstationSlot(Base, IdMixin):
 class Workstation(Base, NameMixin):
     __tablename__ = "workstation"
 
-    @classmethod
-    def _additional_fields(cls):
-        return {"workstation_slots": Nested(WorkstationSlot.__marshmallow__, many=True)}
-
     workstation_type_id: Mapped[str] = mapped_column(ForeignKey("workstation_type.id"))
     workstation_type: Mapped[WorkstationType] = relationship(back_populates="workstations")
 
-    # TODO: slots load first, meaning that we cannot name workstations on slots (lacking data, or repeated data), but
-    # slots are also not able to be called by .name, so we also cannot name slots on workstations
     workstation_slots: Mapped[list[WorkstationSlot]] = relationship(
         back_populates="workstations",
         secondary=workstation_slot_workstation_association,

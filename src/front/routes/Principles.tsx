@@ -1,11 +1,13 @@
 import { useQuery } from "urql"
 
-import Avatar from "@mui/material/Avatar"
+import Avatar, { AvatarProps } from "@mui/material/Avatar"
 import Box from "@mui/material/Box"
 import Card, { CardProps } from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 
+import AvatarStack from "../components/AvatarStack"
 import { graphql } from "../gql"
+import * as types from "../gql/graphql"
 
 const principleQueryDocument = graphql(`
     query Principle {
@@ -15,8 +17,40 @@ const principleQueryDocument = graphql(`
     }
 `)
 
-function PrincipleIcon({ id }: { id: string }) {
-    return <Avatar variant="square" src={`/data/principle/${id}.png`}></Avatar>
+type PrincipleFromQuery = types.PrincipleQuery["principle"][number]
+
+interface PrincipleIconProps extends Omit<AvatarProps, "src"> {
+    id: string
+}
+
+const PrincipleIcon = ({
+    id,
+    alt = id,
+    title = id,
+    variant = "square",
+    ...props
+}: PrincipleIconProps) => (
+    <Avatar
+        alt={alt}
+        title={title}
+        variant={variant}
+        src={`/data/principle/${id}.png`}
+        {...props}
+    />
+)
+
+interface PrincipleIconGroupProps {
+    principles: PrincipleFromQuery[]
+}
+
+function PrincipleIconGroup({ principles }: PrincipleIconGroupProps) {
+    return (
+        <AvatarStack>
+            {principles.map(({ id }) => (
+                <PrincipleIcon key={id} id={id} />
+            ))}
+        </AvatarStack>
+    )
 }
 
 interface PrincipleCardProps extends Omit<CardProps, "title"> {
@@ -35,6 +69,7 @@ function PrincipleCard({
         <Card {...cardProps}>
             <CardHeader
                 title={title.toString()}
+                titleTypographyProps={{ variant: "h6" }}
                 avatar={<PrincipleIcon id={id} />}
                 sx={{ padding: disablePadding ? 0 : 2 }}
             />
@@ -62,4 +97,9 @@ const Principles = () => {
     )
 }
 
-export { PrincipleIcon, PrincipleCard, Principles as default }
+export {
+    PrincipleIcon,
+    PrincipleIconGroup,
+    PrincipleCard,
+    Principles as default,
+}

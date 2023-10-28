@@ -186,7 +186,7 @@ Whispering Sand
 Labhitic Tincture
 Refulgin
 Glue
-Ascendent Harmony
+Ascendant Harmony
 Memory: A Stolen Secret
 Beguiling Melody
 Bittersweet Certainty
@@ -200,7 +200,7 @@ Enduring Reflection
 Memory: Fear
 Memory: Foresight
 Memory: Gossip
-Numen: The Great Counterfeit
+Numen: the Great Counterfeit
 Memory: Hindsight
 Memory: Impulse
 Memory: Intuition
@@ -232,11 +232,33 @@ Stymphling
 Pet Gull
 Perilous Imago
 Chor
++Chor
 Ereb
++Ereb
 Fet
++Fet
 Health
++Health
 Mettle
++Mettle
 Phost
++Phost
 Shapt
++Shapt
 Trist
++Trist
 Wist
++Wist
+Numen: That Old Lost Music
+Invincible Audacity
+Old Wound
+Enduring Reflection
+Torgue's Cleansing
+Memory: Sight
+Memory: Scent
+Memory: Sound
+Memory: Taste
+Memory: Touch
+Numen: the Bells of Ys
+Numen: Merciless Alteration
+Porphyrine

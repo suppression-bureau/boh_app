@@ -35,10 +35,10 @@ const assistantQueryDocument = graphql(`
 
 type AssistantFromQuery = types.AssistantQuery["assistant"][number]
 type PrincipleFromQuery =
-    types.AssistantQuery["assistant"][number]["base_principles"][number]["principle"][number]
+    types.AssistantQuery["assistant"][number]["base_principles"][number]["principle"]
 
 type AssistantItemProps = {
-    principle: PrincipleFromQuery["id"]
+    principle: PrincipleFromQuery
     assistant: AssistantFromQuery
 }
 
@@ -51,8 +51,8 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
                 </Typography>
                 <ItemsView
                     filters={{
-                        [principle]: true,
-                        aspect: aspect!.id,
+                        principles: [principle],
+                        aspects: [aspect],
                     }}
                 />
             </div>
@@ -62,7 +62,7 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
 
 type PrincipleFilterButtonProps = {
     principle: PrincipleFromQuery
-    selectedPrinciple: PrincipleFromQuery["id"]
+    selectedPrinciple: PrincipleFromQuery | undefined
     count: number
     handlePrincipleFilter(principle: PrincipleFromQuery): void
 }
@@ -76,8 +76,10 @@ const PrincipleFilterButton = ({
     <Button
         key={principle.id}
         startIcon={<PrincipleIcon id={principle.id} />}
-        onClick={() => handlePrincipleFilter(principle.id)}
-        variant={selectedPrinciple === principle.id ? "contained" : "outlined"}
+        onClick={() => handlePrincipleFilter(principle)}
+        variant={
+            selectedPrinciple?.id === principle.id ? "contained" : "outlined"
+        }
     >
         {count}
     </Button>
@@ -88,8 +90,9 @@ const AssistantView = () => {
     const [selectedAssistant, setAssistant] =
         useState<AssistantFromQuery | null>(null)
 
-    const [selectedPrinciple, setPrinciple] =
-        useState<PrincipleFromQuery | null>(null)
+    const [selectedPrinciple, setPrinciple] = useState<
+        PrincipleFromQuery | undefined
+    >(undefined)
 
     const handleNewAssistant = useCallback(
         (
@@ -98,17 +101,10 @@ const AssistantView = () => {
         ) => {
             setAssistant(assistant)
             if (selectedPrinciple) {
-                setPrinciple(null)
+                setPrinciple(undefined)
             }
         },
         [setAssistant, selectedPrinciple, setPrinciple],
-    )
-
-    const handlePrinciple = useCallback(
-        (principle: PrincipleFromQuery) => {
-            setPrinciple(principle)
-        },
-        [setPrinciple],
     )
 
     return (
@@ -132,7 +128,7 @@ const AssistantView = () => {
                                     principle={principle}
                                     selectedPrinciple={selectedPrinciple}
                                     count={count}
-                                    handlePrincipleFilter={handlePrinciple}
+                                    handlePrincipleFilter={setPrinciple}
                                 />
                             ),
                         )}
