@@ -1,11 +1,11 @@
 import { useQuery } from "urql"
 
 import Avatar, { AvatarProps } from "@mui/material/Avatar"
-import AvatarGroup from "@mui/material/AvatarGroup"
 import Box from "@mui/material/Box"
 import Card, { CardProps } from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 
+import AvatarStack from "../components/AvatarStack"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 
@@ -19,17 +19,22 @@ const principleQueryDocument = graphql(`
 
 type PrincipleFromQuery = types.PrincipleQuery["principle"][number]
 
-interface PrincipleIconProps extends AvatarProps {
+interface PrincipleIconProps extends Omit<AvatarProps, "src"> {
     id: string
 }
 
-const PrincipleIcon = ({ id, ...props }: PrincipleIconProps) => (
+const PrincipleIcon = ({
+    id,
+    alt,
+    variant = "square",
+    ...props
+}: PrincipleIconProps) => (
     <Avatar
-        alt={id}
-        variant="square"
+        alt={alt ?? id}
+        variant={variant}
         src={`/data/principle/${id}.png`}
         {...props}
-    ></Avatar>
+    />
 )
 
 function PrincipleIconGroup({
@@ -38,15 +43,11 @@ function PrincipleIconGroup({
     principles: PrincipleFromQuery[]
 }) {
     return (
-        <AvatarGroup variant="square">
+        <AvatarStack>
             {principles.map(({ id }) => (
-                <PrincipleIcon
-                    key={id}
-                    id={id}
-                    sx={{ paddingInline: 1, border: "0 !important" }}
-                />
+                <PrincipleIcon key={id} id={id} />
             ))}
-        </AvatarGroup>
+        </AvatarStack>
     )
 }
 

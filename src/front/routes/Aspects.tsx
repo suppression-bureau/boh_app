@@ -2,7 +2,6 @@ import { CardHeader } from "@mui/material"
 import { useQuery } from "urql"
 
 import Avatar, { AvatarProps } from "@mui/material/Avatar"
-import AvatarGroup from "@mui/material/AvatarGroup"
 import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
@@ -10,6 +9,7 @@ import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemText from "@mui/material/ListItemText"
 
+import AvatarStack from "../components/AvatarStack"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 
@@ -29,24 +29,19 @@ interface BasicAspect extends Omit<AspectFromQuery, "assistants"> {
     assistants?: AspectFromQuery["assistants"]
 }
 
-interface AspectIconProps extends AvatarProps {
+interface AspectIconProps extends Omit<AvatarProps, "src"> {
     id: string
 }
-const AspectIcon = ({ id, ...props }: AspectIconProps) => (
-    <Avatar variant="square" src={`/data/aspect/${id}.png`} {...props}></Avatar>
+const AspectIcon = ({ id, variant = "square", ...props }: AspectIconProps) => (
+    <Avatar variant={variant} src={`/data/aspect/${id}.png`} {...props} />
 )
 
 const AspectIconGroup = ({ aspects }: { aspects: BasicAspect[] }) => (
-    <AvatarGroup variant="square" max={10}>
-        {/* AvatarGroup spacing can only reduce overlap, max is 5 by default*/}
+    <AvatarStack>
         {aspects.map(({ id }) => (
-            <AspectIcon
-                key={id}
-                id={id}
-                sx={{ paddingInline: 1, border: "0 !important" }}
-            />
+            <AspectIcon key={id} id={id} />
         ))}
-    </AvatarGroup>
+    </AvatarStack>
 )
 
 interface AspectProps extends BasicAspect {
