@@ -81,15 +81,19 @@ function filterItems(
         const filterPrinciples: Principle[] = filters.principles.map(
             (principle) => principle.id,
         ) as Principle[]
+        const possiblities = []
         for (const principle of filterPrinciples) {
-            filteredState = filteredState
-                .filter((item) => {
-                    return item[principle] !== null
-                })
-                .toSorted((a, b) => {
-                    return b[principle]! - a[principle]!
-                }) // note that this won't work once we have principles.length > 1
+            possiblities.push(
+                filteredState
+                    .filter((item) => {
+                        return item[principle] !== null
+                    })
+                    .toSorted((a, b) => {
+                        return b[principle]! - a[principle]!
+                    }), // NB: this doesn't work with principles.length > 1
+            )
         }
+        filteredState = possiblities.reduce((a, b) => a.concat(b), [])
     }
     if (filters?.aspects) {
         const aspects = filters.aspects.map((aspect) => aspect.id)
@@ -113,7 +117,7 @@ function Item({ ...item }: ItemFromQuery) {
     return (
         <Card>
             <CardHeader title={item.id} />
-            <Stack direction="row">
+            <Stack direction="row" marginBottom={-5} marginTop={-2}>
                 {PRINCIPLES.map((principle) => {
                     if (item[principle] != null)
                         return (
