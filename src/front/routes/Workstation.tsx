@@ -57,7 +57,7 @@ const WorkstationSlotInfoCard = ({
     ...workstationSlot
 }: WorkstationSlotFromQuery) => {
     return (
-        <Card>
+        <Card sx={{ boxShadow: "none" }}>
             <CardHeader
                 title={workstationSlot.name}
                 titleTypographyProps={{ variant: "h6" }}
@@ -73,7 +73,7 @@ const WorkstationSlot = ({
 }: WorkstationSlotProps) => {
     const [expanded, setExpanded] = useState(false)
     return (
-        <Card sx={{ boxShadow: "none" }}>
+        <Card>
             <CardActions>
                 <WorkstationSlotInfoCard {...workstationSlot} />
                 <Button
@@ -101,7 +101,7 @@ const Workstation = ({
 }: {
     workstation: WorkstationFromQuery
 }) => (
-    <Card>
+    <Card sx={{ boxShadow: "none" }}>
         <CardHeader
             title={workstation.id}
             titleTypographyProps={{ variant: "h5" }}
