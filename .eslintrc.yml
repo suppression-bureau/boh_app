@@ -7,6 +7,14 @@ extends:
   - plugin:react/recommended
   - plugin:react/jsx-runtime
   - plugin:react-hooks/recommended
+rules:
+  no-restricted-imports:
+    - error
+    - paths:
+        - name: "@mui/material"
+          message: For small bundle size, import from @mui/material/* instead
+      patterns:
+        - "!@mui/material/*"
 parser: "@typescript-eslint/parser"
 parserOptions:
   ecmaVersion: latest
@@ -18,4 +26,3 @@ plugins:
 settings:
   react:
     version: detect
-rules: {}
