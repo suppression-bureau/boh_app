@@ -1,9 +1,8 @@
 import { Typography } from "@mui/material"
-import { Fragment, useMemo } from "react"
+import { useMemo } from "react"
 import { useQuery } from "urql"
 
 import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
 import ListItemButton from "@mui/material/ListItemButton"
 import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
@@ -108,32 +107,49 @@ function filterItems(
     return state.map((item) => setVisible(item, filteredItems.has(item.id)))
 }
 
+const ItemPrincipleValue = ({
+    principle,
+    value,
+}: {
+    principle: Principle
+    value: number
+}) => {
+    return (
+        <>
+            <PrincipleIcon id={principle} />
+            <Typography
+                variant="h6"
+                sx={{
+                    paddingInline: 1,
+                }}
+            >
+                {value}
+            </Typography>
+        </>
+    )
+}
+
+const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
+    <Stack direction="row" alignItems="center">
+        {PRINCIPLES.filter((principle) => item[principle] != null).map(
+            (principle) => (
+                <ItemPrincipleValue
+                    key={principle}
+                    principle={principle}
+                    value={item[principle]!}
+                />
+            ),
+        )}
+        {<AspectIconGroup aspects={aspects} />}
+    </Stack>
+)
+
 function Item({ ...item }: ItemFromQuery) {
     return (
-        <ListItem>
-            <ListItemButton>
-                <ListItemText primary={item.id} />
-                <Stack direction="row" alignItems="center">
-                    {PRINCIPLES.map((principle) => {
-                        if (item[principle] != null)
-                            return (
-                                <Fragment key={principle}>
-                                    <PrincipleIcon id={principle} />
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
-                                            paddingInline: 1,
-                                        }}
-                                    >
-                                        {item[principle]!}
-                                    </Typography>
-                                </Fragment>
-                            )
-                    })}
-                    {<AspectIconGroup aspects={item.aspects!} />}
-                </Stack>
-            </ListItemButton>
-        </ListItem>
+        <ListItemButton>
+            <ListItemText primary={item.id} />
+            <ItemValues {...item} />
+        </ListItemButton>
     )
 }
 const ItemsView = ({ filters }: ItemsProps) => {

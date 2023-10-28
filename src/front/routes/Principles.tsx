@@ -40,7 +40,11 @@ function PrincipleIconGroup({
     return (
         <AvatarGroup variant="square">
             {principles.map(({ id }) => (
-                <PrincipleIcon key={id} id={id} sx={{ margin: 2 }} />
+                <PrincipleIcon
+                    key={id}
+                    id={id}
+                    sx={{ paddingInline: 1, border: "0 !important" }}
+                />
             ))}
         </AvatarGroup>
     )
