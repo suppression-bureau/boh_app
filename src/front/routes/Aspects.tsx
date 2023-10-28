@@ -40,7 +40,7 @@ const AspectIconGroup = ({ aspects }: { aspects: BasicAspect[] }) => (
     <AvatarGroup variant="square" max={10}>
         {/* AvatarGroup spacing can only reduce overlap, max is 5 by default*/}
         {aspects.map(({ id }) => (
-            <AspectIcon key={id} id={id} sx={{ margin: 2 }} />
+            <AspectIcon key={id} id={id} sx={{ margin: "0 2px" }} />
         ))}
     </AvatarGroup>
 )

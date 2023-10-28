@@ -107,13 +107,7 @@ const Workstation = ({
             titleTypographyProps={{ variant: "h5" }}
             avatar={<PrincipleIconGroup principles={workstation.principles} />}
         />
-        <Stack
-            // direction="row"
-            justifyContent={"space-between"}
-            spacing={2}
-            useFlexGap
-            flexWrap="wrap"
-        >
+        <Stack spacing={2}>
             {workstation
                 .workstation_slots!.sort((a, b) => a!.index - b!.index)
                 .map((slot) => (

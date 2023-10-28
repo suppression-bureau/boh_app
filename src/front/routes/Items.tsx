@@ -1,14 +1,17 @@
-import { useMemo } from "react"
+import { Typography } from "@mui/material"
+import { Fragment, useMemo } from "react"
 import { useQuery } from "urql"
 
-import Card from "@mui/material/Card"
-import CardHeader from "@mui/material/CardHeader"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemButton from "@mui/material/ListItemButton"
+import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
-import { Aspect } from "../routes/Aspects"
-import { PrincipleCard } from "../routes/Principles"
+import { AspectIconGroup } from "../routes/Aspects"
+import { PrincipleIcon } from "../routes/Principles"
 
 const itemsQueryDocument = graphql(`
     query Items {
@@ -115,24 +118,30 @@ function filterItems(
 
 function Item({ ...item }: ItemFromQuery) {
     return (
-        <Card>
-            <CardHeader title={item.id} />
-            <Stack direction="row" marginBottom={-5} marginTop={-2}>
-                {PRINCIPLES.map((principle) => {
-                    if (item[principle] != null)
-                        return (
-                            <PrincipleCard
-                                key={principle}
-                                id={principle}
-                                title={item[principle]!} // displays amount
-                            />
-                        )
-                })}
-                {item.aspects!.map(({ id }) => (
-                    <Aspect key={id} id={id} nameAspect={false} />
-                ))}
-            </Stack>
-        </Card>
+        <ListItem>
+            <ListItemButton>
+                <ListItemText primary={item.id} />
+                <Stack direction="row" alignItems="center">
+                    {PRINCIPLES.map((principle) => {
+                        if (item[principle] != null)
+                            return (
+                                <Fragment key={principle}>
+                                    <PrincipleIcon id={principle} />
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            paddingInline: 1,
+                                        }}
+                                    >
+                                        {item[principle]!}
+                                    </Typography>
+                                </Fragment>
+                            )
+                    })}
+                    {<AspectIconGroup aspects={item.aspects!} />}
+                </Stack>
+            </ListItemButton>
+        </ListItem>
     )
 }
 const ItemsView = ({ filters }: ItemsProps) => {
@@ -144,8 +153,7 @@ const ItemsView = ({ filters }: ItemsProps) => {
     )
 
     return (
-        <Stack
-            spacing={2}
+        <List
             sx={{
                 maxWidth: "sm",
                 marginInline: "auto",
@@ -154,7 +162,7 @@ const ItemsView = ({ filters }: ItemsProps) => {
             {state
                 ?.filter(({ isVisible }) => isVisible)
                 .map((item) => <Item key={item.id} {...item} />)}
-        </Stack>
+        </List>
     )
 }
 export default ItemsView
