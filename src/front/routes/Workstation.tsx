@@ -1,13 +1,20 @@
+import { CardActions } from "@mui/material"
+import { useState } from "react"
 import { useQuery } from "urql"
 
+import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
+import Collapse from "@mui/material/Collapse"
 import Stack from "@mui/material/Stack"
+
+import ExpandLess from "@mui/icons-material/ExpandLess"
+import ExpandMore from "@mui/icons-material/ExpandMore"
 
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { AspectIconGroup } from "./Aspects"
-// import ItemsView from "./Items"
+import ItemsView from "./Items"
 import { PrincipleIconGroup } from "./Principles"
 
 const workstationQueryDocument = graphql(`
@@ -39,16 +46,55 @@ type WorkstationFromQuery = types.WorkstationQuery["workstation"][number]
 type WorkstationSlotFromQuery =
     WorkstationFromQuery["workstation_slots"][number]
 
-const WorkstationSlot = (workstation_slot: WorkstationSlotFromQuery) => (
-    <Card sx={{ boxShadow: "none" }}>
-        <CardHeader
-            title={workstation_slot.name}
-            titleTypographyProps={{ variant: "h6" }}
-            avatar={<AspectIconGroup aspects={workstation_slot.accepts} />}
-        />
-        {/* <ItemsView filters={{ aspects: workstation_slot.accepts }} /> */}
-    </Card>
-)
+type Principle = Pick<types.Principle, "id">
+
+interface WorkstationSlotProps {
+    workstationSlot: WorkstationSlotFromQuery
+    principles: Principle[]
+}
+
+const WorkstationSlotInfoCard = ({
+    ...workstationSlot
+}: WorkstationSlotFromQuery) => {
+    return (
+        <Card>
+            <CardHeader
+                title={workstationSlot.name}
+                titleTypographyProps={{ variant: "h6" }}
+                avatar={<AspectIconGroup aspects={workstationSlot.accepts} />}
+            />
+        </Card>
+    )
+}
+
+const WorkstationSlot = ({
+    workstationSlot,
+    principles,
+}: WorkstationSlotProps) => {
+    const [expanded, setExpanded] = useState(false)
+    return (
+        <Card sx={{ boxShadow: "none" }}>
+            <CardActions>
+                <WorkstationSlotInfoCard {...workstationSlot} />
+                <Button
+                    onClick={() => setExpanded(!expanded)}
+                    endIcon={expanded ? <ExpandLess /> : <ExpandMore />}
+                    sx={{ ml: "auto" }}
+                >
+                    {"Show Items"}
+                </Button>
+            </CardActions>
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <ItemsView
+                    filters={{
+                        aspects: workstationSlot.accepts,
+                        principles: principles,
+                    }}
+                />
+            </Collapse>
+        </Card>
+    )
+}
 
 const Workstation = ({
     workstation,
@@ -62,7 +108,7 @@ const Workstation = ({
             avatar={<PrincipleIconGroup principles={workstation.principles} />}
         />
         <Stack
-            direction="row"
+            // direction="row"
             justifyContent={"space-between"}
             spacing={2}
             useFlexGap
@@ -71,7 +117,11 @@ const Workstation = ({
             {workstation
                 .workstation_slots!.sort((a, b) => a!.index - b!.index)
                 .map((slot) => (
-                    <WorkstationSlot key={slot.id} {...slot} />
+                    <WorkstationSlot
+                        key={slot.id}
+                        workstationSlot={slot}
+                        principles={workstation.principles}
+                    />
                 ))}
         </Stack>
     </Card>
