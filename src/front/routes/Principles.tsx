@@ -90,7 +90,7 @@ const Principles = () => {
                 rowGap: 1,
             }}
         >
-            {data!.principle.map(({ id }) => (
+            {data.principle.map(({ id }) => (
                 <PrincipleCard key={id} id={id} />
             ))}
         </Box>

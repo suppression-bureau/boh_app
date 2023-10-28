@@ -45,7 +45,7 @@ type AssistantItemProps = {
 const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
     <Stack>
         {assistant?.aspects!.map((aspect) => (
-            <div key={`${aspect!.id}grouping`}>
+            <div key={`${aspect.id}grouping`}>
                 <Typography variant="h5" color={"secondary"}>
                     {aspect?.id}
                 </Typography>
@@ -111,7 +111,7 @@ const AssistantView = () => {
         <Container maxWidth="sm">
             <Card sx={{ padding: 2 }}>
                 <Autocomplete
-                    options={data!.assistant}
+                    options={data.assistant}
                     getOptionLabel={({ id }) => id}
                     isOptionEqualToValue={(a, b) => a.id === b.id}
                     renderInput={(params) => (

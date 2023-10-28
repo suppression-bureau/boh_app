@@ -125,7 +125,7 @@ const SkillsView = () => {
 
     const [state, dispatch] = useReducerAsync(
         skillReducer,
-        data!.skill,
+        data.skill,
         skillHandlers,
     )
 

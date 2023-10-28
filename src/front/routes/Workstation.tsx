@@ -126,7 +126,7 @@ const WorkstationView = () => {
 
     return (
         <Stack maxWidth="md" marginInline="auto" spacing={2}>
-            {data!.workstation.map((workstation) => (
+            {data.workstation.map((workstation) => (
                 <Workstation key={workstation.id} workstation={workstation} />
             ))}
         </Stack>
