@@ -37,7 +37,7 @@ type AssistantFromQuery = types.AssistantQuery["assistant"][number]
 type PrincipleFromQuery =
     types.AssistantQuery["assistant"][number]["base_principles"][number]["principle"]
 
-type AssistantItemProps = {
+interface AssistantItemProps {
     principle: PrincipleFromQuery
     assistant: AssistantFromQuery
 }
@@ -47,7 +47,7 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
         {assistant?.aspects.map((aspect) => (
             <div key={`${aspect.id}grouping`}>
                 <Typography variant="h5" color={"secondary"}>
-                    {aspect?.id}
+                    {aspect.id}
                 </Typography>
                 <ItemsView
                     filters={{
@@ -60,7 +60,7 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
     </Stack>
 )
 
-type PrincipleFilterButtonProps = {
+interface PrincipleFilterButtonProps {
     principle: PrincipleFromQuery
     selectedPrinciple: PrincipleFromQuery | undefined
     count: number
@@ -120,18 +120,17 @@ const AssistantView = () => {
                     onChange={handleNewAssistant}
                 />
                 <CardActions>
-                    {selectedAssistant &&
-                        selectedAssistant.base_principles.map(
-                            ({ principle, count }) => (
-                                <PrincipleFilterButton
-                                    key={principle.id}
-                                    principle={principle}
-                                    selectedPrinciple={selectedPrinciple}
-                                    count={count}
-                                    handlePrincipleFilter={setPrinciple}
-                                />
-                            ),
-                        )}
+                    {selectedAssistant?.base_principles.map(
+                        ({ principle, count }) => (
+                            <PrincipleFilterButton
+                                key={principle.id}
+                                principle={principle}
+                                selectedPrinciple={selectedPrinciple}
+                                count={count}
+                                handlePrincipleFilter={setPrinciple}
+                            />
+                        ),
+                    )}
                 </CardActions>
             </Card>
             <Suspense fallback={"Loading..."}>
