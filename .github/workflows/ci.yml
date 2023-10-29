@@ -66,13 +66,29 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
+      # Backend
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          cache: pip
+
+      - name: Install Python tools
+        run: python -m pip install --upgrade pip wheel hatch
+
+      # Frontend
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version-file: .node-version
 
-      - name: Install dependencies
+      - name: Install Node dependencies
         run: yarn install --immutable
+
+      - name: Generate schema
+        run: yarn run generate
 
       - name: Run lints
         run: yarn run lint --fix
