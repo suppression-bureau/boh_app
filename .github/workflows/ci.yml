@@ -18,6 +18,7 @@ defaults:
 
 jobs:
   run_tester:
+    name: Run tests
     runs-on: ${{ matrix.config.os }}
 
     strategy:
@@ -51,7 +52,19 @@ jobs:
       - name: Run tests
         run: pytest --verbose --color=yes
 
-      # Frontend
+  lint:
+    name: Run lints that can’t be done with pre-commit
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -59,7 +72,7 @@ jobs:
           node-version-file: .node-version
 
       - name: Install dependencies
-        run: yarn install --immutable --immutable-cache
+        run: yarn install --immutable
 
       - name: Run tests
         run: yarn run eslint --fix
