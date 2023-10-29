@@ -53,7 +53,7 @@ jobs:
         run: pytest --verbose --color=yes
 
   lint:
-    name: Run lints that can’t be done with pre-commit
+    name: Run lints on installed project
     runs-on: ubuntu-latest
 
     strategy:
@@ -74,8 +74,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Run tests
-        run: yarn run eslint --fix
+      - name: Run lints
+        run: yarn run lint --fix
 
       - name: Commit autofixes
         uses: stefanzweifel/git-auto-commit-action@v5
