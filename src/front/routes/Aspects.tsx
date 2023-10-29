@@ -101,7 +101,7 @@ const AspectsView = () => {
                 rowGap: 1,
             }}
         >
-            {data.aspect.map(({ assistants, id }) => (
+            {data!.aspect.map(({ assistants, id }) => (
                 <Aspect
                     key={id}
                     showAssistant={true}

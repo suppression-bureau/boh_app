@@ -34,6 +34,8 @@ jobs:
           fetch-depth: 0
           filter: blob:none
 
+      # Backend
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -41,11 +43,28 @@ jobs:
           cache: pip
 
       - name: Install Python tools
-        run: |
-          python -m pip install --upgrade pip wheel
+        run: python -m pip install --upgrade pip wheel
 
       - name: Install Python package and dependencies
         run: pip install .[test]
 
       - name: Run tests
         run: pytest --verbose --color=yes
+
+      # Frontend
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .node-version
+
+      - name: Install dependencies
+        run: yarn install --immutable --immutable-cache
+
+      - name: Run tests
+        run: yarn run eslint --fix
+
+      - name: Commit autofixes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: auto-fix eslint errors"

@@ -156,7 +156,7 @@ const ItemsView = ({ filters }: ItemsProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
 
     const state = useMemo(
-        () => filterItems(data.item, { known: true, ...filters }),
+        () => filterItems(data!.item, { known: true, ...filters }),
         [data, filters],
     )
 
