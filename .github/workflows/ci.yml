@@ -56,6 +56,9 @@ jobs:
     name: Run lints on installed project
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write # commit changes
+
     strategy:
       fail-fast: false
 
