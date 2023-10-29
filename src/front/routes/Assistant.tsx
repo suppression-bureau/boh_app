@@ -121,7 +121,7 @@ const AssistantView = () => {
                 />
                 <CardActions>
                     {selectedAssistant &&
-                        selectedAssistant!.base_principles.map(
+                        selectedAssistant.base_principles.map(
                             ({ principle, count }) => (
                                 <PrincipleFilterButton
                                     key={principle.id}
