@@ -56,9 +56,6 @@ jobs:
     name: Run lints on installed project
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write # commit changes
-
     strategy:
       fail-fast: false
 
@@ -100,3 +97,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: auto-fix eslint errors"
+          token: ${{ secrets.SPENCER_GITHUB_TOKEN }}
