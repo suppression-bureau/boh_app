@@ -63,6 +63,7 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.SPENCER_GITHUB_TOKEN }}
           fetch-depth: 0
           filter: blob:none
 
@@ -97,4 +98,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: auto-fix eslint errors"
-          token: ${{ secrets.SPENCER_GITHUB_TOKEN }}
+          commit_author: Spencer Hobson <41898282+github-actions[bot]@users.noreply.github.com>
