@@ -2,7 +2,6 @@
   "recommendations": [
     // Python
     "ms-python.python",
-    "ms-python.black-formatter",
     "charliermarsh.ruff",
     "tamasfe.even-better-toml",
     // Web

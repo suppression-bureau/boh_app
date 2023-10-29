@@ -14,7 +14,8 @@
     "preview": "vite preview",
     "generate": "yarn run generate:schema && yarn run generate:query",
     "generate:schema": "mkdir -p src/front/gql && hatch run boh schema src/front/gql/schema.graphql",
-    "generate:query": "LISTR_FORCE_TTY=1 graphql-codegen --config=.graphqlrc.ts"
+    "generate:query": "LISTR_FORCE_TTY=1 graphql-codegen --config=.graphqlrc.ts",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",

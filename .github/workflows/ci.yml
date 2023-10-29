@@ -1,0 +1,102 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -e {0} # -e to fail on error
+
+jobs:
+  run_tester:
+    name: Run tests
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { name: "3.11", os: ubuntu-latest, python: "3.11" }
+          - { name: "3.12", os: ubuntu-latest, python: "3.12" }
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      # Backend
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.config.python }}
+          cache: pip
+
+      - name: Install Python tools
+        run: python -m pip install --upgrade pip wheel
+
+      - name: Install Python package and dependencies
+        run: pip install .[test]
+
+      - name: Run tests
+        run: pytest --verbose --color=yes
+
+  lint:
+    name: Run lints on installed project
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SPENCER_GITHUB_TOKEN }}
+          fetch-depth: 0
+          filter: blob:none
+
+      # Backend
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Python tools
+        run: python -m pip install --upgrade pip wheel hatch
+
+      # Frontend
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .node-version
+
+      - name: Install Node dependencies
+        run: yarn install --immutable
+
+      - name: Generate schema
+        run: yarn run generate
+
+      - name: Run lints
+        run: yarn run lint --fix
+
+      - name: Commit autofixes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: auto-fix eslint errors"
+          commit_user_name: spencer-hobson[bot]
+          commit_user_email: 149329160+spencer-hobson[bot]@users.noreply.github.com

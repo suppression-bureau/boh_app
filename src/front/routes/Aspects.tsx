@@ -74,9 +74,9 @@ function Aspect({
                 avatar={<AspectIcon id={id} />}
             />
             <CardContent>
-                {showAssistant && assistants!.length > 0 && (
+                {showAssistant && assistants.length > 0 && (
                     <List disablePadding>
-                        {assistants!.map(({ id }) => (
+                        {assistants.map(({ id }) => (
                             <ListItem key={id} sx={{ pl: 4 }}>
                                 <ListItemText primary={id} />
                             </ListItem>

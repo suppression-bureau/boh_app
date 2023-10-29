@@ -68,7 +68,7 @@ function PrincipleCard({
     return (
         <Card {...cardProps}>
             <CardHeader
-                title={title.toString()}
+                title={String(title)}
                 titleTypographyProps={{ variant: "h6" }}
                 avatar={<PrincipleIcon id={id} />}
                 sx={{ padding: disablePadding ? 0 : 2 }}
