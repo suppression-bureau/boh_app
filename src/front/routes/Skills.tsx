@@ -44,6 +44,7 @@ type SkillFromQuery = types.SkillsQuery["skill"][number]
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 type SkillAction = SkillActionInner | SkillActionOuter
 /** Synchronously handleable actions that are dispatched by the async action handler */
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type SkillActionInner = { type: "update"; skill: SkillFromQuery }
 /** Synchronously handleable actions that we dispatch manually */
 type SkillActionOuter = never
@@ -63,6 +64,7 @@ function skillReducer(
 }
 
 /** Actions that are handled asynchronously by the action handler */
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type SkillActionAsync = { type: "increment"; skill: SkillFromQuery }
 
 const skillHandlers: AsyncActionHandlers<
