@@ -41,6 +41,7 @@ const skillQueryDocument = graphql(`
 type SkillFromQuery = types.SkillsQuery["skill"][number]
 
 /** Actions that can be handled synchronously in the reducer */
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 type SkillAction = SkillActionInner | SkillActionOuter
 /** Synchronously handleable actions that are dispatched by the async action handler */
 type SkillActionInner = { type: "update"; skill: SkillFromQuery }
@@ -94,14 +95,14 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
             <CardHeader title={skill.id} />
             <CardActions sx={{ gap: 2 }}>
                 <PrincipleCard
-                    id={skill.primary_principle!.id}
+                    id={skill.primary_principle.id}
                     title={skill.level + 1}
                     sx={{ boxShadow: "none" }}
                     disablePadding
                 />
                 <Divider orientation="vertical" variant="middle" flexItem />
                 <PrincipleCard
-                    id={skill.secondary_principle!.id}
+                    id={skill.secondary_principle.id}
                     title={skill.level}
                     sx={{ boxShadow: "none" }}
                     disablePadding
