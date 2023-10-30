@@ -1,3 +1,5 @@
+import { useCallback } from "react"
+
 import Button from "@mui/material/Button"
 import IconButton from "@mui/material/IconButton"
 
@@ -10,44 +12,40 @@ interface PrincipleFilterButtonProps {
     principle: Principle
     selectedPrinciple?: Principle | undefined
     count?: number | string | undefined
-    handlePrincipleFilter(principle: Principle): void
+    onPrincipleFilter(principle: Principle): void
 }
 
 const PrincipleFilterButton = ({
     principle,
     selectedPrinciple,
     count,
-    handlePrincipleFilter,
-}: PrincipleFilterButtonProps) =>
-    count ? (
+    onPrincipleFilter,
+}: PrincipleFilterButtonProps) => {
+    const handlePrincipleFilter = useCallback(
+        () => onPrincipleFilter(principle),
+        [onPrincipleFilter, principle],
+    )
+    const principleMatch = principle.id === selectedPrinciple?.id
+    const style = {
+        backgroundColor: principleMatch ? "primary.main" : undefined,
+    }
+    const icon = <PrincipleIcon id={principle.id} />
+    return count ? (
         <Button
-            startIcon={<PrincipleIcon id={principle.id} />}
-            variant={
-                selectedPrinciple?.id === principle.id
-                    ? "contained"
-                    : "outlined"
-            }
+            onClick={handlePrincipleFilter}
+            startIcon={icon}
+            variant={principleMatch ? "contained" : "outlined"}
         >
             {count}
         </Button>
     ) : (
         <IconButton
-            onClick={() => handlePrincipleFilter(principle)}
-            sx={{
-                backgroundColor:
-                    principle.id === selectedPrinciple?.id
-                        ? "primary.dark"
-                        : undefined,
-                "&:hover": {
-                    backgroundColor:
-                        principle.id === selectedPrinciple?.id
-                            ? "primary.light"
-                            : undefined,
-                },
-            }}
+            onClick={handlePrincipleFilter}
+            sx={{ ...style, "&:hover": { ...style } }}
         >
-            {<PrincipleIcon id={principle.id} />}
+            {icon}
         </IconButton>
     )
+}
 
 export default PrincipleFilterButton

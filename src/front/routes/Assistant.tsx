@@ -101,7 +101,7 @@ const AssistantView = () => {
                                 principle={principle}
                                 selectedPrinciple={selectedPrinciple}
                                 count={count}
-                                handlePrincipleFilter={setPrinciple}
+                                onPrincipleFilter={setPrinciple}
                             />
                         ),
                     )}

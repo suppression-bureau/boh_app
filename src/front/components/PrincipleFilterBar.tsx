@@ -22,7 +22,7 @@ const PrincipleFilterBar = ({
                     key={principle.id}
                     principle={principle}
                     selectedPrinciple={selectedPrinciple}
-                    handlePrincipleFilter={handleSelectedPrinciple}
+                    onPrincipleFilter={handleSelectedPrinciple}
                 />
             ))}
         </Stack>
