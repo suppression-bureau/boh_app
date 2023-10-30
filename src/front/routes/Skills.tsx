@@ -17,6 +17,7 @@ import TextField from "@mui/material/TextField"
 
 import UpgradeIcon from "@mui/icons-material/Upgrade"
 
+import PrincipleFilterButton from "../components/PrincipleFilterButton"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { PrincipleCard } from "../routes/Principles"
@@ -39,6 +40,7 @@ const skillQueryDocument = graphql(`
 `)
 
 type SkillFromQuery = types.SkillsQuery["skill"][number]
+type Principle = Pick<types.Principle, "id">
 
 /** Actions that can be handled synchronously in the reducer */
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
@@ -123,6 +125,38 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
     )
 }
 
+interface SkillFilterProps {
+    skills: SkillFromQuery[]
+    selectedPrinciple: Pick<types.Principle, "id"> | undefined
+    handlePrinciple(principle: SkillFromQuery): void
+}
+
+const SkillFilterBar = ({
+    skills,
+    selectedPrinciple,
+    handlePrinciple,
+}: SkillFilterProps) => {
+    const skillPrinciples = new Set(
+        skills.map((skill) => skill.primary_principle.id),
+    )
+    const principles = Array.from(skillPrinciples).map((principle) => ({
+        id: principle,
+    }))
+    return (
+        <Stack direction={"row"} spacing={2} useFlexGap flexWrap={"wrap"}>
+            {principles.map((principle) => (
+                <PrincipleFilterButton
+                    key={principle.id}
+                    principle={principle}
+                    selectedPrinciple={selectedPrinciple}
+                    handlePrincipleFilter={handlePrinciple}
+                    count={""}
+                />
+            ))}
+        </Stack>
+    )
+}
+
 const SkillsView = () => {
     const [{ data }] = useQuery({ query: skillQueryDocument })
 
@@ -134,6 +168,10 @@ const SkillsView = () => {
 
     const [open, setOpen] = useState(false)
     const [newSkill, setNewSkill] = useState<SkillFromQuery | null>(null)
+
+    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
+        undefined,
+    )
 
     const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
     const handleClose = useCallback(() => setOpen(false), [setOpen])
@@ -162,6 +200,11 @@ const SkillsView = () => {
                 marginInline: "auto",
             }}
         >
+            <SkillFilterBar
+                skills={state}
+                selectedPrinciple={selectedPrinciple}
+                handlePrinciple={setPrinciple}
+            />
             <Button onClick={handleClickOpen} variant="contained">
                 Learn new Skill
             </Button>
@@ -189,13 +232,29 @@ const SkillsView = () => {
             </Dialog>
             {state
                 .filter(({ level }) => level > 0)
-                .map(({ ...skill }) => (
-                    <Skill
-                        key={skill.id}
-                        onIncrement={handleSkillIncrement}
-                        {...skill}
-                    />
-                ))}
+                .map(({ ...skill }) => {
+                    if (!selectedPrinciple)
+                        return (
+                            <Skill
+                                key={skill.id}
+                                onIncrement={handleSkillIncrement}
+                                {...skill}
+                            />
+                        )
+                    if (
+                        selectedPrinciple &&
+                        (skill.primary_principle.id === selectedPrinciple.id ||
+                            skill.secondary_principle.id ===
+                                selectedPrinciple.id)
+                    )
+                        return (
+                            <Skill
+                                key={skill.id}
+                                onIncrement={handleSkillIncrement}
+                                {...skill}
+                            />
+                        )
+                })}
         </Stack>
     )
 }

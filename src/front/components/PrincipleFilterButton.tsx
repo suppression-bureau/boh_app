@@ -8,7 +8,7 @@ type Principle = Pick<types.Principle, "id">
 interface PrincipleFilterButtonProps {
     principle: Principle
     selectedPrinciple: Principle | undefined
-    count: number
+    count: number | string
     handlePrincipleFilter(principle: Principle): void
 }
 
