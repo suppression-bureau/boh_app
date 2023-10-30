@@ -17,7 +17,7 @@ import TextField from "@mui/material/TextField"
 
 import UpgradeIcon from "@mui/icons-material/Upgrade"
 
-import PrincipleFilterButton from "../components/PrincipleFilterButton"
+import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { PrincipleCard } from "../routes/Principles"
@@ -125,38 +125,6 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
     )
 }
 
-interface SkillFilterProps {
-    skills: SkillFromQuery[]
-    selectedPrinciple: Pick<types.Principle, "id"> | undefined
-    handlePrinciple(principle: SkillFromQuery): void
-}
-
-const SkillFilterBar = ({
-    skills,
-    selectedPrinciple,
-    handlePrinciple,
-}: SkillFilterProps) => {
-    const skillPrinciples = new Set(
-        skills.map((skill) => skill.primary_principle.id),
-    )
-    const principles = Array.from(skillPrinciples).map((principle) => ({
-        id: principle,
-    }))
-    return (
-        <Stack direction={"row"} spacing={2} useFlexGap flexWrap={"wrap"}>
-            {principles.map((principle) => (
-                <PrincipleFilterButton
-                    key={principle.id}
-                    principle={principle}
-                    selectedPrinciple={selectedPrinciple}
-                    handlePrincipleFilter={handlePrinciple}
-                    count={""}
-                />
-            ))}
-        </Stack>
-    )
-}
-
 const SkillsView = () => {
     const [{ data }] = useQuery({ query: skillQueryDocument })
 
@@ -169,6 +137,13 @@ const SkillsView = () => {
     const [open, setOpen] = useState(false)
     const [newSkill, setNewSkill] = useState<SkillFromQuery | null>(null)
 
+    // for PrincipleFilterBar
+    const skillPrinciples = new Set(
+        state.map((skill) => skill.primary_principle.id),
+    )
+    const principles = Array.from(skillPrinciples).map((principle) => ({
+        id: principle,
+    }))
     const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
         undefined,
     )
@@ -200,10 +175,10 @@ const SkillsView = () => {
                 marginInline: "auto",
             }}
         >
-            <SkillFilterBar
-                skills={state}
+            <PrincipleFilterBar
+                principles={principles}
                 selectedPrinciple={selectedPrinciple}
-                handlePrinciple={setPrinciple}
+                handleSelectedPrinciple={setPrinciple}
             />
             <Button onClick={handleClickOpen} variant="contained">
                 Learn new Skill
