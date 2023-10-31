@@ -125,6 +125,52 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
     )
 }
 
+interface NewSkillDialogProps {
+    state: SkillFromQuery[]
+    open: boolean
+    handleClose(): void
+    newSkill: SkillFromQuery | null
+    handleNewSkill(
+        event: React.SyntheticEvent,
+        skill: SkillFromQuery | null,
+    ): void
+    learnSkill(): void
+}
+
+const NewSkillDialog = ({
+    state,
+    open,
+    handleClose,
+    newSkill,
+    handleNewSkill,
+    learnSkill,
+}: NewSkillDialogProps) => {
+    return (
+        <Dialog open={open} onClose={handleClose}>
+            <DialogContent>
+                <Autocomplete
+                    id="skill-selector"
+                    options={state.filter(({ level }) => level == 0)}
+                    value={newSkill}
+                    sx={{ width: 300 }}
+                    getOptionLabel={(skill) => skill.id}
+                    isOptionEqualToValue={(a, b) => a.id === b.id}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Skill" />
+                    )}
+                    onChange={handleNewSkill}
+                />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={learnSkill} disabled={!newSkill}>
+                        Learn
+                    </Button>
+                </DialogActions>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
 const SkillsView = () => {
     const [{ data }] = useQuery({ query: skillQueryDocument })
 
@@ -148,8 +194,12 @@ const SkillsView = () => {
         undefined,
     )
 
+    // for NewSkillDialog
     const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
-    const handleClose = useCallback(() => setOpen(false), [setOpen])
+    const handleClose = useCallback(() => {
+        setNewSkill(null) // de-select newSkill to reset Dialog to initial state
+        setOpen(false)
+    }, [setOpen, setNewSkill])
     const handleNewSkill = useCallback(
         (_event: React.SyntheticEvent, skill: SkillFromQuery | null) => {
             setNewSkill(skill)
@@ -159,8 +209,9 @@ const SkillsView = () => {
     const learnSkill = useCallback(() => {
         if (!newSkill) throw new Error("No skill selected")
         dispatch({ type: "increment", skill: newSkill })
-        setOpen(false)
-    }, [dispatch, newSkill, setOpen])
+        handleClose() // closes the dialog and resets newSkill to avoid warning
+    }, [dispatch, newSkill, handleClose])
+
     const handleSkillIncrement = useCallback(
         (skill: SkillFromQuery) => dispatch({ type: "increment", skill }),
         [dispatch],
@@ -183,28 +234,14 @@ const SkillsView = () => {
             <Button onClick={handleClickOpen} variant="contained">
                 Learn new Skill
             </Button>
-            <Dialog open={open} onClose={handleClose}>
-                <DialogContent>
-                    <Autocomplete
-                        id="skill-selector"
-                        options={state.filter(({ level }) => level == 0)}
-                        sx={{ width: 300 }}
-                        getOptionLabel={(skill) => skill.id}
-                        isOptionEqualToValue={(a, b) => a.id === b.id}
-                        renderInput={(params) => (
-                            <TextField {...params} label="Skill" />
-                        )}
-                        onChange={handleNewSkill}
-                    />
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        {/* TODO: also reset autocomplete state to avoid warning */}
-                        <Button onClick={learnSkill} disabled={!newSkill}>
-                            Learn
-                        </Button>
-                    </DialogActions>
-                </DialogContent>
-            </Dialog>
+            <NewSkillDialog
+                state={state}
+                open={open}
+                handleClose={handleClose}
+                newSkill={newSkill}
+                handleNewSkill={handleNewSkill}
+                learnSkill={learnSkill}
+            />
             {state
                 .filter(({ level }) => level > 0)
                 .map(({ ...skill }) => {
