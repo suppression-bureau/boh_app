@@ -48,7 +48,7 @@ export function getPrinciples<T extends HasPrinciple>(datum: T): Principle[] {
     if ("primary_principle" in datum) {
         return [datum.primary_principle, datum.secondary_principle]
     } else {
-        let principles: Principle[] = []
+        const principles: Principle[] = []
         for (const principle of PRINCIPLES) {
             if (datum[principle]) {
                 principles.push({ id: principle })
@@ -81,7 +81,7 @@ interface PrincipleFilter {
 
 type FilterSet = Partial<AspectFilter> & Partial<PrincipleFilter>
 
-// eslint-disable @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 interface FilterDataProps<
     F extends FilterSet,
     T extends (F extends AspectFilter ? HasAspect : {}) &
@@ -110,7 +110,7 @@ export function filterAspects<T extends HasAspect>(
         return item.aspects.some(({ id }) => filterAspects.includes(id))
     })
 }
-// eslint-disable @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 function filterData<
     F extends FilterSet,
     T extends (F extends AspectFilter ? HasAspect : {}) &
@@ -122,7 +122,7 @@ function filterData<
     if (filters && filters.aspects) {
         const aspects = filters.aspects.map((aspect) => aspect.id)
         filteredData = withAspects(filteredData).filter((item) => {
-            return item.aspects!.some(({ id }) => aspects.includes(id))
+            return item.aspects.some(({ id }) => aspects.includes(id))
         })
     }
     if (filters?.principles) {
