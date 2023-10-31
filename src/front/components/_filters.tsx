@@ -71,6 +71,27 @@ type MaybeWithPrinciple<T extends HasPrinciple> = { d: T } & Partial<
     Pick<WithPrinciple<T>, "principles">
 >
 
+export function filterPrinciples<T extends HasPrinciple>(
+    data: { d: T }[],
+    principles: types.Principle[],
+) {
+    const filterPrinciples = principles.map((principle) => principle.id)
+    return withPrinciples(data).filter((item) => {
+        return item.principles.some(({ id }) => filterPrinciples.includes(id))
+    })
+}
+
+export function filterAspects<T extends HasAspect>(
+    data: { d: T }[],
+    aspects: types.Aspect[],
+) {
+    const filterAspects = aspects.map((aspect) => aspect.id)
+    return withAspects(data).filter((item) => {
+        return item.aspects.some(({ id }) => filterAspects.includes(id))
+    })
+}
+
+// experimental filter
 interface AspectFilter {
     aspects: types.Aspect[]
 }
@@ -91,25 +112,6 @@ interface FilterDataProps<
     filters?: F
 }
 
-export function filterPrinciples<T extends HasPrinciple>(
-    data: { d: T }[],
-    principles: types.Principle[],
-) {
-    const filterPrinciples = principles.map((principle) => principle.id)
-    return withPrinciples(data).filter((item) => {
-        return item.principles.some(({ id }) => filterPrinciples.includes(id))
-    })
-}
-
-export function filterAspects<T extends HasAspect>(
-    data: { d: T }[],
-    aspects: types.Aspect[],
-) {
-    const filterAspects = aspects.map((aspect) => aspect.id)
-    return withAspects(data).filter((item) => {
-        return item.aspects.some(({ id }) => filterAspects.includes(id))
-    })
-}
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 function filterData<
     F extends FilterSet,
