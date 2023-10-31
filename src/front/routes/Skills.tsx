@@ -48,7 +48,12 @@ type SkillFromQuery = types.SkillsQuery["skill"][number]
 type SkillAction = SkillActionInner | SkillActionOuter
 /** Synchronously handleable actions that are dispatched by the async action handler */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type SkillActionInner = { type: "update"; skill: SkillFromQuery }
+type SkillActionInner =
+    | { type: "update"; skill: SkillFromQuery }
+    | {
+          type: "sort"
+          principle: Principle | undefined
+      }
 /** Synchronously handleable actions that we dispatch manually */
 type SkillActionOuter = never
 
@@ -62,6 +67,11 @@ function skillReducer(
                 if (skill.id !== action.skill.id) return skill
                 return action.skill
             })
+        }
+        case "sort": {
+            if (!action.principle)
+                return state.toSorted((a, b) => a.id.localeCompare(b.id))
+            return state.toSorted((a, b) => b.level - a.level)
         }
     }
 }
@@ -204,6 +214,14 @@ const SkillsView = () => {
         undefined,
     )
 
+    const handleSelectedPrinciple = useCallback(
+        (principle: Principle | undefined) => {
+            dispatch({ type: "sort", principle })
+            setPrinciple(principle)
+        },
+        [setPrinciple, dispatch],
+    )
+
     const handleSkillIncrement = useCallback(
         (skill: SkillFromQuery) => dispatch({ type: "increment", skill }),
         [dispatch],
@@ -221,7 +239,7 @@ const SkillsView = () => {
             <PrincipleFilterBar
                 principles={principles}
                 selectedPrinciple={selectedPrinciple}
-                handleSelectedPrinciple={setPrinciple}
+                handleSelectedPrinciple={handleSelectedPrinciple}
             />
             <NewSkillDialog state={state} dispatch={dispatch} />
             {state
@@ -237,9 +255,9 @@ const SkillsView = () => {
                         )
                     if (
                         selectedPrinciple &&
-                        getPrinciples(skill)
-                            .map(({ id }) => id)
-                            .includes(selectedPrinciple.id)
+                        new Set(getPrinciples(skill).map(({ id }) => id)).has(
+                            selectedPrinciple.id,
+                        )
                     )
                         return (
                             <Skill
