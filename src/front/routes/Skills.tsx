@@ -128,47 +128,59 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
 
 interface NewSkillDialogProps {
     state: SkillFromQuery[]
-    open: boolean
-    handleClose(): void
-    newSkill: SkillFromQuery | null
-    handleNewSkill(
-        event: React.SyntheticEvent,
-        skill: SkillFromQuery | null,
-    ): void
-    learnSkill(): void
+    dispatch: React.Dispatch<SkillActionAsync>
 }
 
-const NewSkillDialog = ({
-    state,
-    open,
-    handleClose,
-    newSkill,
-    handleNewSkill,
-    learnSkill,
-}: NewSkillDialogProps) => {
+const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
+    const [open, setOpen] = useState(false)
+    const [newSkill, setNewSkill] = useState<SkillFromQuery | null>(null)
+
+    const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
+    const handleClose = useCallback(() => {
+        setNewSkill(null) // de-select newSkill to reset Dialog to initial state
+        setOpen(false)
+    }, [setOpen, setNewSkill])
+
+    const handleNewSkill = useCallback(
+        (_event: React.SyntheticEvent, skill: SkillFromQuery | null) => {
+            setNewSkill(skill)
+        },
+        [setNewSkill],
+    )
+    const learnSkill = useCallback(() => {
+        if (!newSkill) throw new Error("No skill selected")
+        dispatch({ type: "increment", skill: newSkill })
+        handleClose() // closes the dialog and resets newSkill to avoid warning
+    }, [dispatch, newSkill, handleClose])
+
     return (
-        <Dialog open={open} onClose={handleClose}>
-            <DialogContent>
-                <Autocomplete
-                    id="skill-selector"
-                    options={state.filter(({ level }) => level == 0)}
-                    value={newSkill}
-                    sx={{ width: 300 }}
-                    getOptionLabel={(skill) => skill.id}
-                    isOptionEqualToValue={(a, b) => a.id === b.id}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Skill" />
-                    )}
-                    onChange={handleNewSkill}
-                />
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={learnSkill} disabled={!newSkill}>
-                        Learn
-                    </Button>
-                </DialogActions>
-            </DialogContent>
-        </Dialog>
+        <>
+            <Button onClick={handleClickOpen} variant="contained">
+                Learn new Skill
+            </Button>
+            <Dialog open={open} onClose={handleClose}>
+                <DialogContent>
+                    <Autocomplete
+                        id="skill-selector"
+                        options={state.filter(({ level }) => level == 0)}
+                        value={newSkill}
+                        sx={{ width: 300 }}
+                        getOptionLabel={(skill) => skill.id}
+                        isOptionEqualToValue={(a, b) => a.id === b.id}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Skill" />
+                        )}
+                        onChange={handleNewSkill}
+                    />
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={learnSkill} disabled={!newSkill}>
+                            Learn
+                        </Button>
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
+        </>
     )
 }
 
@@ -181,9 +193,6 @@ const SkillsView = () => {
         skillHandlers,
     )
 
-    const [open, setOpen] = useState(false)
-    const [newSkill, setNewSkill] = useState<SkillFromQuery | null>(null)
-
     // for PrincipleFilterBar
     const skillPrinciples = new Set(
         state.map((skill) => skill.primary_principle.id),
@@ -194,24 +203,6 @@ const SkillsView = () => {
     const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
         undefined,
     )
-
-    // for NewSkillDialog
-    const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
-    const handleClose = useCallback(() => {
-        setNewSkill(null) // de-select newSkill to reset Dialog to initial state
-        setOpen(false)
-    }, [setOpen, setNewSkill])
-    const handleNewSkill = useCallback(
-        (_event: React.SyntheticEvent, skill: SkillFromQuery | null) => {
-            setNewSkill(skill)
-        },
-        [setNewSkill],
-    )
-    const learnSkill = useCallback(() => {
-        if (!newSkill) throw new Error("No skill selected")
-        dispatch({ type: "increment", skill: newSkill })
-        handleClose() // closes the dialog and resets newSkill to avoid warning
-    }, [dispatch, newSkill, handleClose])
 
     const handleSkillIncrement = useCallback(
         (skill: SkillFromQuery) => dispatch({ type: "increment", skill }),
@@ -232,17 +223,7 @@ const SkillsView = () => {
                 selectedPrinciple={selectedPrinciple}
                 handleSelectedPrinciple={setPrinciple}
             />
-            <Button onClick={handleClickOpen} variant="contained">
-                Learn new Skill
-            </Button>
-            <NewSkillDialog
-                state={state}
-                open={open}
-                handleClose={handleClose}
-                newSkill={newSkill}
-                handleNewSkill={handleNewSkill}
-                learnSkill={learnSkill}
-            />
+            <NewSkillDialog state={state} dispatch={dispatch} />
             {state
                 .filter(({ level }) => level > 0)
                 .map(({ ...skill }) => {
