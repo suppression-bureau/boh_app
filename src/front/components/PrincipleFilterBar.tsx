@@ -3,10 +3,9 @@ import Stack from "@mui/material/Stack"
 
 import ClearIcon from "@mui/icons-material/Clear"
 
-import * as types from "../gql/graphql"
+import { Principle } from "../types"
 import PrincipleFilterButton from "./PrincipleFilterButton"
 
-type Principle = Pick<types.Principle, "id">
 interface SkillFilterProps {
     principles: Principle[]
     selectedPrinciple: Principle | undefined

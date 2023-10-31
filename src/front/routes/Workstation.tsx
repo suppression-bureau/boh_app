@@ -13,6 +13,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore"
 
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
+import { Principle } from "../types"
 import { AspectIconGroup } from "./Aspects"
 import ItemsView from "./Items"
 import { PrincipleIconGroup } from "./Principles"
@@ -45,7 +46,6 @@ const workstationQueryDocument = graphql(`
 type WorkstationFromQuery = types.WorkstationQuery["workstation"][number]
 type WorkstationSlotFromQuery =
     WorkstationFromQuery["workstation_slots"][number]
-type Principle = WorkstationFromQuery["principles"][number]
 
 interface WorkstationSlotProps {
     workstationSlot: WorkstationSlotFromQuery

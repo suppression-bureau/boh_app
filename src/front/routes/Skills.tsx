@@ -21,6 +21,7 @@ import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { PrincipleCard } from "../routes/Principles"
+import { Principle } from "../types"
 
 const API_URL = "http://localhost:8000"
 
@@ -40,7 +41,6 @@ const skillQueryDocument = graphql(`
 `)
 
 type SkillFromQuery = types.SkillsQuery["skill"][number]
-type Principle = Pick<types.Principle, "id">
 
 /** Actions that can be handled synchronously in the reducer */
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents

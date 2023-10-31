@@ -3,10 +3,8 @@ import { useCallback } from "react"
 import Button from "@mui/material/Button"
 import IconButton from "@mui/material/IconButton"
 
-import * as types from "../gql/graphql"
 import { PrincipleIcon } from "../routes/Principles"
-
-type Principle = Pick<types.Principle, "id">
+import { Principle } from "../types"
 
 interface PrincipleFilterButtonProps {
     principle: Principle
