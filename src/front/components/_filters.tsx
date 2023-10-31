@@ -81,6 +81,7 @@ interface PrincipleFilter {
 
 type FilterSet = Partial<AspectFilter> & Partial<PrincipleFilter>
 
+// eslint-disable @typescript-eslint/no-explicit-any
 interface FilterDataProps<
     F extends FilterSet,
     T extends (F extends AspectFilter ? HasAspect : {}) &
@@ -109,7 +110,7 @@ export function filterAspects<T extends HasAspect>(
         return item.aspects.some(({ id }) => filterAspects.includes(id))
     })
 }
-
+// eslint-disable @typescript-eslint/no-explicit-any
 function filterData<
     F extends FilterSet,
     T extends (F extends AspectFilter ? HasAspect : {}) &
@@ -117,7 +118,7 @@ function filterData<
 >({ data, filters }: FilterDataProps<F, T>) {
     type Enriched = (T extends HasAspect ? MaybeWithAspect<T> : {}) &
         (T extends HasPrinciple ? MaybeWithPrinciple<T> : {})
-    let filteredData: Enriched[] = data.map((d) => ({ d }))
+    const filteredData: Enriched[] = data.map((d) => ({ d }))
     if (filters && filters.aspects) {
         const aspects = filters.aspects.map((aspect) => aspect.id)
         filteredData = withAspects(filteredData).filter((item) => {
