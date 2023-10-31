@@ -18,6 +18,7 @@ import TextField from "@mui/material/TextField"
 import UpgradeIcon from "@mui/icons-material/Upgrade"
 
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
+import { getPrinciples } from "../components/_filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { PrincipleCard } from "../routes/Principles"
@@ -255,9 +256,9 @@ const SkillsView = () => {
                         )
                     if (
                         selectedPrinciple &&
-                        (skill.primary_principle.id === selectedPrinciple.id ||
-                            skill.secondary_principle.id ===
-                                selectedPrinciple.id)
+                        getPrinciples(skill)
+                            .map(({ id }) => id)
+                            .includes(selectedPrinciple.id)
                     )
                         return (
                             <Skill
