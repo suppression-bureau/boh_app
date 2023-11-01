@@ -8,6 +8,7 @@ import {
 } from "react"
 import { useQuery } from "urql"
 
+import Drawer from "@mui/material/Drawer"
 import List from "@mui/material/List"
 import ListItemButton from "@mui/material/ListItemButton"
 import ListItemText from "@mui/material/ListItemText"
@@ -170,23 +171,45 @@ const ItemsView = ({ filters }: ItemsProps) => {
         [selected],
     )
     return (
-        <List
-            sx={{
-                maxWidth: "sm",
-                marginInline: "auto",
-            }}
-        >
-            {items
-                .filter(({ isVisible }) => isVisible)
-                .map((item) => (
+        <>
+            <List
+                sx={{
+                    maxWidth: "sm",
+                    marginInline: "auto",
+                }}
+            >
+                {items
+                    .filter(({ isVisible }) => isVisible)
+                    .map((item) => (
+                        <Item
+                            key={item.id}
+                            selected={selected.has(item.id)}
+                            onClick={(e) => toggleSelected(e, item.id)}
+                            {...item}
+                        />
+                    ))}
+            </List>
+            <Drawer
+                variant="persistent"
+                open={!!selected.size}
+                sx={{
+                    maxWidth: "250px",
+                    "& .MuiDrawer-paper": { width: "250px" },
+                }}
+            >
+                {[...selected].map(([id, ref]) => (
                     <Item
-                        key={item.id}
-                        selected={selected.has(item.id)}
-                        onClick={(e) => toggleSelected(e, item.id)}
-                        {...item}
+                        key={id}
+                        onClick={() =>
+                            ref.current!.scrollIntoView({
+                                behavior: "smooth",
+                            })
+                        }
+                        {...data!.item.find((item) => item.id === id)!}
                     />
                 ))}
-        </List>
+            </Drawer>
+        </>
     )
 }
 export default ItemsView
