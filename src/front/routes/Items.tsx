@@ -1,5 +1,4 @@
 import {
-    MouseEventHandler,
     RefObject,
     forwardRef,
     memo,
