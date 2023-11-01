@@ -58,17 +58,17 @@ function setVisible(item: ItemFromQuery, visible: boolean): VisibleItem {
 
 function filterItems(
     state: ItemFromQuery[],
-    filters: ItemsProps["filters"],
+    filters: ItemsProps["filters"] = {},
 ): VisibleItem[] {
     let filteredState = state
     // now everything is visible
-    if (filters?.known) {
-        filteredState = state.filter(({ known }) => known)
+    if (filters.known) {
+        filteredState = filteredState.filter(({ known }) => known)
     }
     // now, if we filtered by known, the unknown items are no longer visible
-    if (filters?.principles) {
+    if (filters.principles) {
         filteredState = filters.principles
-            .map((principle) => principle.id as PrincipleString)
+            .map(({ id }) => id as PrincipleString)
             .map((principle) =>
                 filteredState
                     .filter((item) => item[principle] !== null)
@@ -80,7 +80,7 @@ function filterItems(
             .reduce((a, b) => a.concat(b), [])
     }
     // now, if we filtered by principles, the items lacking one or more of the principles are no longer visible
-    if (filters?.aspects) {
+    if (filters.aspects) {
         const aspects = new Set(filters.aspects.map((aspect) => aspect.id))
         filteredState = filteredState.filter((item) =>
             item.aspects.some(({ id }) => aspects.has(id)),
@@ -153,8 +153,10 @@ const ItemsView = ({ filters }: ItemsProps) => {
             }}
         >
             {state
-                ?.filter(({ isVisible }) => isVisible)
-                .map((item) => <Item key={item.id} {...item} />)}
+                .filter(({ isVisible }) => isVisible)
+                .map((item) => (
+                    <Item key={item.id} {...item} />
+                ))}
         </List>
     )
 }

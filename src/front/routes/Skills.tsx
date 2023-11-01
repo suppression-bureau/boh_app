@@ -18,7 +18,7 @@ import TextField from "@mui/material/TextField"
 import UpgradeIcon from "@mui/icons-material/Upgrade"
 
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
-import { getPrinciples } from "../components/_filters"
+import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { PrincipleCard } from "../routes/Principles"

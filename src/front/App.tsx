@@ -5,6 +5,7 @@ import SlideRoutes from "react-slide-routes"
 
 import AppBar from "@mui/material/AppBar"
 import CssBaseline from "@mui/material/CssBaseline"
+import Stack from "@mui/material/Stack"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
 import Toolbar from "@mui/material/Toolbar"
@@ -14,6 +15,7 @@ import {
     alpha,
     createTheme,
     responsiveFontSizes,
+    useTheme,
 } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
@@ -77,52 +79,65 @@ const App = () => {
         })
         return responsiveFontSizes(baseTheme)
     }, [dark])
-    const currentTab = useRouteMatch(ROUTE_LINKS.map(({ pattern }) => pattern))
-        ?.pattern.path
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <ElevationScroll>
-                <AppBar
-                    position="sticky"
-                    sx={{
-                        color: theme.palette.text.primary,
-                        background: alpha(
-                            theme.palette.background.default,
-                            0.7,
-                        ),
-                        // TODO re-add contrast(200%) before blur without discoloring dark mode
-                        backdropFilter: "blur(15px)",
-                    }}
-                >
-                    <Toolbar component="nav" sx={{ justifyContent: "center" }}>
-                        <Tabs centered value={currentTab}>
-                            {ROUTE_LINKS.map(({ label, href, pattern }) => (
-                                <Tab
-                                    key={label}
-                                    label={label}
-                                    value={pattern}
-                                    component={Link}
-                                    to={href}
-                                />
-                            ))}
-                        </Tabs>
-                    </Toolbar>
-                </AppBar>
-            </ElevationScroll>
-            <React.Suspense fallback={"Loading..."}>
-                <SlideRoutes>
-                    <Route index element={<Home />} />
-                    <Route path="aspects" element={<Aspects />} />
-                    <Route path="principles" element={<Principles />} />
-                    <Route path="skills" element={<SkillsView />} />
-                    <Route path="items" element={<ItemsView />} />
-                    <Route path="assistance" element={<AssistantView />} />
-                    <Route path="workstations" element={<WorkstationView />} />
-                    <Route path="*" element={<Navigate replace to="/" />} />
-                </SlideRoutes>
-            </React.Suspense>
+            <Stack
+                direction="column"
+                justifyContent="start"
+                sx={{ "&>*:nth-child(2)": { flexGrow: 1 } }}
+            >
+                <AppNav />
+                <React.Suspense fallback={"Loading..."}>
+                    <SlideRoutes>
+                        <Route index element={<Home />} />
+                        <Route path="aspects" element={<Aspects />} />
+                        <Route path="principles" element={<Principles />} />
+                        <Route path="skills" element={<SkillsView />} />
+                        <Route path="items" element={<ItemsView />} />
+                        <Route path="assistance" element={<AssistantView />} />
+                        <Route
+                            path="workstations"
+                            element={<WorkstationView />}
+                        />
+                        <Route path="*" element={<Navigate replace to="/" />} />
+                    </SlideRoutes>
+                </React.Suspense>
+            </Stack>
         </ThemeProvider>
+    )
+}
+
+function AppNav() {
+    const theme = useTheme()
+    const currentTab = useRouteMatch(ROUTE_LINKS.map(({ pattern }) => pattern))
+        ?.pattern.path
+    return (
+        <ElevationScroll>
+            <AppBar
+                position="sticky"
+                sx={{
+                    color: theme.palette.text.primary,
+                    background: alpha(theme.palette.background.default, 0.7),
+                    // TODO re-add contrast(200%) before blur without discoloring dark mode
+                    backdropFilter: "blur(15px)",
+                }}
+            >
+                <Toolbar component="nav" sx={{ justifyContent: "center" }}>
+                    <Tabs centered value={currentTab}>
+                        {ROUTE_LINKS.map(({ label, href, pattern }) => (
+                            <Tab
+                                key={label}
+                                label={label}
+                                value={pattern}
+                                component={Link}
+                                to={href}
+                            />
+                        ))}
+                    </Tabs>
+                </Toolbar>
+            </AppBar>
+        </ElevationScroll>
     )
 }
 
