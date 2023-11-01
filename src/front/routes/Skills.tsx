@@ -26,7 +26,7 @@ import { Principle } from "../types"
 
 const API_URL = "http://localhost:8000"
 
-const skillQueryDocument = graphql(`
+export const skillQueryDocument = graphql(`
     query Skills {
         skill {
             id

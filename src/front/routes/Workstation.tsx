@@ -19,9 +19,9 @@ import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { Principle } from "../types"
 import { AspectIconGroup } from "./Aspects"
-import ItemsView from "./Items"
+import ItemsView, { itemsQueryDocument } from "./Items"
 import { PrincipleIconGroup } from "./Principles"
-import { SkillsStack } from "./Skills"
+import { SkillsStack, skillQueryDocument } from "./Skills"
 
 const workstationQueryDocument = graphql(`
     query Workstation {
@@ -129,8 +129,14 @@ const WorkstationSlot = ({
                     Show Items
                 </Button>
             </CardActions>
+            {/* without the prefetching, the Collapse transition and urql have a bad interaction */}
             <ErrorBoundary FallbackComponent={ErrorDisplay}>
-                <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <Collapse
+                    in={expanded}
+                    timeout="auto"
+                    mountOnEnter
+                    unmountOnExit
+                >
                     {workstationSlot.id === "Skill" ? (
                         <SkillsStack selectedPrinciples={principles} />
                     ) : (
@@ -174,6 +180,9 @@ const Workstation = ({ workstation }: WorkstationProps) => (
 
 const WorkstationView = () => {
     const [{ data }] = useQuery({ query: workstationQueryDocument })
+    // prefetch
+    useQuery({ query: skillQueryDocument })
+    useQuery({ query: itemsQueryDocument })
 
     const initialState: VisibleWorkstation[] = useMemo(
         () =>
