@@ -45,7 +45,7 @@ interface AssistantItemProps {
 const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
     <Stack>
         {assistant.aspects.map((aspect) => (
-            <div key={`${aspect.id}grouping`}>
+            <div key={aspect.id}>
                 <Typography variant="h5" color={"secondary"}>
                     {aspect.id}
                 </Typography>

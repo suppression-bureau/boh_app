@@ -97,7 +97,7 @@ const App = () => {
                 justifyItems="center"
                 sx={{
                     "&>*": { flexShrink: 0 },
-                    "&>*:nth-child(2)": { flexGrow: 1 },
+                    "&>.slide-routes": { flexGrow: 1 },
                 }}
             >
                 <AppNav />

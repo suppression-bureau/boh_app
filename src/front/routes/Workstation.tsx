@@ -169,7 +169,7 @@ const Workstation = ({ workstation }: WorkstationProps) => (
                 .toSorted((a, b) => a.index - b.index)
                 .map((slot) => (
                     <WorkstationSlot
-                        key={`${workstation.id}${slot.id}`}
+                        key={slot.id}
                         workstationSlot={slot}
                         principles={workstation.principles}
                     />
