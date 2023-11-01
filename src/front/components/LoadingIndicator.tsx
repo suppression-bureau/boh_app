@@ -14,5 +14,5 @@ export default function LoadingIndicator({
 }: LoadingIndicatorProps) {
     const [visible, setVisible] = useState(false)
     setTimeout(() => setVisible(true), delayMs)
-    return visible ? <CircularProgress {...props} /> : null
+    return visible ? <CircularProgress {...props} /> : undefined
 }

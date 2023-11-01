@@ -132,15 +132,13 @@ const ItemPrincipleValue = ({
 
 const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
     <Stack direction="row" alignItems="center">
-        {PRINCIPLES.filter((principle) => item[principle] != null).map(
-            (principle) => (
-                <ItemPrincipleValue
-                    key={principle}
-                    principle={principle}
-                    value={item[principle]!}
-                />
-            ),
-        )}
+        {PRINCIPLES.filter((principle) => item[principle]).map((principle) => (
+            <ItemPrincipleValue
+                key={principle}
+                principle={principle}
+                value={item[principle]!}
+            />
+        ))}
         <AspectIconGroup aspects={aspects} />
     </Stack>
 )
@@ -286,6 +284,7 @@ const ItemsView = ({ filters }: ItemsProps) => {
     // all possible item refs have a key, even if they’re filtered out
     const itemRefs = useRef(
         new Map<string, RefObject<HTMLDivElement>>(
+            // eslint-disable-next-line unicorn/no-null
             data!.item.map(({ id }) => [id, { current: null }]),
         ),
     )

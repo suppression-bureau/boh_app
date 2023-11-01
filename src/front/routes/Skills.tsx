@@ -144,17 +144,21 @@ interface NewSkillDialogProps {
 
 const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
     const [open, setOpen] = useState(false)
-    const [newSkill, setNewSkill] = useState<SkillFromQuery | null>(null)
+    const [newSkill, setNewSkill] = useState<SkillFromQuery | undefined>()
 
     const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
     const handleClose = useCallback(() => {
-        setNewSkill(null) // de-select newSkill to reset Dialog to initial state
+        // eslint-disable-next-line unicorn/no-useless-undefined
+        setNewSkill(undefined) // de-select newSkill to reset Dialog to initial state
         setOpen(false)
     }, [setOpen, setNewSkill])
 
     const handleNewSkill = useCallback(
-        (_event: React.SyntheticEvent, skill: SkillFromQuery | null) => {
-            setNewSkill(skill)
+        (
+            _event: React.SyntheticEvent,
+            skill?: SkillFromQuery | undefined | null,
+        ) => {
+            setNewSkill(skill ?? undefined)
         },
         [setNewSkill],
     )

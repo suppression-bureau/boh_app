@@ -62,8 +62,9 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
 
 const AssistantView = () => {
     const [{ data }] = useQuery({ query: assistantQueryDocument })
-    const [selectedAssistant, setAssistant] =
-        useState<AssistantFromQuery | null>(null)
+    const [selectedAssistant, setAssistant] = useState<
+        AssistantFromQuery | undefined
+    >()
 
     const [selectedPrinciple, setPrinciple] = useState<
         PrincipleFromQuery | undefined
@@ -72,9 +73,9 @@ const AssistantView = () => {
     const handleNewAssistant = useCallback(
         (
             _event: React.SyntheticEvent,
-            assistant: AssistantFromQuery | null,
+            assistant?: AssistantFromQuery | undefined | null,
         ) => {
-            setAssistant(assistant)
+            setAssistant(assistant ?? undefined)
             if (selectedPrinciple) {
                 // eslint-disable-next-line unicorn/no-useless-undefined
                 setPrinciple(undefined)
