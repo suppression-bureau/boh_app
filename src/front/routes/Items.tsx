@@ -1,21 +1,28 @@
 import {
-    MouseEvent,
     MouseEventHandler,
     RefObject,
+    forwardRef,
     useCallback,
     useMemo,
+    useReducer,
+    useRef,
     useState,
 } from "react"
 import { useQuery } from "urql"
 
+import Divider from "@mui/material/Divider"
 import Drawer from "@mui/material/Drawer"
 import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
 import ListItemButton, {
     ListItemButtonProps,
 } from "@mui/material/ListItemButton"
+import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
+
+import Delete from "@mui/icons-material/Delete"
 
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
@@ -140,81 +147,161 @@ const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
 )
 
 export interface ItemProps extends ItemFromQuery {
-    selected?: boolean | undefined
-    onClick?: MouseEventHandler<HTMLDivElement> | undefined
+    onToggleSelect?(id: string, selected: boolean): void
     sx?: ListItemButtonProps["sx"] | undefined
 }
 
-function Item({ selected = false, onClick, sx, ...item }: ItemProps) {
+const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
+    { onToggleSelect, sx, ...item },
+    ref,
+) {
+    const [selected, setSelected] = useState(false)
+    const handleToggleSelect = useCallback(() => {
+        setSelected(!selected)
+        onToggleSelect?.(item.id, !selected)
+    }, [item.id, onToggleSelect, selected])
     return (
-        <ListItemButton selected={selected} onClick={onClick} sx={sx}>
-            <ListItemText primary={item.id} />
-            <ItemValues {...item} />
-        </ListItemButton>
+        <ListItem disablePadding>
+            <ListItemButton
+                ref={ref}
+                selected={selected}
+                onClick={handleToggleSelect}
+                sx={sx}
+            >
+                <ListItemText primary={item.id} />
+                <ItemValues {...item} />
+            </ListItemButton>
+        </ListItem>
+    )
+})
+
+interface ItemsListProps {
+    items: VisibleItem[]
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    onToggleSelect(id: string, selected: boolean): void
+}
+
+const ItemsList = ({ items, itemRefs, onToggleSelect }: ItemsListProps) => (
+    <List
+        sx={{
+            maxWidth: "sm",
+            marginInline: "auto",
+        }}
+    >
+        {items
+            .filter(({ isVisible }) => isVisible)
+            .map((item) => (
+                <Item
+                    key={item.id}
+                    ref={itemRefs.current?.get(item.id)}
+                    onToggleSelect={onToggleSelect}
+                    {...item}
+                />
+            ))}
+    </List>
+)
+
+interface ItemsDrawerProps {
+    items: VisibleItem[]
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    onClear?(): void
+}
+
+function ItemsDrawer({ items, itemRefs, onClear }: ItemsDrawerProps) {
+    return (
+        <Drawer
+            variant="persistent"
+            open={items.length > 0}
+            sx={{
+                maxWidth: "250px",
+                "& .MuiDrawer-paper": { maxWidth: "250px" },
+            }}
+        >
+            <List sx={{ flexGrow: 1 }}>
+                {items.map((item) => (
+                    <ListItem key={item.id} disablePadding>
+                        <ListItemButton
+                            onClick={() =>
+                                itemRefs.current
+                                    ?.get(item.id)
+                                    ?.current?.scrollIntoView({
+                                        behavior: "smooth",
+                                    })
+                            }
+                        >
+                            <ListItemText>{item.id}</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+                <Divider />
+                <ListItem disablePadding>
+                    <ListItemButton onClick={onClear}>
+                        <ListItemIcon>
+                            <Delete />
+                        </ListItemIcon>
+                        <ListItemText>Clear</ListItemText>
+                    </ListItemButton>
+                </ListItem>
+            </List>
+        </Drawer>
     )
 }
+
+type StringSetAction =
+    | { type: "clear" }
+    | { type: "toggle"; id: string; selected: boolean }
+
+function reduceStringSet(
+    state: Set<string>,
+    action: StringSetAction,
+): Set<string> {
+    switch (action.type) {
+        case "clear":
+            return new Set()
+        case "toggle": {
+            const nextState = new Set(state)
+            if (action.selected) nextState.add(action.id)
+            else nextState.delete(action.id)
+            return nextState
+        }
+    }
+}
+
 const ItemsView = ({ filters }: ItemsProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
     const items = useMemo(
         () => filterItems(data!.item, { known: true, ...filters }),
         [data, filters],
     )
-    const [selected, setSelected] = useState(
-        new Map<string, RefObject<HTMLDivElement>>(),
+    // all possible item refs have a key, even if they’re filtered out
+    const itemRefs = useRef(
+        new Map<string, RefObject<HTMLDivElement>>(
+            data!.item.map(({ id }) => [id, { current: null }]),
+        ),
     )
+    const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
+    const clearSelected = useCallback(() => dispatch({ type: "clear" }), [])
     const toggleSelected = useCallback(
-        (e: MouseEvent<HTMLDivElement>, id: string) => {
-            if (selected.has(id)) {
-                selected.delete(id)
-            } else {
-                selected.set(id, { current: e.currentTarget })
-            }
-            setSelected(new Map(selected))
-        },
-        [selected],
+        (id: string, selected: boolean) =>
+            dispatch({ type: "toggle", id, selected }),
+        [],
+    )
+    const selectedItems = useMemo(
+        () => items.filter(({ id }) => selected.has(id)),
+        [items, selected],
     )
     return (
         <>
-            <List
-                sx={{
-                    maxWidth: "sm",
-                    marginInline: "auto",
-                }}
-            >
-                {items
-                    .filter(({ isVisible }) => isVisible)
-                    .map((item) => (
-                        <Item
-                            key={item.id}
-                            selected={selected.has(item.id)}
-                            onClick={(e) => toggleSelected(e, item.id)}
-                            {...item}
-                        />
-                    ))}
-            </List>
-            <Drawer
-                variant="persistent"
-                open={!!selected.size}
-                sx={{
-                    maxWidth: "250px",
-                    "& .MuiDrawer-paper": { maxWidth: "250px" },
-                }}
-            >
-                <List>
-                    {[...selected].map(([id, ref]) => (
-                        <ListItemButton
-                            key={id}
-                            onClick={() =>
-                                ref.current!.scrollIntoView({
-                                    behavior: "smooth",
-                                })
-                            }
-                        >
-                            <ListItemText>{id}</ListItemText>
-                        </ListItemButton>
-                    ))}
-                </List>
-            </Drawer>
+            <ItemsList
+                items={items}
+                itemRefs={itemRefs}
+                onToggleSelect={toggleSelected}
+            />
+            <ItemsDrawer
+                items={selectedItems}
+                itemRefs={itemRefs}
+                onClear={clearSelected}
+            />
         </>
     )
 }
