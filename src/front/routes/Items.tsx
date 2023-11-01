@@ -1,4 +1,11 @@
-import { Ref, RefObject, useCallback, useMemo, useRef, useState } from "react"
+import {
+    MouseEvent,
+    MouseEventHandler,
+    RefObject,
+    useCallback,
+    useMemo,
+    useState,
+} from "react"
 import { useQuery } from "urql"
 
 import List from "@mui/material/List"
@@ -130,8 +137,8 @@ const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
 )
 
 export interface ItemProps extends ItemFromQuery {
-    selected?: boolean
-    onClick?(): void
+    selected?: boolean | undefined
+    onClick?: MouseEventHandler<HTMLDivElement> | undefined
 }
 
 function Item({ selected = false, onClick, ...item }: ItemProps) {
@@ -152,11 +159,11 @@ const ItemsView = ({ filters }: ItemsProps) => {
         new Map<string, RefObject<HTMLDivElement>>(),
     )
     const toggleSelected = useCallback(
-        (id: string) => {
+        (e: MouseEvent<HTMLDivElement>, id: string) => {
             if (selected.has(id)) {
                 selected.delete(id)
             } else {
-                selected.set(id, { current: null })
+                selected.set(id, { current: e.currentTarget })
             }
             setSelected(new Map(selected))
         },
@@ -175,7 +182,7 @@ const ItemsView = ({ filters }: ItemsProps) => {
                     <Item
                         key={item.id}
                         selected={selected.has(item.id)}
-                        onClick={() => toggleSelected(item.id)}
+                        onClick={(e) => toggleSelected(e, item.id)}
                         {...item}
                     />
                 ))}
