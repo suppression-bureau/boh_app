@@ -177,11 +177,12 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 })
 
 interface ItemsListProps {
-    items: VisibleItem[]
+    items: ItemFromQuery[]
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
     onToggleSelect(id: string, selected: boolean): void
 }
 
+// This list is long, use memo to prevent rerendering
 const ItemsList = memo(function ItemsList({
     items,
     itemRefs,
@@ -194,16 +195,14 @@ const ItemsList = memo(function ItemsList({
                 marginInline: "auto",
             }}
         >
-            {items
-                .filter(({ isVisible }) => isVisible)
-                .map((item) => (
-                    <Item
-                        key={item.id}
-                        ref={itemRefs.current?.get(item.id)}
-                        onToggleSelect={onToggleSelect}
-                        {...item}
-                    />
-                ))}
+            {items.map((item) => (
+                <Item
+                    key={item.id}
+                    ref={itemRefs.current?.get(item.id)}
+                    onToggleSelect={onToggleSelect}
+                    {...item}
+                />
+            ))}
         </List>
     )
 })
@@ -277,7 +276,10 @@ function reduceStringSet(
 const ItemsView = ({ filters }: ItemsProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
     const items = useMemo(
-        () => filterItems(data!.item, { known: true, ...filters }),
+        () =>
+            filterItems(data!.item, { known: true, ...filters }).filter(
+                ({ isVisible }) => isVisible,
+            ),
         [data, filters],
     )
     // all possible item refs have a key, even if they’re filtered out
