@@ -49,10 +49,7 @@ type SkillAction = SkillActionInner | SkillActionOuter
 /** Synchronously handleable actions that are dispatched by the async action handler */
 type SkillActionInner =
     | { type: "update"; skill: SkillFromQuery }
-    | {
-          type: "sort"
-          principle: Principle | undefined
-      }
+    | { type: "sort"; principle: Principle | undefined }
 /** Synchronously handleable actions that we dispatch manually */
 type SkillActionOuter = never
 
@@ -230,7 +227,7 @@ const SkillsView = () => {
         >
             <PrincipleFilterBar
                 selectedPrinciple={selectedPrinciple}
-                handleSelectedPrinciple={handleSelectedPrinciple}
+                onSelectPrinciple={handleSelectedPrinciple}
             />
             <NewSkillDialog state={state} dispatch={dispatch} />
             {state
@@ -246,9 +243,9 @@ const SkillsView = () => {
                         )
                     if (
                         selectedPrinciple &&
-                        new Set(getPrinciples(skill).map(({ id }) => id)).has(
-                            selectedPrinciple.id,
-                        )
+                        getPrinciples(skill)
+                            .map(({ id }) => id)
+                            .includes(selectedPrinciple.id)
                     )
                         return (
                             <Skill

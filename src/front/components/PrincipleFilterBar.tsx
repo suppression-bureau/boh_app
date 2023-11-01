@@ -8,12 +8,12 @@ import PrincipleFilterButton from "./PrincipleFilterButton"
 
 interface PrincipleFilterProps {
     selectedPrinciple: Principle | undefined
-    handleSelectedPrinciple(principle: Principle | undefined): void
+    onSelectPrinciple(principle: Principle | undefined): void
 }
 
 const PrincipleFilterBar = ({
     selectedPrinciple,
-    handleSelectedPrinciple,
+    onSelectPrinciple,
 }: PrincipleFilterProps) => {
     const principles = PRINCIPLES.map((principle) => ({
         id: principle,
@@ -25,12 +25,12 @@ const PrincipleFilterBar = ({
                     key={principle.id}
                     principle={principle}
                     selectedPrinciple={selectedPrinciple}
-                    onPrincipleFilter={handleSelectedPrinciple}
+                    onPrincipleFilter={onSelectPrinciple}
                 />
             ))}
             <IconButton
                 size="large"
-                onClick={() => handleSelectedPrinciple(undefined)}
+                onClick={() => onSelectPrinciple(undefined)}
             >
                 <ClearIcon />
             </IconButton>
