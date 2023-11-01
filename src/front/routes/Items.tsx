@@ -240,14 +240,16 @@ function ItemsDrawer({ items, itemRefs, onClear }: ItemsDrawerProps) {
                     </ListItem>
                 ))}
                 <Divider />
-                <ListItem disablePadding>
-                    <ListItemButton onClick={onClear}>
-                        <ListItemIcon>
-                            <Delete />
-                        </ListItemIcon>
-                        <ListItemText>Clear</ListItemText>
-                    </ListItemButton>
-                </ListItem>
+                {onClear && (
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={onClear}>
+                            <ListItemIcon>
+                                <Delete />
+                            </ListItemIcon>
+                            <ListItemText>Clear</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                )}
             </List>
         </Drawer>
     )
@@ -309,7 +311,8 @@ const ItemsView = ({ filters }: ItemsProps) => {
             <ItemsDrawer
                 items={selectedItems}
                 itemRefs={itemRefs}
-                onClear={clearSelected}
+                // TODO: this doesn’t work yet since the items manage their selected state themselves
+                onClear={undefined && clearSelected}
             />
         </>
     )
