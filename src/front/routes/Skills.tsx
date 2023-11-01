@@ -1,5 +1,5 @@
 import axios from "axios"
-import { useCallback, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { useQuery } from "urql"
 import { AsyncActionHandlers, useReducerAsync } from "use-reducer-async"
 
@@ -26,7 +26,7 @@ import { Principle } from "../types"
 
 const API_URL = "http://localhost:8000"
 
-const skillQueryDocument = graphql(`
+export const skillQueryDocument = graphql(`
     query Skills {
         skill {
             id
@@ -94,12 +94,12 @@ const skillHandlers: AsyncActionHandlers<
 }
 
 interface SkillProps extends SkillFromQuery {
-    onIncrement(skill: SkillFromQuery): void
+    onIncrement?(skill: SkillFromQuery): void
 }
 
 function Skill({ onIncrement, ...skill }: SkillProps) {
     const handleIncrement = useCallback(() => {
-        onIncrement(skill)
+        onIncrement?.(skill)
     }, [skill, onIncrement])
     return (
         <Card>
@@ -118,15 +118,20 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
                     sx={{ boxShadow: "none" }}
                     disablePadding
                 />
-                <Button
-                    endIcon={
-                        <UpgradeIcon stroke="currentColor" strokeWidth={0.5} />
-                    }
-                    onClick={handleIncrement}
-                    sx={{ ml: "auto" }}
-                >
-                    Upgrade Skill
-                </Button>
+                {onIncrement && (
+                    <Button
+                        endIcon={
+                            <UpgradeIcon
+                                stroke="currentColor"
+                                strokeWidth={0.5}
+                            />
+                        }
+                        onClick={handleIncrement}
+                        sx={{ ml: "auto" }}
+                    >
+                        Upgrade Skill
+                    </Button>
+                )}
             </CardActions>
         </Card>
     )
@@ -190,6 +195,49 @@ const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
     )
 }
 
+interface SkillStackProps {
+    skills?: SkillFromQuery[]
+    selectedPrinciples?: Principle[] | undefined
+    onSkillIncrement?(skill: SkillFromQuery): void
+}
+export const SkillsStack = ({
+    skills,
+    selectedPrinciples,
+    onSkillIncrement,
+}: SkillStackProps) => {
+    const [{ data }] = useQuery({ query: skillQueryDocument })
+    const allSkills = useMemo(
+        () => skills ?? data!.skill.toSorted((a, b) => b.level - a.level),
+        [data, skills],
+    )
+    const selectedPrincipleSet = useMemo(
+        () => new Set(selectedPrinciples?.map(({ id }) => id)),
+        [selectedPrinciples],
+    )
+    const filteredSkills = useMemo(
+        () =>
+            allSkills.filter(
+                (skill) =>
+                    (skill.level > 0 && !selectedPrinciples) ||
+                    getPrinciples(skill).some(({ id }) =>
+                        selectedPrincipleSet.has(id),
+                    ),
+            ),
+        [selectedPrincipleSet, selectedPrinciples, allSkills],
+    )
+    return (
+        <Stack spacing={2}>
+            {filteredSkills.map((skill) => (
+                <Skill
+                    key={skill.id}
+                    onIncrement={onSkillIncrement}
+                    {...skill}
+                />
+            ))}
+        </Stack>
+    )
+}
+
 const SkillsView = () => {
     const [{ data }] = useQuery({ query: skillQueryDocument })
 
@@ -230,31 +278,13 @@ const SkillsView = () => {
                 onSelectPrinciple={handleSelectedPrinciple}
             />
             <NewSkillDialog state={state} dispatch={dispatch} />
-            {state
-                .filter(({ level }) => level > 0)
-                .map(({ ...skill }) => {
-                    if (!selectedPrinciple)
-                        return (
-                            <Skill
-                                key={skill.id}
-                                onIncrement={handleSkillIncrement}
-                                {...skill}
-                            />
-                        )
-                    if (
-                        selectedPrinciple &&
-                        getPrinciples(skill)
-                            .map(({ id }) => id)
-                            .includes(selectedPrinciple.id)
-                    )
-                        return (
-                            <Skill
-                                key={skill.id}
-                                onIncrement={handleSkillIncrement}
-                                {...skill}
-                            />
-                        )
-                })}
+            <SkillsStack
+                skills={state}
+                selectedPrinciples={
+                    selectedPrinciple ? [selectedPrinciple] : undefined
+                }
+                onSkillIncrement={handleSkillIncrement}
+            />
         </Stack>
     )
 }

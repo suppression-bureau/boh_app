@@ -14,14 +14,16 @@ export function withAspects<D extends HasAspect, T extends { d: D } = { d: D }>(
 }
 
 type HasPrinciple =
-    | types.Skill
     | types.SkillsQuery["skill"][number]
-    | types.Item
     | types.ItemsQuery["item"][number]
+    | types.WorkstationQuery["workstation"][number]
 
 export function getPrinciples<T extends HasPrinciple>(datum: T): Principle[] {
     if ("primary_principle" in datum) {
         return [datum.primary_principle, datum.secondary_principle]
+    }
+    if ("principles" in datum) {
+        return datum.principles
     }
     return PRINCIPLES.filter((principle) => datum[principle]).map((id) => ({
         id,

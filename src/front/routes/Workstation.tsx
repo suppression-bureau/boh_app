@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useCallback, useMemo, useReducer, useState } from "react"
+import { ErrorBoundary } from "react-error-boundary"
 import { useQuery } from "urql"
 
 import Button from "@mui/material/Button"
@@ -11,12 +12,16 @@ import Stack from "@mui/material/Stack"
 import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
 
+import ErrorDisplay from "../components/ErrorDisplay"
+import PrincipleFilterBar from "../components/PrincipleFilterBar"
+import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { Principle } from "../types"
 import { AspectIconGroup } from "./Aspects"
-import ItemsView from "./Items"
+import ItemsView, { itemsQueryDocument } from "./Items"
 import { PrincipleIconGroup } from "./Principles"
+import { SkillsStack, skillQueryDocument } from "./Skills"
 
 const workstationQueryDocument = graphql(`
     query Workstation {
@@ -47,6 +52,42 @@ type WorkstationFromQuery = types.WorkstationQuery["workstation"][number]
 type WorkstationSlotFromQuery =
     WorkstationFromQuery["workstation_slots"][number]
 
+interface VisibleWorkstation extends WorkstationFromQuery {
+    isVisible: boolean
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+type WorkstationAction = { type: "filter"; principle: Principle | undefined }
+
+function workstationReducer(
+    state: VisibleWorkstation[],
+    action: WorkstationAction,
+): VisibleWorkstation[] {
+    switch (action.type) {
+        case "filter": {
+            const workstationData: VisibleWorkstation[] = state.map(
+                (workstation) => ({
+                    ...workstation,
+                    isVisible: true,
+                }),
+            )
+            if (!action.principle) return workstationData
+            return workstationData.map((workstation) => {
+                const workstationPrinciples = new Set(
+                    getPrinciples(workstation).map(({ id }) => id),
+                )
+                if (
+                    action.principle &&
+                    !workstationPrinciples.has(action.principle.id)
+                ) {
+                    return { ...workstation, isVisible: false }
+                }
+                return workstation
+            })
+        }
+    }
+}
+
 interface WorkstationSlotProps {
     workstationSlot: WorkstationSlotFromQuery
     principles: Principle[]
@@ -72,26 +113,42 @@ const WorkstationSlot = ({
     principles,
 }: WorkstationSlotProps) => {
     const [expanded, setExpanded] = useState(false)
+    const toggleExpanded = useCallback(
+        () => setExpanded(!expanded),
+        [expanded, setExpanded],
+    )
     return (
         <Card>
             <CardActions>
                 <WorkstationSlotInfoCard {...workstationSlot} />
                 <Button
-                    onClick={() => setExpanded(!expanded)}
+                    onClick={toggleExpanded}
                     endIcon={expanded ? <ExpandLess /> : <ExpandMore />}
                     sx={{ ml: "auto" }}
                 >
                     Show Items
                 </Button>
             </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <ItemsView
-                    filters={{
-                        aspects: workstationSlot.accepts,
-                        principles,
-                    }}
-                />
-            </Collapse>
+            {/* without the prefetching, the Collapse transition and urql have a bad interaction */}
+            <ErrorBoundary FallbackComponent={ErrorDisplay}>
+                <Collapse
+                    in={expanded}
+                    timeout="auto"
+                    mountOnEnter
+                    unmountOnExit
+                >
+                    {workstationSlot.id === "Skill" ? (
+                        <SkillsStack selectedPrinciples={principles} />
+                    ) : (
+                        <ItemsView
+                            filters={{
+                                aspects: workstationSlot.accepts,
+                                principles,
+                            }}
+                        />
+                    )}
+                </Collapse>
+            </ErrorBoundary>
         </Card>
     )
 }
@@ -112,7 +169,7 @@ const Workstation = ({ workstation }: WorkstationProps) => (
                 .toSorted((a, b) => a.index - b.index)
                 .map((slot) => (
                     <WorkstationSlot
-                        key={slot.id}
+                        key={`${workstation.id}${slot.id}`}
                         workstationSlot={slot}
                         principles={workstation.principles}
                     />
@@ -123,12 +180,43 @@ const Workstation = ({ workstation }: WorkstationProps) => (
 
 const WorkstationView = () => {
     const [{ data }] = useQuery({ query: workstationQueryDocument })
+    // prefetch
+    useQuery({ query: skillQueryDocument })
+    useQuery({ query: itemsQueryDocument })
 
+    const initialState: VisibleWorkstation[] = useMemo(
+        () =>
+            data!.workstation.map((workstation) => ({
+                ...workstation,
+                isVisible: true,
+            })),
+        [data],
+    )
+    const [state, dispatch] = useReducer(workstationReducer, initialState)
+    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
+        undefined,
+    )
+    const handleSelectedPrinciple = useCallback(
+        (principle: Principle | undefined) => {
+            dispatch({ type: "filter", principle })
+            setPrinciple(principle)
+        },
+        [dispatch, setPrinciple],
+    )
     return (
         <Stack maxWidth="md" marginInline="auto" spacing={2}>
-            {data!.workstation.map((workstation) => (
-                <Workstation key={workstation.id} workstation={workstation} />
-            ))}
+            <PrincipleFilterBar
+                selectedPrinciple={selectedPrinciple}
+                onSelectPrinciple={handleSelectedPrinciple}
+            />
+            {state
+                .filter(({ isVisible }) => isVisible)
+                .map((workstation) => (
+                    <Workstation
+                        key={workstation.id}
+                        workstation={workstation}
+                    />
+                ))}
         </Stack>
     )
 }

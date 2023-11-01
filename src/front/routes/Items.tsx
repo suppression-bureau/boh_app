@@ -13,7 +13,7 @@ import { AspectIconGroup } from "../routes/Aspects"
 import { PrincipleIcon } from "../routes/Principles"
 import { PRINCIPLES, PrincipleString } from "../types"
 
-const itemsQueryDocument = graphql(`
+export const itemsQueryDocument = graphql(`
     query Items {
         item {
             id
