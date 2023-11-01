@@ -34,7 +34,7 @@ const PrincipleIcon = ({
         alt={alt}
         title={title}
         variant={variant}
-        src={`/data/principle/${id}.png`}
+        src={new URL(`/data/principle/${id}.png`, import.meta.url).href}
         {...props}
     />
 )
