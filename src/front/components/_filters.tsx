@@ -1,5 +1,5 @@
 import * as types from "../gql/graphql"
-import { Principle } from "../types"
+import { PRINCIPLES, Principle } from "../types"
 
 type HasAspect = types.Workstation_Slot | types.Item
 
@@ -21,22 +21,6 @@ type WithAspect<T extends HasAspect> = ReturnType<typeof withAspects<T>>[number]
 type MaybeWithAspect<T extends HasAspect> = { d: T } & Partial<
     Pick<WithAspect<T>, "aspects">
 >
-
-const PRINCIPLES = [
-    "edge",
-    "forge",
-    "grail",
-    "heart",
-    "knock",
-    "lantern",
-    "moon",
-    "moth",
-    "nectar",
-    "rose",
-    "scale",
-    "sky",
-    "winter",
-] as const
 
 type HasPrinciple =
     | types.Skill

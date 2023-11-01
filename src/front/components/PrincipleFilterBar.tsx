@@ -3,20 +3,21 @@ import Stack from "@mui/material/Stack"
 
 import ClearIcon from "@mui/icons-material/Clear"
 
-import { Principle } from "../types"
+import { PRINCIPLES, Principle } from "../types"
 import PrincipleFilterButton from "./PrincipleFilterButton"
 
 interface PrincipleFilterProps {
-    principles: Principle[]
     selectedPrinciple: Principle | undefined
     handleSelectedPrinciple(principle: Principle | undefined): void
 }
 
 const PrincipleFilterBar = ({
-    principles,
     selectedPrinciple,
     handleSelectedPrinciple,
 }: PrincipleFilterProps) => {
+    const principles = PRINCIPLES.map((principle) => ({
+        id: principle,
+    }))
     return (
         <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
             {principles.map((principle) => (

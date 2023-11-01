@@ -202,13 +202,6 @@ const SkillsView = () => {
         skillHandlers,
     )
 
-    // for PrincipleFilterBar
-    const skillPrinciples = new Set(
-        state.map((skill) => skill.primary_principle.id),
-    )
-    const principles = Array.from(skillPrinciples).map((principle) => ({
-        id: principle,
-    }))
     const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
         undefined,
     )
@@ -236,7 +229,6 @@ const SkillsView = () => {
             }}
         >
             <PrincipleFilterBar
-                principles={principles}
                 selectedPrinciple={selectedPrinciple}
                 handleSelectedPrinciple={handleSelectedPrinciple}
             />
