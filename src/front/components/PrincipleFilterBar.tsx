@@ -6,7 +6,7 @@ import ClearIcon from "@mui/icons-material/Clear"
 import { Principle } from "../types"
 import PrincipleFilterButton from "./PrincipleFilterButton"
 
-interface SkillFilterProps {
+interface PrincipleFilterProps {
     principles: Principle[]
     selectedPrinciple: Principle | undefined
     handleSelectedPrinciple(principle: Principle | undefined): void
@@ -16,7 +16,7 @@ const PrincipleFilterBar = ({
     principles,
     selectedPrinciple,
     handleSelectedPrinciple,
-}: SkillFilterProps) => {
+}: PrincipleFilterProps) => {
     return (
         <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
             {principles.map((principle) => (
