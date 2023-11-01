@@ -7,6 +7,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>BOH companion app</title>
         <style>
+            html {
+                /* TODO: use Helmet or so. (header height + 2*spacing) */
+                scroll-padding-block: calc(64px + 2 * 8px);
+            }
             html,
             body,
             #root {
