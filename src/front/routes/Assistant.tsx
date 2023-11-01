@@ -67,7 +67,7 @@ const AssistantView = () => {
 
     const [selectedPrinciple, setPrinciple] = useState<
         PrincipleFromQuery | undefined
-    >(undefined)
+    >()
 
     const handleNewAssistant = useCallback(
         (
@@ -76,6 +76,7 @@ const AssistantView = () => {
         ) => {
             setAssistant(assistant)
             if (selectedPrinciple) {
+                // eslint-disable-next-line unicorn/no-useless-undefined
                 setPrinciple(undefined)
             }
         },

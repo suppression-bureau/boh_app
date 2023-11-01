@@ -86,7 +86,7 @@ function filterItems(
     if (filters.principles) {
         filteredState = filters.principles
             .map(({ id }) => id as PrincipleString)
-            .map((principle) =>
+            .flatMap((principle) =>
                 filteredState
                     .filter((item) => item[principle] !== null)
                     // NB: this doesn't work with principles.length > 1
@@ -94,7 +94,6 @@ function filterItems(
                         (a, b) => (b[principle] ?? 0) - (a[principle] ?? 0),
                     ),
             )
-            .reduce((a, b) => a.concat(b), [])
     }
     // now, if we filtered by principles, the items lacking one or more of the principles are no longer visible
     if (filters.aspects) {
@@ -263,8 +262,9 @@ function reduceStringSet(
     action: StringSetAction,
 ): Set<string> {
     switch (action.type) {
-        case "clear":
+        case "clear": {
             return new Set()
+        }
         case "toggle": {
             const nextState = new Set(state)
             if (action.selected) nextState.add(action.id)

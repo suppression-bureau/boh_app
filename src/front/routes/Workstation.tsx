@@ -193,9 +193,7 @@ const WorkstationView = () => {
         [data],
     )
     const [state, dispatch] = useReducer(workstationReducer, initialState)
-    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
-        undefined,
-    )
+    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>()
     const handleSelectedPrinciple = useCallback(
         (principle: Principle | undefined) => {
             dispatch({ type: "filter", principle })

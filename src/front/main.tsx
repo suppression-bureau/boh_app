@@ -11,7 +11,7 @@ const client = createClient({
     exchanges: [cacheExchange, fetchExchange],
 })
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.querySelector("#root")!).render(
     <React.StrictMode>
         <Provider value={client}>
             <Router>

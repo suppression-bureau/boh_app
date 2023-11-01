@@ -8,7 +8,7 @@ import PrincipleFilterButton from "./PrincipleFilterButton"
 
 interface PrincipleFilterProps {
     selectedPrinciple: Principle | undefined
-    onSelectPrinciple(principle: Principle | undefined): void
+    onSelectPrinciple(principle?: Principle | undefined): void
 }
 
 const PrincipleFilterBar = ({
@@ -28,10 +28,7 @@ const PrincipleFilterBar = ({
                     onPrincipleFilter={onSelectPrinciple}
                 />
             ))}
-            <IconButton
-                size="large"
-                onClick={() => onSelectPrinciple(undefined)}
-            >
+            <IconButton size="large" onClick={() => onSelectPrinciple()}>
                 <ClearIcon />
             </IconButton>
         </Stack>

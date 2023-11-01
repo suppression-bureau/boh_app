@@ -8,6 +8,7 @@ extends:
   - plugin:react/recommended
   - plugin:react/jsx-runtime
   - plugin:react-hooks/recommended
+  - plugin:unicorn/recommended
 rules:
   no-restricted-imports:
     - error
@@ -16,6 +17,9 @@ rules:
           message: For small bundle size, import from @mui/material/* instead
       patterns:
         - "!@mui/material/*"
+  unicorn/prevent-abbreviations: off
+  unicorn/filename-case: off
+  unicorn/no-null: off
 parser: "@typescript-eslint/parser"
 parserOptions:
   project: true

@@ -172,7 +172,6 @@ const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
             <Dialog open={open} onClose={handleClose}>
                 <DialogContent>
                     <Autocomplete
-                        id="skill-selector"
                         options={state.filter(({ level }) => level == 0)}
                         value={newSkill}
                         sx={{ width: 300 }}
@@ -247,9 +246,7 @@ const SkillsView = () => {
         skillHandlers,
     )
 
-    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
-        undefined,
-    )
+    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>()
 
     const handleSelectedPrinciple = useCallback(
         (principle: Principle | undefined) => {
