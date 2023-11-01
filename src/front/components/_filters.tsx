@@ -23,14 +23,15 @@ type MaybeWithAspect<T extends HasAspect> = { d: T } & Partial<
 >
 
 type HasPrinciple =
-    | types.Skill
     | types.SkillsQuery["skill"][number]
-    | types.Item
     | types.ItemsQuery["item"][number]
+    | types.WorkstationQuery["workstation"][number]
 
 export function getPrinciples<T extends HasPrinciple>(datum: T): Principle[] {
     if ("primary_principle" in datum) {
         return [datum.primary_principle, datum.secondary_principle]
+    } else if ("principles" in datum) {
+        return datum.principles
     } else {
         const principles: Principle[] = []
         for (const principle of PRINCIPLES) {

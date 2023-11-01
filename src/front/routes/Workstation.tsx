@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useReducer, useState } from "react"
 import { useQuery } from "urql"
 
 import Button from "@mui/material/Button"
@@ -11,6 +11,8 @@ import Stack from "@mui/material/Stack"
 import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
 
+import PrincipleFilterBar from "../components/PrincipleFilterBar"
+import { getPrinciples } from "../components/_filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { Principle } from "../types"
@@ -46,6 +48,43 @@ const workstationQueryDocument = graphql(`
 type WorkstationFromQuery = types.WorkstationQuery["workstation"][number]
 type WorkstationSlotFromQuery =
     WorkstationFromQuery["workstation_slots"][number]
+
+interface VisibleWorkstation extends WorkstationFromQuery {
+    isVisible: boolean
+}
+
+type WorkstationAction = {
+    type: "filter"
+    principle: Principle | undefined
+}
+
+function workstationReducer(
+    state: WorkstationFromQuery[],
+    action: WorkstationAction,
+): VisibleWorkstation[] {
+    switch (action.type) {
+        case "filter":
+            const workstationData: VisibleWorkstation[] = state.map(
+                (workstation) => ({
+                    ...workstation,
+                    isVisible: true,
+                }),
+            )
+            if (!action.principle) return workstationData
+            return workstationData.map((workstation) => {
+                const workstationPrinciples = new Set(
+                    getPrinciples(workstation).map(({ id }) => id),
+                )
+                if (
+                    action.principle &&
+                    !workstationPrinciples.has(action.principle.id)
+                ) {
+                    return { ...workstation, isVisible: false }
+                }
+                return workstation
+            })
+    }
+}
 
 interface WorkstationSlotProps {
     workstationSlot: WorkstationSlotFromQuery
@@ -124,11 +163,34 @@ const Workstation = ({ workstation }: WorkstationProps) => (
 const WorkstationView = () => {
     const [{ data }] = useQuery({ query: workstationQueryDocument })
 
+    const initialState: VisibleWorkstation[] = data!.workstation.map(
+        (workstation) => ({ ...workstation, isVisible: true }),
+    )
+    const [state, dispatch] = useReducer(workstationReducer, initialState)
+    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
+        undefined,
+    )
+    const handleSelectedPrinciple = useCallback(
+        (principle: Principle | undefined) => {
+            dispatch({ type: "filter", principle })
+            setPrinciple(principle)
+        },
+        [dispatch, setPrinciple],
+    )
     return (
         <Stack maxWidth="md" marginInline="auto" spacing={2}>
-            {data!.workstation.map((workstation) => (
-                <Workstation key={workstation.id} workstation={workstation} />
-            ))}
+            <PrincipleFilterBar
+                selectedPrinciple={selectedPrinciple}
+                onSelectPrinciple={handleSelectedPrinciple}
+            />
+            {state!
+                .filter(({ isVisible }) => isVisible)
+                .map((workstation) => (
+                    <Workstation
+                        key={workstation.id}
+                        workstation={workstation}
+                    />
+                ))}
         </Stack>
     )
 }
