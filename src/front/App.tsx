@@ -1,5 +1,4 @@
-import { useMemo } from "react"
-import React from "react"
+import { Suspense, useMemo } from "react"
 import { Link, Navigate, Route, matchPath, useLocation } from "react-router-dom"
 import SlideRoutes from "react-slide-routes"
 
@@ -20,6 +19,7 @@ import {
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 import ElevationScroll from "./ElevationScroll.tsx"
+import LoadingIndicator from "./components/LoadingIndicator.tsx"
 import Aspects from "./routes/Aspects"
 import AssistantView from "./routes/Assistant.tsx"
 import Home from "./routes/Home"
@@ -85,10 +85,14 @@ const App = () => {
             <Stack
                 direction="column"
                 justifyContent="start"
-                sx={{ "&>*:nth-child(2)": { flexGrow: 1 } }}
+                justifyItems="center"
+                sx={{
+                    "&>*": { flexShrink: 0 },
+                    "&>*:nth-child(2)": { flexGrow: 1 },
+                }}
             >
                 <AppNav />
-                <React.Suspense fallback={"Loading..."}>
+                <Suspense fallback={<LoadingIndicator sx={{ m: "auto" }} />}>
                     <SlideRoutes>
                         <Route index element={<Home />} />
                         <Route path="aspects" element={<Aspects />} />
@@ -102,7 +106,7 @@ const App = () => {
                         />
                         <Route path="*" element={<Navigate replace to="/" />} />
                     </SlideRoutes>
-                </React.Suspense>
+                </Suspense>
             </Stack>
         </ThemeProvider>
     )
