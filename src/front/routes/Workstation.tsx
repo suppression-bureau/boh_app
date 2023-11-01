@@ -19,6 +19,7 @@ import { Principle } from "../types"
 import { AspectIconGroup } from "./Aspects"
 import ItemsView from "./Items"
 import { PrincipleIconGroup } from "./Principles"
+import { SkillsStack } from "./Skills"
 
 const workstationQueryDocument = graphql(`
     query Workstation {
@@ -121,12 +122,19 @@ const WorkstationSlot = ({
                 </Button>
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <ItemsView
-                    filters={{
-                        aspects: workstationSlot.accepts,
-                        principles,
-                    }}
-                />
+                {workstationSlot.id === "Skill" ? (
+                    <SkillsStack
+                        key={`${workstationSlot.id}skills`}
+                        selectedPrinciples={principles}
+                    />
+                ) : (
+                    <ItemsView
+                        filters={{
+                            aspects: workstationSlot.accepts,
+                            principles,
+                        }}
+                    />
+                )}
             </Collapse>
         </Card>
     )
