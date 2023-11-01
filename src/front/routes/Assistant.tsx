@@ -45,7 +45,7 @@ interface AssistantItemProps {
 const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
     <Stack>
         {assistant.aspects.map((aspect) => (
-            <div key={`${aspect.id}grouping`}>
+            <div key={aspect.id}>
                 <Typography variant="h5" color={"secondary"}>
                     {aspect.id}
                 </Typography>
@@ -62,20 +62,22 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
 
 const AssistantView = () => {
     const [{ data }] = useQuery({ query: assistantQueryDocument })
-    const [selectedAssistant, setAssistant] =
-        useState<AssistantFromQuery | null>(null)
+    const [selectedAssistant, setAssistant] = useState<
+        AssistantFromQuery | undefined
+    >()
 
     const [selectedPrinciple, setPrinciple] = useState<
         PrincipleFromQuery | undefined
-    >(undefined)
+    >()
 
     const handleNewAssistant = useCallback(
         (
             _event: React.SyntheticEvent,
-            assistant: AssistantFromQuery | null,
+            assistant?: AssistantFromQuery | undefined | null,
         ) => {
-            setAssistant(assistant)
+            setAssistant(assistant ?? undefined)
             if (selectedPrinciple) {
+                // eslint-disable-next-line unicorn/no-useless-undefined
                 setPrinciple(undefined)
             }
         },

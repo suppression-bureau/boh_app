@@ -144,17 +144,21 @@ interface NewSkillDialogProps {
 
 const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
     const [open, setOpen] = useState(false)
-    const [newSkill, setNewSkill] = useState<SkillFromQuery | null>(null)
+    const [newSkill, setNewSkill] = useState<SkillFromQuery | undefined>()
 
     const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
     const handleClose = useCallback(() => {
-        setNewSkill(null) // de-select newSkill to reset Dialog to initial state
+        // eslint-disable-next-line unicorn/no-useless-undefined
+        setNewSkill(undefined) // de-select newSkill to reset Dialog to initial state
         setOpen(false)
     }, [setOpen, setNewSkill])
 
     const handleNewSkill = useCallback(
-        (_event: React.SyntheticEvent, skill: SkillFromQuery | null) => {
-            setNewSkill(skill)
+        (
+            _event: React.SyntheticEvent,
+            skill?: SkillFromQuery | undefined | null,
+        ) => {
+            setNewSkill(skill ?? undefined)
         },
         [setNewSkill],
     )
@@ -172,7 +176,6 @@ const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
             <Dialog open={open} onClose={handleClose}>
                 <DialogContent>
                     <Autocomplete
-                        id="skill-selector"
                         options={state.filter(({ level }) => level == 0)}
                         value={newSkill}
                         sx={{ width: 300 }}
@@ -247,9 +250,7 @@ const SkillsView = () => {
         skillHandlers,
     )
 
-    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
-        undefined,
-    )
+    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>()
 
     const handleSelectedPrinciple = useCallback(
         (principle: Principle | undefined) => {

@@ -86,7 +86,7 @@ function filterItems(
     if (filters.principles) {
         filteredState = filters.principles
             .map(({ id }) => id as PrincipleString)
-            .map((principle) =>
+            .flatMap((principle) =>
                 filteredState
                     .filter((item) => item[principle] !== null)
                     // NB: this doesn't work with principles.length > 1
@@ -94,7 +94,6 @@ function filterItems(
                         (a, b) => (b[principle] ?? 0) - (a[principle] ?? 0),
                     ),
             )
-            .reduce((a, b) => a.concat(b), [])
     }
     // now, if we filtered by principles, the items lacking one or more of the principles are no longer visible
     if (filters.aspects) {
@@ -133,15 +132,13 @@ const ItemPrincipleValue = ({
 
 const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
     <Stack direction="row" alignItems="center">
-        {PRINCIPLES.filter((principle) => item[principle] != null).map(
-            (principle) => (
-                <ItemPrincipleValue
-                    key={principle}
-                    principle={principle}
-                    value={item[principle]!}
-                />
-            ),
-        )}
+        {PRINCIPLES.filter((principle) => item[principle]).map((principle) => (
+            <ItemPrincipleValue
+                key={principle}
+                principle={principle}
+                value={item[principle]!}
+            />
+        ))}
         <AspectIconGroup aspects={aspects} />
     </Stack>
 )
@@ -263,8 +260,9 @@ function reduceStringSet(
     action: StringSetAction,
 ): Set<string> {
     switch (action.type) {
-        case "clear":
+        case "clear": {
             return new Set()
+        }
         case "toggle": {
             const nextState = new Set(state)
             if (action.selected) nextState.add(action.id)
@@ -286,6 +284,7 @@ const ItemsView = ({ filters }: ItemsProps) => {
     // all possible item refs have a key, even if they’re filtered out
     const itemRefs = useRef(
         new Map<string, RefObject<HTMLDivElement>>(
+            // eslint-disable-next-line unicorn/no-null
             data!.item.map(({ id }) => [id, { current: null }]),
         ),
     )

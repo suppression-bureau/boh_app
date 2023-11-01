@@ -1,5 +1,12 @@
 import { Suspense, useMemo } from "react"
-import { Link, Navigate, Route, matchPath, useLocation } from "react-router-dom"
+import {
+    Link,
+    Navigate,
+    PathMatch,
+    Route,
+    matchPath,
+    useLocation,
+} from "react-router-dom"
 import SlideRoutes from "react-slide-routes"
 
 import AppBar from "@mui/material/AppBar"
@@ -38,7 +45,9 @@ const ROUTE_LINKS = [
     { label: "Workstations", href: "/workstations", pattern: "/workstations" },
 ]
 
-function useRouteMatch(patterns: readonly string[]) {
+function useRouteMatch(
+    patterns: readonly string[],
+): PathMatch<string> | undefined {
     const { pathname } = useLocation()
 
     for (const pattern of patterns) {
@@ -48,7 +57,7 @@ function useRouteMatch(patterns: readonly string[]) {
         }
     }
 
-    return null
+    return undefined
 }
 
 const App = () => {
@@ -88,7 +97,7 @@ const App = () => {
                 justifyItems="center"
                 sx={{
                     "&>*": { flexShrink: 0 },
-                    "&>*:nth-child(2)": { flexGrow: 1 },
+                    "&>.slide-routes": { flexGrow: 1 },
                 }}
             >
                 <AppNav />
