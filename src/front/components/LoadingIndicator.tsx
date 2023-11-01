@@ -1,11 +1,18 @@
 import { useState } from "react"
 
-import CircularProgress from "@mui/material/CircularProgress"
+import CircularProgress, {
+    CircularProgressProps,
+} from "@mui/material/CircularProgress"
 
-export default function LoadingIndicator() {
+export interface LoadingIndicatorProps extends CircularProgressProps {
+    delayMs?: number
+}
+
+export default function LoadingIndicator({
+    delayMs = 500,
+    ...props
+}: LoadingIndicatorProps) {
     const [visible, setVisible] = useState(false)
-    setTimeout(() => {
-        setVisible(true)
-    }, 500)
-    return visible ? <CircularProgress /> : null
+    setTimeout(() => setVisible(true), delayMs)
+    return visible ? <CircularProgress {...props} /> : null
 }

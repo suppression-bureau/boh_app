@@ -92,7 +92,7 @@ const App = () => {
                 }}
             >
                 <AppNav />
-                <Suspense fallback={<LoadingIndicator />}>
+                <Suspense fallback={<LoadingIndicator sx={{ m: "auto" }} />}>
                     <SlideRoutes>
                         <Route index element={<Home />} />
                         <Route path="aspects" element={<Aspects />} />
