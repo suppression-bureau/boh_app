@@ -10,7 +10,9 @@ import { useQuery } from "urql"
 
 import Drawer from "@mui/material/Drawer"
 import List from "@mui/material/List"
-import ListItemButton from "@mui/material/ListItemButton"
+import ListItemButton, {
+    ListItemButtonProps,
+} from "@mui/material/ListItemButton"
 import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
@@ -140,11 +142,12 @@ const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
 export interface ItemProps extends ItemFromQuery {
     selected?: boolean | undefined
     onClick?: MouseEventHandler<HTMLDivElement> | undefined
+    sx?: ListItemButtonProps["sx"] | undefined
 }
 
-function Item({ selected = false, onClick, ...item }: ItemProps) {
+function Item({ selected = false, onClick, sx, ...item }: ItemProps) {
     return (
-        <ListItemButton selected={selected} onClick={onClick}>
+        <ListItemButton selected={selected} onClick={onClick} sx={sx}>
             <ListItemText primary={item.id} />
             <ItemValues {...item} />
         </ListItemButton>
@@ -194,20 +197,23 @@ const ItemsView = ({ filters }: ItemsProps) => {
                 open={!!selected.size}
                 sx={{
                     maxWidth: "250px",
-                    "& .MuiDrawer-paper": { width: "250px" },
+                    "& .MuiDrawer-paper": { maxWidth: "250px" },
                 }}
             >
-                {[...selected].map(([id, ref]) => (
-                    <Item
-                        key={id}
-                        onClick={() =>
-                            ref.current!.scrollIntoView({
-                                behavior: "smooth",
-                            })
-                        }
-                        {...data!.item.find((item) => item.id === id)!}
-                    />
-                ))}
+                <List>
+                    {[...selected].map(([id, ref]) => (
+                        <ListItemButton
+                            key={id}
+                            onClick={() =>
+                                ref.current!.scrollIntoView({
+                                    behavior: "smooth",
+                                })
+                            }
+                        >
+                            <ListItemText>{id}</ListItemText>
+                        </ListItemButton>
+                    ))}
+                </List>
             </Drawer>
         </>
     )
