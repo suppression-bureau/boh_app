@@ -43,7 +43,7 @@ const AspectIcon = ({
         alt={alt}
         title={title}
         variant={variant}
-        src={`/data/aspect/${id}.png`}
+        src={new URL(`/data/aspect/${id}.png`, import.meta.url).href}
         {...props}
     />
 )
