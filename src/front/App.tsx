@@ -87,9 +87,7 @@ const App = () => {
                 justifyContent="start"
                 sx={{ "&>*:nth-child(2)": { flexGrow: 1 } }}
             >
-                <ElevationScroll>
-                    <AppNav />
-                </ElevationScroll>
+                <AppNav />
                 <React.Suspense fallback={"Loading..."}>
                     <SlideRoutes>
                         <Route index element={<Home />} />
@@ -115,29 +113,31 @@ function AppNav() {
     const currentTab = useRouteMatch(ROUTE_LINKS.map(({ pattern }) => pattern))
         ?.pattern.path
     return (
-        <AppBar
-            position="sticky"
-            sx={{
-                color: theme.palette.text.primary,
-                background: alpha(theme.palette.background.default, 0.7),
-                // TODO re-add contrast(200%) before blur without discoloring dark mode
-                backdropFilter: "blur(15px)",
-            }}
-        >
-            <Toolbar component="nav" sx={{ justifyContent: "center" }}>
-                <Tabs centered value={currentTab}>
-                    {ROUTE_LINKS.map(({ label, href, pattern }) => (
-                        <Tab
-                            key={label}
-                            label={label}
-                            value={pattern}
-                            component={Link}
-                            to={href}
-                        />
-                    ))}
-                </Tabs>
-            </Toolbar>
-        </AppBar>
+        <ElevationScroll>
+            <AppBar
+                position="sticky"
+                sx={{
+                    color: theme.palette.text.primary,
+                    background: alpha(theme.palette.background.default, 0.7),
+                    // TODO re-add contrast(200%) before blur without discoloring dark mode
+                    backdropFilter: "blur(15px)",
+                }}
+            >
+                <Toolbar component="nav" sx={{ justifyContent: "center" }}>
+                    <Tabs centered value={currentTab}>
+                        {ROUTE_LINKS.map(({ label, href, pattern }) => (
+                            <Tab
+                                key={label}
+                                label={label}
+                                value={pattern}
+                                component={Link}
+                                to={href}
+                            />
+                        ))}
+                    </Tabs>
+                </Toolbar>
+            </AppBar>
+        </ElevationScroll>
     )
 }
 
