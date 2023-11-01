@@ -221,10 +221,11 @@ export const SkillsStack = ({
         () =>
             allSkills.filter(
                 (skill) =>
-                    (skill.level > 0 && !selectedPrinciples) ||
-                    getPrinciples(skill).some(({ id }) =>
-                        selectedPrincipleSet.has(id),
-                    ),
+                    skill.level > 0 &&
+                    (!selectedPrinciples ||
+                        getPrinciples(skill).some(({ id }) =>
+                            selectedPrincipleSet.has(id),
+                        )),
             ),
         [selectedPrincipleSet, selectedPrinciples, allSkills],
     )
