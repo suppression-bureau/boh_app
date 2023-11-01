@@ -2,7 +2,6 @@ import { Suspense, useCallback, useState } from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
-import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
 import Container from "@mui/material/Container"
@@ -10,10 +9,10 @@ import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 
+import PrincipleFilterButton from "../components/PrincipleFilterButton"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import ItemsView from "./Items"
-import { PrincipleIcon } from "./Principles"
 
 const assistantQueryDocument = graphql(`
     query Assistant {
@@ -60,31 +59,6 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
     </Stack>
 )
 
-interface PrincipleFilterButtonProps {
-    principle: PrincipleFromQuery
-    selectedPrinciple: PrincipleFromQuery | undefined
-    count: number
-    handlePrincipleFilter(principle: PrincipleFromQuery): void
-}
-
-const PrincipleFilterButton = ({
-    principle,
-    selectedPrinciple,
-    count,
-    handlePrincipleFilter,
-}: PrincipleFilterButtonProps) => (
-    <Button
-        key={principle.id}
-        startIcon={<PrincipleIcon id={principle.id} />}
-        onClick={() => handlePrincipleFilter(principle)}
-        variant={
-            selectedPrinciple?.id === principle.id ? "contained" : "outlined"
-        }
-    >
-        {count}
-    </Button>
-)
-
 const AssistantView = () => {
     const [{ data }] = useQuery({ query: assistantQueryDocument })
     const [selectedAssistant, setAssistant] =
@@ -127,7 +101,7 @@ const AssistantView = () => {
                                 principle={principle}
                                 selectedPrinciple={selectedPrinciple}
                                 count={count}
-                                handlePrincipleFilter={setPrinciple}
+                                onPrincipleFilter={setPrinciple}
                             />
                         ),
                     )}

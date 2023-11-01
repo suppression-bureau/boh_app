@@ -11,6 +11,7 @@ import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { AspectIconGroup } from "../routes/Aspects"
 import { PrincipleIcon } from "../routes/Principles"
+import { PRINCIPLES, PrincipleString } from "../types"
 
 const itemsQueryDocument = graphql(`
     query Items {
@@ -36,23 +37,7 @@ const itemsQueryDocument = graphql(`
         }
     }
 `)
-const PRINCIPLES = [
-    "edge",
-    "forge",
-    "grail",
-    "heart",
-    "knock",
-    "lantern",
-    "moon",
-    "moth",
-    "nectar",
-    "rose",
-    "scale",
-    "sky",
-    "winter",
-] as const
 
-type Principle = (typeof PRINCIPLES)[number]
 type ItemFromQuery = types.ItemsQuery["item"][number]
 interface VisibleItem extends ItemFromQuery {
     isVisible: boolean
@@ -83,7 +68,7 @@ function filterItems(
     // now, if we filtered by known, the unknown items are no longer visible
     if (filters?.principles) {
         filteredState = filters.principles
-            .map((principle) => principle.id as Principle)
+            .map((principle) => principle.id as PrincipleString)
             .map((principle) =>
                 filteredState
                     .filter((item) => item[principle] !== null)
@@ -111,7 +96,7 @@ const ItemPrincipleValue = ({
     principle,
     value,
 }: {
-    principle: Principle
+    principle: PrincipleString
     value: number
 }) => {
     return (

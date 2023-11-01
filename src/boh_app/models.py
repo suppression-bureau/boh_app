@@ -128,7 +128,10 @@ class Skill(Base, NameMixin):
 
     @classmethod
     def _additional_fields(cls):
-        return {"wisdoms": Nested(Wisdom.__marshmallow__, many=True)}
+        return {
+            "wisdoms": Nested(Wisdom.__marshmallow__, many=True),
+            "principles": Nested(Principle.__marshmallow__, many=True),
+        }
 
     level: Mapped[int] = mapped_column(default=0)
     committed: Mapped[bool] = mapped_column(default=False)
@@ -144,6 +147,10 @@ class Skill(Base, NameMixin):
 
     wisdom_2_id: Mapped[int] = mapped_column(ForeignKey("wisdom.id"))
     wisdom_2: Mapped[Wisdom] = relationship(foreign_keys=[wisdom_2_id])
+
+    @hybrid_property
+    def principles(self) -> list[Principle]:
+        return [self.primary_principle, self.secondary_principle]
 
     @hybrid_property
     def wisdoms(self) -> list[Wisdom]:
