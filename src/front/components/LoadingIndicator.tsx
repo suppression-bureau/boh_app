@@ -7,5 +7,5 @@ export default function LoadingIndicator() {
     setTimeout(() => {
         setVisible(true)
     }, 500)
-    return visible ? <CircularProgress sx={{ justifySelf: "center" }} /> : null
+    return visible ? <CircularProgress /> : null
 }
