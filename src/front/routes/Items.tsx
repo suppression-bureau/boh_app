@@ -2,6 +2,7 @@ import {
     MouseEventHandler,
     RefObject,
     forwardRef,
+    memo,
     useCallback,
     useMemo,
     useReducer,
@@ -181,25 +182,31 @@ interface ItemsListProps {
     onToggleSelect(id: string, selected: boolean): void
 }
 
-const ItemsList = ({ items, itemRefs, onToggleSelect }: ItemsListProps) => (
-    <List
-        sx={{
-            maxWidth: "sm",
-            marginInline: "auto",
-        }}
-    >
-        {items
-            .filter(({ isVisible }) => isVisible)
-            .map((item) => (
-                <Item
-                    key={item.id}
-                    ref={itemRefs.current?.get(item.id)}
-                    onToggleSelect={onToggleSelect}
-                    {...item}
-                />
-            ))}
-    </List>
-)
+const ItemsList = memo(function ItemsList({
+    items,
+    itemRefs,
+    onToggleSelect,
+}: ItemsListProps) {
+    return (
+        <List
+            sx={{
+                maxWidth: "sm",
+                marginInline: "auto",
+            }}
+        >
+            {items
+                .filter(({ isVisible }) => isVisible)
+                .map((item) => (
+                    <Item
+                        key={item.id}
+                        ref={itemRefs.current?.get(item.id)}
+                        onToggleSelect={onToggleSelect}
+                        {...item}
+                    />
+                ))}
+        </List>
+    )
+})
 
 interface ItemsDrawerProps {
     items: VisibleItem[]
