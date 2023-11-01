@@ -9,6 +9,7 @@ import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 
+import LoadingIndicator from "../components/LoadingIndicator"
 import PrincipleFilterButton from "../components/PrincipleFilterButton"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
@@ -107,7 +108,7 @@ const AssistantView = () => {
                     )}
                 </CardActions>
             </Card>
-            <Suspense fallback={"Loading..."}>
+            <Suspense fallback={<LoadingIndicator />}>
                 {selectedAssistant && selectedPrinciple && (
                     <AssistantItems
                         principle={selectedPrinciple}
