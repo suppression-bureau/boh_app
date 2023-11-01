@@ -20,6 +20,7 @@ import {
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 import ElevationScroll from "./ElevationScroll.tsx"
+import LoadingIndicator from "./components/LoadingIndicator.tsx"
 import Aspects from "./routes/Aspects"
 import AssistantView from "./routes/Assistant.tsx"
 import Home from "./routes/Home"
@@ -88,7 +89,7 @@ const App = () => {
                 sx={{ "&>*:nth-child(2)": { flexGrow: 1 } }}
             >
                 <AppNav />
-                <React.Suspense fallback={"Loading..."}>
+                <React.Suspense fallback={<LoadingIndicator />}>
                     <SlideRoutes>
                         <Route index element={<Home />} />
                         <Route path="aspects" element={<Aspects />} />
