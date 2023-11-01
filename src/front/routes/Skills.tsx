@@ -1,5 +1,5 @@
 import axios from "axios"
-import { useCallback, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { useQuery } from "urql"
 import { AsyncActionHandlers, useReducerAsync } from "use-reducer-async"
 
@@ -205,40 +205,35 @@ export const SkillsStack = ({
     selectedPrinciples,
     onSkillIncrement,
 }: SkillStackProps) => {
-    if (!skills) {
-        const [{ data }] = useQuery({ query: skillQueryDocument })
-        skills = data!.skill.toSorted((a, b) => b.level - a.level)
-    }
-    const selectedPrincipleSet = new Set(
-        selectedPrinciples?.map(({ id }) => id),
+    const [{ data }] = useQuery({ query: skillQueryDocument })
+    const allSkills = useMemo(
+        () => skills ?? data!.skill.toSorted((a, b) => b.level - a.level),
+        [data, skills],
+    )
+    const selectedPrincipleSet = useMemo(
+        () => new Set(selectedPrinciples?.map(({ id }) => id)),
+        [selectedPrinciples],
+    )
+    const filteredSkills = useMemo(
+        () =>
+            allSkills.filter(
+                (skill) =>
+                    (skill.level > 0 && !selectedPrinciples) ||
+                    getPrinciples(skill).some(({ id }) =>
+                        selectedPrincipleSet.has(id),
+                    ),
+            ),
+        [selectedPrincipleSet, selectedPrinciples, allSkills],
     )
     return (
         <Stack spacing={2}>
-            {skills!
-                .filter(({ level }) => level > 0)
-                .map(({ ...skill }) => {
-                    if (!selectedPrinciples)
-                        return (
-                            <Skill
-                                key={skill.id}
-                                onIncrement={onSkillIncrement}
-                                {...skill}
-                            />
-                        )
-                    if (
-                        selectedPrinciples &&
-                        getPrinciples(skill)
-                            .map(({ id }) => id)
-                            .some((id) => selectedPrincipleSet.has(id))
-                    )
-                        return (
-                            <Skill
-                                key={skill.id}
-                                onIncrement={onSkillIncrement}
-                                {...skill}
-                            />
-                        )
-                })}
+            {filteredSkills.map((skill) => (
+                <Skill
+                    key={skill.id}
+                    onIncrement={onSkillIncrement}
+                    {...skill}
+                />
+            ))}
         </Stack>
     )
 }

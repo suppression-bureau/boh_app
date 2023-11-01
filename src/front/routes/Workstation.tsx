@@ -1,4 +1,5 @@
-import { useCallback, useReducer, useState } from "react"
+import { useCallback, useMemo, useReducer, useState } from "react"
+import { ErrorBoundary } from "react-error-boundary"
 import { useQuery } from "urql"
 
 import Button from "@mui/material/Button"
@@ -11,6 +12,7 @@ import Stack from "@mui/material/Stack"
 import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
 
+import ErrorDisplay from "../components/ErrorDisplay"
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
@@ -54,6 +56,7 @@ interface VisibleWorkstation extends WorkstationFromQuery {
     isVisible: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type WorkstationAction = { type: "filter"; principle: Principle | undefined }
 
 function workstationReducer(
@@ -61,7 +64,7 @@ function workstationReducer(
     action: WorkstationAction,
 ): VisibleWorkstation[] {
     switch (action.type) {
-        case "filter":
+        case "filter": {
             const workstationData: VisibleWorkstation[] = state.map(
                 (workstation) => ({
                     ...workstation,
@@ -81,6 +84,7 @@ function workstationReducer(
                 }
                 return workstation
             })
+        }
     }
 }
 
@@ -109,33 +113,36 @@ const WorkstationSlot = ({
     principles,
 }: WorkstationSlotProps) => {
     const [expanded, setExpanded] = useState(false)
+    const toggleExpanded = useCallback(
+        () => setExpanded(!expanded),
+        [expanded, setExpanded],
+    )
     return (
         <Card>
             <CardActions>
                 <WorkstationSlotInfoCard {...workstationSlot} />
                 <Button
-                    onClick={() => setExpanded(!expanded)}
+                    onClick={toggleExpanded}
                     endIcon={expanded ? <ExpandLess /> : <ExpandMore />}
                     sx={{ ml: "auto" }}
                 >
                     Show Items
                 </Button>
             </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                {workstationSlot.id === "Skill" ? (
-                    <SkillsStack
-                        key={`${workstationSlot.id}skills`}
-                        selectedPrinciples={principles}
-                    />
-                ) : (
-                    <ItemsView
-                        filters={{
-                            aspects: workstationSlot.accepts,
-                            principles,
-                        }}
-                    />
-                )}
-            </Collapse>
+            <ErrorBoundary FallbackComponent={ErrorDisplay}>
+                <Collapse in={expanded} timeout="auto" unmountOnExit>
+                    {workstationSlot.id === "Skill" ? (
+                        <SkillsStack selectedPrinciples={principles} />
+                    ) : (
+                        <ItemsView
+                            filters={{
+                                aspects: workstationSlot.accepts,
+                                principles,
+                            }}
+                        />
+                    )}
+                </Collapse>
+            </ErrorBoundary>
         </Card>
     )
 }
@@ -168,8 +175,13 @@ const Workstation = ({ workstation }: WorkstationProps) => (
 const WorkstationView = () => {
     const [{ data }] = useQuery({ query: workstationQueryDocument })
 
-    const initialState: VisibleWorkstation[] = data!.workstation.map(
-        (workstation) => ({ ...workstation, isVisible: true }),
+    const initialState: VisibleWorkstation[] = useMemo(
+        () =>
+            data!.workstation.map((workstation) => ({
+                ...workstation,
+                isVisible: true,
+            })),
+        [data],
     )
     const [state, dispatch] = useReducer(workstationReducer, initialState)
     const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
@@ -188,7 +200,7 @@ const WorkstationView = () => {
                 selectedPrinciple={selectedPrinciple}
                 onSelectPrinciple={handleSelectedPrinciple}
             />
-            {state!
+            {state
                 .filter(({ isVisible }) => isVisible)
                 .map((workstation) => (
                     <Workstation
