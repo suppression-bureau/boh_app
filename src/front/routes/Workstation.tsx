@@ -12,7 +12,7 @@ import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
 
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
-import { getPrinciples } from "../components/_filters"
+import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { Principle } from "../types"
