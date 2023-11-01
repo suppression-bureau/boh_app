@@ -190,6 +190,47 @@ const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
     )
 }
 
+interface SkillStackProps {
+    data?: SkillFromQuery[]
+    selectedPrinciple?: Principle
+    handleSkillIncrement(skill: SkillFromQuery): void
+}
+const SkillsStack = ({
+    data,
+    selectedPrinciple,
+    handleSkillIncrement,
+}: SkillStackProps) => {
+    return (
+        <Stack>
+            {data!
+                .filter(({ level }) => level > 0)
+                .map(({ ...skill }) => {
+                    if (!selectedPrinciple)
+                        return (
+                            <Skill
+                                key={skill.id}
+                                onIncrement={handleSkillIncrement}
+                                {...skill}
+                            />
+                        )
+                    if (
+                        selectedPrinciple &&
+                        getPrinciples(skill)
+                            .map(({ id }) => id)
+                            .includes(selectedPrinciple.id)
+                    )
+                        return (
+                            <Skill
+                                key={skill.id}
+                                onIncrement={handleSkillIncrement}
+                                {...skill}
+                            />
+                        )
+                })}
+        </Stack>
+    )
+}
+
 const SkillsView = () => {
     const [{ data }] = useQuery({ query: skillQueryDocument })
 
@@ -230,31 +271,11 @@ const SkillsView = () => {
                 onSelectPrinciple={handleSelectedPrinciple}
             />
             <NewSkillDialog state={state} dispatch={dispatch} />
-            {state
-                .filter(({ level }) => level > 0)
-                .map(({ ...skill }) => {
-                    if (!selectedPrinciple)
-                        return (
-                            <Skill
-                                key={skill.id}
-                                onIncrement={handleSkillIncrement}
-                                {...skill}
-                            />
-                        )
-                    if (
-                        selectedPrinciple &&
-                        getPrinciples(skill)
-                            .map(({ id }) => id)
-                            .includes(selectedPrinciple.id)
-                    )
-                        return (
-                            <Skill
-                                key={skill.id}
-                                onIncrement={handleSkillIncrement}
-                                {...skill}
-                            />
-                        )
-                })}
+            <SkillsStack
+                data={state}
+                selectedPrinciple={selectedPrinciple}
+                handleSkillIncrement={handleSkillIncrement}
+            />
         </Stack>
     )
 }

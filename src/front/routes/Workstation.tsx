@@ -53,13 +53,10 @@ interface VisibleWorkstation extends WorkstationFromQuery {
     isVisible: boolean
 }
 
-type WorkstationAction = {
-    type: "filter"
-    principle: Principle | undefined
-}
+type WorkstationAction = { type: "filter"; principle: Principle | undefined }
 
 function workstationReducer(
-    state: WorkstationFromQuery[],
+    state: VisibleWorkstation[],
     action: WorkstationAction,
 ): VisibleWorkstation[] {
     switch (action.type) {
@@ -151,7 +148,7 @@ const Workstation = ({ workstation }: WorkstationProps) => (
                 .toSorted((a, b) => a.index - b.index)
                 .map((slot) => (
                     <WorkstationSlot
-                        key={slot.id}
+                        key={`${workstation.id}${slot.id}`}
                         workstationSlot={slot}
                         principles={workstation.principles}
                     />
