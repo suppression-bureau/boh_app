@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { Ref, RefObject, useCallback, useMemo, useRef, useState } from "react"
 import { useQuery } from "urql"
 
 import List from "@mui/material/List"
@@ -125,13 +125,18 @@ const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
                 />
             ),
         )}
-        {<AspectIconGroup aspects={aspects} />}
+        <AspectIconGroup aspects={aspects} />
     </Stack>
 )
 
-function Item({ ...item }: ItemFromQuery) {
+export interface ItemProps extends ItemFromQuery {
+    selected?: boolean
+    onClick?(): void
+}
+
+function Item({ selected = false, onClick, ...item }: ItemProps) {
     return (
-        <ListItemButton>
+        <ListItemButton selected={selected} onClick={onClick}>
             <ListItemText primary={item.id} />
             <ItemValues {...item} />
         </ListItemButton>
@@ -139,12 +144,24 @@ function Item({ ...item }: ItemFromQuery) {
 }
 const ItemsView = ({ filters }: ItemsProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
-
-    const state = useMemo(
+    const items = useMemo(
         () => filterItems(data!.item, { known: true, ...filters }),
         [data, filters],
     )
-
+    const [selected, setSelected] = useState(
+        new Map<string, RefObject<HTMLDivElement>>(),
+    )
+    const toggleSelected = useCallback(
+        (id: string) => {
+            if (selected.has(id)) {
+                selected.delete(id)
+            } else {
+                selected.set(id, { current: null })
+            }
+            setSelected(new Map(selected))
+        },
+        [selected],
+    )
     return (
         <List
             sx={{
@@ -152,10 +169,15 @@ const ItemsView = ({ filters }: ItemsProps) => {
                 marginInline: "auto",
             }}
         >
-            {state
+            {items
                 .filter(({ isVisible }) => isVisible)
                 .map((item) => (
-                    <Item key={item.id} {...item} />
+                    <Item
+                        key={item.id}
+                        selected={selected.has(item.id)}
+                        onClick={() => toggleSelected(item.id)}
+                        {...item}
+                    />
                 ))}
         </List>
     )
