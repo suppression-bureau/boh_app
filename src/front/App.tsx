@@ -1,10 +1,10 @@
-import { useMemo } from "react"
-import React from "react"
+import { Suspense, useMemo } from "react"
 import { Link, Navigate, Route, matchPath, useLocation } from "react-router-dom"
 import SlideRoutes from "react-slide-routes"
 
 import AppBar from "@mui/material/AppBar"
 import CssBaseline from "@mui/material/CssBaseline"
+import Stack from "@mui/material/Stack"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
 import Toolbar from "@mui/material/Toolbar"
@@ -14,10 +14,12 @@ import {
     alpha,
     createTheme,
     responsiveFontSizes,
+    useTheme,
 } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 import ElevationScroll from "./ElevationScroll.tsx"
+import LoadingIndicator from "./components/LoadingIndicator.tsx"
 import Aspects from "./routes/Aspects"
 import AssistantView from "./routes/Assistant.tsx"
 import Home from "./routes/Home"
@@ -77,52 +79,69 @@ const App = () => {
         })
         return responsiveFontSizes(baseTheme)
     }, [dark])
-    const currentTab = useRouteMatch(ROUTE_LINKS.map(({ pattern }) => pattern))
-        ?.pattern.path
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <ElevationScroll>
-                <AppBar
-                    position="sticky"
-                    sx={{
-                        color: theme.palette.text.primary,
-                        background: alpha(
-                            theme.palette.background.default,
-                            0.7,
-                        ),
-                        // TODO re-add contrast(200%) before blur without discoloring dark mode
-                        backdropFilter: "blur(15px)",
-                    }}
-                >
-                    <Toolbar component="nav" sx={{ justifyContent: "center" }}>
-                        <Tabs centered value={currentTab}>
-                            {ROUTE_LINKS.map(({ label, href, pattern }) => (
-                                <Tab
-                                    key={label}
-                                    label={label}
-                                    value={pattern}
-                                    component={Link}
-                                    to={href}
-                                />
-                            ))}
-                        </Tabs>
-                    </Toolbar>
-                </AppBar>
-            </ElevationScroll>
-            <React.Suspense fallback={"Loading..."}>
-                <SlideRoutes>
-                    <Route index element={<Home />} />
-                    <Route path="aspects" element={<Aspects />} />
-                    <Route path="principles" element={<Principles />} />
-                    <Route path="skills" element={<SkillsView />} />
-                    <Route path="items" element={<ItemsView />} />
-                    <Route path="assistance" element={<AssistantView />} />
-                    <Route path="workstations" element={<WorkstationView />} />
-                    <Route path="*" element={<Navigate replace to="/" />} />
-                </SlideRoutes>
-            </React.Suspense>
+            <Stack
+                direction="column"
+                justifyContent="start"
+                justifyItems="center"
+                sx={{
+                    "&>*": { flexShrink: 0 },
+                    "&>*:nth-child(2)": { flexGrow: 1 },
+                }}
+            >
+                <AppNav />
+                <Suspense fallback={<LoadingIndicator sx={{ m: "auto" }} />}>
+                    <SlideRoutes>
+                        <Route index element={<Home />} />
+                        <Route path="aspects" element={<Aspects />} />
+                        <Route path="principles" element={<Principles />} />
+                        <Route path="skills" element={<SkillsView />} />
+                        <Route path="items" element={<ItemsView />} />
+                        <Route path="assistance" element={<AssistantView />} />
+                        <Route
+                            path="workstations"
+                            element={<WorkstationView />}
+                        />
+                        <Route path="*" element={<Navigate replace to="/" />} />
+                    </SlideRoutes>
+                </Suspense>
+            </Stack>
         </ThemeProvider>
+    )
+}
+
+function AppNav() {
+    const theme = useTheme()
+    const currentTab = useRouteMatch(ROUTE_LINKS.map(({ pattern }) => pattern))
+        ?.pattern.path
+    return (
+        <ElevationScroll>
+            <AppBar
+                position="sticky"
+                sx={{
+                    color: theme.palette.text.primary,
+                    background: alpha(theme.palette.background.default, 0.7),
+                    // TODO re-add contrast(200%) before blur without discoloring dark mode
+                    backdropFilter: "blur(15px)",
+                }}
+            >
+                <Toolbar component="nav" sx={{ justifyContent: "center" }}>
+                    <Tabs centered value={currentTab}>
+                        {ROUTE_LINKS.map(({ label, href, pattern }) => (
+                            <Tab
+                                key={label}
+                                label={label}
+                                value={pattern}
+                                component={Link}
+                                to={href}
+                            />
+                        ))}
+                    </Tabs>
+                </Toolbar>
+            </AppBar>
+        </ElevationScroll>
     )
 }
 

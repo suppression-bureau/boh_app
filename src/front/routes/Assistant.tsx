@@ -2,7 +2,6 @@ import { Suspense, useCallback, useState } from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
-import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
 import Container from "@mui/material/Container"
@@ -10,10 +9,11 @@ import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 
+import LoadingIndicator from "../components/LoadingIndicator"
+import PrincipleFilterButton from "../components/PrincipleFilterButton"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import ItemsView from "./Items"
-import { PrincipleIcon } from "./Principles"
 
 const assistantQueryDocument = graphql(`
     query Assistant {
@@ -44,7 +44,7 @@ interface AssistantItemProps {
 
 const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
     <Stack>
-        {assistant?.aspects.map((aspect) => (
+        {assistant.aspects.map((aspect) => (
             <div key={`${aspect.id}grouping`}>
                 <Typography variant="h5" color={"secondary"}>
                     {aspect.id}
@@ -58,31 +58,6 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
             </div>
         ))}
     </Stack>
-)
-
-interface PrincipleFilterButtonProps {
-    principle: PrincipleFromQuery
-    selectedPrinciple: PrincipleFromQuery | undefined
-    count: number
-    handlePrincipleFilter(principle: PrincipleFromQuery): void
-}
-
-const PrincipleFilterButton = ({
-    principle,
-    selectedPrinciple,
-    count,
-    handlePrincipleFilter,
-}: PrincipleFilterButtonProps) => (
-    <Button
-        key={principle.id}
-        startIcon={<PrincipleIcon id={principle.id} />}
-        onClick={() => handlePrincipleFilter(principle)}
-        variant={
-            selectedPrinciple?.id === principle.id ? "contained" : "outlined"
-        }
-    >
-        {count}
-    </Button>
 )
 
 const AssistantView = () => {
@@ -127,13 +102,13 @@ const AssistantView = () => {
                                 principle={principle}
                                 selectedPrinciple={selectedPrinciple}
                                 count={count}
-                                handlePrincipleFilter={setPrinciple}
+                                onPrincipleFilter={setPrinciple}
                             />
                         ),
                     )}
                 </CardActions>
             </Card>
-            <Suspense fallback={"Loading..."}>
+            <Suspense fallback={<LoadingIndicator />}>
                 {selectedAssistant && selectedPrinciple && (
                     <AssistantItems
                         principle={selectedPrinciple}
