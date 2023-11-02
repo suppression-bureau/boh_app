@@ -162,10 +162,12 @@ const AssistantView = () => {
                 />
                 <Suspense fallback={<LoadingIndicator />}>
                     {selectedAssistant && selectedPrinciple && (
-                        <AssistantItems
-                            principle={selectedPrinciple}
-                            assistant={selectedAssistant}
-                        />
+                        <DrawerContextProvider>
+                            <AssistantItems
+                                principle={selectedPrinciple}
+                                assistant={selectedAssistant}
+                            />
+                        </DrawerContextProvider>
                     )}
                 </Suspense>
             </Stack>
