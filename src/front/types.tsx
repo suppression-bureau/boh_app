@@ -24,4 +24,5 @@ export type ItemFromQuery = types.ItemsQuery["item"][number]
 
 export interface VisibleItem extends ItemFromQuery {
     isVisible: boolean
+    index: number
 }

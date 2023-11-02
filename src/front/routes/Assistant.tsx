@@ -13,11 +13,7 @@ import LoadingIndicator from "../components/LoadingIndicator"
 import PrincipleFilterButton from "../components/PrincipleFilterButton"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
-import {
-    DrawerContextProvider,
-    ItemsViewInner,
-    useDrawerContext,
-} from "./Items"
+import { DrawerContextProvider, ItemsView, useDrawerContext } from "./Items"
 
 const assistantQueryDocument = graphql(`
     query Assistant {
@@ -53,7 +49,7 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
                 <Typography variant="h5" color={"secondary"}>
                     {aspect.id}
                 </Typography>
-                <ItemsViewInner
+                <ItemsView
                     filters={{
                         principles: [principle],
                         aspects: [aspect],

@@ -19,7 +19,7 @@ import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { Principle } from "../types"
 import { AspectIconGroup } from "./Aspects"
-import ItemsView, { itemsQueryDocument } from "./Items"
+import AllItemsView, { itemsQueryDocument } from "./Items"
 import { PrincipleIconGroup } from "./Principles"
 import { SkillsStack, skillQueryDocument } from "./Skills"
 
@@ -140,7 +140,7 @@ const WorkstationSlot = ({
                     {workstationSlot.id === "Skill" ? (
                         <SkillsStack selectedPrinciples={principles} />
                     ) : (
-                        <ItemsView
+                        <AllItemsView
                             filters={{
                                 aspects: workstationSlot.accepts,
                                 principles,

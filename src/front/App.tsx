@@ -30,7 +30,7 @@ import LoadingIndicator from "./components/LoadingIndicator.tsx"
 import Aspects from "./routes/Aspects"
 import AssistantView from "./routes/Assistant.tsx"
 import Home from "./routes/Home"
-import ItemsView from "./routes/Items.tsx"
+import AllItemsView from "./routes/Items.tsx"
 import Principles from "./routes/Principles.tsx"
 import SkillsView from "./routes/Skills"
 import WorkstationView from "./routes/Workstation.tsx"
@@ -107,7 +107,7 @@ const App = () => {
                         <Route path="aspects" element={<Aspects />} />
                         <Route path="principles" element={<Principles />} />
                         <Route path="skills" element={<SkillsView />} />
-                        <Route path="items" element={<ItemsView />} />
+                        <Route path="items" element={<AllItemsView />} />
                         <Route path="assistance" element={<AssistantView />} />
                         <Route
                             path="workstations"

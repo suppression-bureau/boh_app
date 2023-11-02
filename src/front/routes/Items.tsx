@@ -72,8 +72,12 @@ interface ItemsProps {
     }
 }
 
-function setVisible(item: ItemFromQuery, visible: boolean): VisibleItem {
-    return { ...item, isVisible: visible }
+function setVisible(
+    item: ItemFromQuery,
+    visible: boolean,
+    index: number = 0,
+): VisibleItem {
+    return { ...item, isVisible: visible, index: index }
 }
 
 function filterItems(
@@ -107,8 +111,17 @@ function filterItems(
     }
     // now, if we filtered by aspects, the items lacking one or more of the aspects are no longer visible
     // now we apply isVisible to all items which were filtered
-    const filteredItems = new Set(filteredState.map(({ id }) => id))
-    return state.map((item) => setVisible(item, filteredItems.has(item.id)))
+    console.log(filteredState)
+
+    const filteredItemsSet = new Set(filteredState.map(({ id }) => id))
+    const filteredItems = Array.from(filteredItemsSet)
+    return state.map((item) =>
+        setVisible(
+            item,
+            filteredItemsSet.has(item.id),
+            filteredItems.findIndex((id) => id === item.id),
+        ),
+    )
 }
 
 const ItemPrincipleValue = ({
@@ -176,7 +189,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 })
 
 interface ItemsListProps {
-    items: ItemFromQuery[]
+    items: VisibleItem[]
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>> | undefined
     onToggleSelect(id: string, selected: boolean): void
 }
@@ -194,14 +207,16 @@ const ItemsList = memo(function ItemsList({
                 marginInline: "auto",
             }}
         >
-            {items.map((item) => (
-                <Item
-                    key={item.id}
-                    ref={itemRefs!.current?.get(item.id)}
-                    onToggleSelect={onToggleSelect}
-                    {...item}
-                />
-            ))}
+            {items
+                .toSorted((a, b) => a.index - b.index)
+                .map((item) => (
+                    <Item
+                        key={item.id}
+                        ref={itemRefs!.current?.get(item.id)}
+                        onToggleSelect={onToggleSelect}
+                        {...item}
+                    />
+                ))}
         </List>
     )
 })
@@ -275,7 +290,7 @@ export const DrawerContextProvider = ({
     )
 }
 
-export const ItemsViewInner = ({ filters }: ItemsProps) => {
+export const ItemsView = ({ filters }: ItemsProps) => {
     const { data, itemRefs, dispatch } = useDrawerContext()
     const items = useMemo(
         () =>
@@ -298,12 +313,12 @@ export const ItemsViewInner = ({ filters }: ItemsProps) => {
     )
 }
 
-function ItemsView({ filters }: ItemsProps) {
+function AllItemsView({ filters }: ItemsProps) {
     return (
         <DrawerContextProvider>
-            <ItemsViewInner filters={filters} />
+            <ItemsView filters={filters} />
         </DrawerContextProvider>
     )
 }
 
-export default ItemsView
+export default AllItemsView
