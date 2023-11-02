@@ -19,7 +19,7 @@ const PrincipleFilterBar = ({
         id: principle,
     }))
     return (
-        <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
+        <Stack direction="row" spacing={2} flexWrap="wrap">
             {principles.map((principle) => (
                 <PrincipleFilterButton
                     key={principle.id}

@@ -15,8 +15,8 @@ import Typography from "@mui/material/Typography"
 import LoadingIndicator from "../components/LoadingIndicator"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
-import ItemsView from "./Items"
 import { PrincipleIcon } from "./Principles"
+import { DrawerContextProvider, ItemsView } from "./Items"
 
 const assistantQueryDocument = graphql(`
     query Assistant {
