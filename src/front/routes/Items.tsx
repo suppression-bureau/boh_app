@@ -1,4 +1,3 @@
-import { Draw } from "@mui/icons-material"
 import {
     Dispatch,
     ReactNode,
@@ -75,7 +74,7 @@ interface ItemsProps {
 function setVisible(
     item: ItemFromQuery,
     visible: boolean,
-    index: number = 0,
+    index = 0,
 ): VisibleItem {
     return { ...item, isVisible: visible, index: index }
 }
@@ -112,12 +111,12 @@ function filterItems(
     // now, if we filtered by aspects, the items lacking one or more of the aspects are no longer visible
     // now we apply isVisible to all items which were filtered
     const filteredItemsSet = new Set(filteredState.map(({ id }) => id))
-    const filteredItems = Array.from(filteredItemsSet)
+    const filteredItems = [...filteredItemsSet]
     return state.map((item) =>
         setVisible(
             item,
             filteredItemsSet.has(item.id),
-            filteredItems.findIndex((id) => id === item.id),
+            filteredItems.indexOf(item.id),
         ),
     )
 }
@@ -240,7 +239,7 @@ function reduceStringSet(
     }
 }
 
-type DrawerContextProps = {
+interface DrawerContextProps {
     data: types.ItemsQuery | undefined
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>> | undefined
     dispatch: Dispatch<StringSetAction>
@@ -249,7 +248,8 @@ type DrawerContextProps = {
 const DrawerContext = createContext<DrawerContextProps>({
     data: undefined,
     itemRefs: undefined,
-    dispatch: () => undefined,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    dispatch() {},
 })
 
 export const useDrawerContext = (): DrawerContextProps => {
@@ -300,7 +300,7 @@ export const ItemsView = ({ filters }: ItemsProps) => {
     const toggleSelected = useCallback(
         (id: string, selected: boolean) =>
             dispatch({ type: "toggle", id, selected }),
-        [],
+        [dispatch],
     )
     return (
         <ItemsList

@@ -1,4 +1,4 @@
-import { RefObject, useMemo, useRef } from "react"
+import { RefObject, useMemo } from "react"
 
 import Divider from "@mui/material/Divider"
 import Drawer from "@mui/material/Drawer"
@@ -35,7 +35,7 @@ function PrincipleCounter({
                 {total}
             </Typography>
         </Stack>
-    ) : null
+    ) : undefined
 }
 
 function PrincipleCounterStack({ items }: { items: VisibleItem[] }) {
@@ -60,7 +60,7 @@ function PrincipleCounterStack({ items }: { items: VisibleItem[] }) {
                 ))}
             </Stack>
         </>
-    ) : null
+    ) : undefined
 }
 
 interface ItemsDrawerProps {
