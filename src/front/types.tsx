@@ -19,3 +19,9 @@ export const PRINCIPLES = [
 ] as const
 
 export type PrincipleString = (typeof PRINCIPLES)[number]
+
+export type ItemFromQuery = types.ItemsQuery["item"][number]
+
+export interface VisibleItem extends ItemFromQuery {
+    isVisible: boolean
+}

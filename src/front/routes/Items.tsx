@@ -24,7 +24,13 @@ import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { AspectIconGroup } from "../routes/Aspects"
 import { PrincipleIcon } from "../routes/Principles"
-import { PRINCIPLES, PrincipleString } from "../types"
+import {
+    ItemFromQuery,
+    PRINCIPLES,
+    Principle,
+    PrincipleString,
+    VisibleItem,
+} from "../types"
 
 export const itemsQueryDocument = graphql(`
     query Items {
@@ -51,17 +57,13 @@ export const itemsQueryDocument = graphql(`
     }
 `)
 
-type ItemFromQuery = types.ItemsQuery["item"][number]
-export interface VisibleItem extends ItemFromQuery {
-    isVisible: boolean
-}
 type AspectFromQuery = ItemFromQuery["aspects"][number]
 
 interface ItemsProps {
     filters?: {
         known?: boolean
         aspects?: AspectFromQuery[]
-        principles?: Pick<types.Principle, "id">[]
+        principles?: Principle[]
     }
 }
 

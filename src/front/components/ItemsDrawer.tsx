@@ -12,15 +12,8 @@ import Typography from "@mui/material/Typography"
 
 import Delete from "@mui/icons-material/Delete"
 
-import { VisibleItem } from "../routes/Items"
 import { PrincipleIcon } from "../routes/Principles"
-import { PRINCIPLES, PrincipleString } from "../types"
-
-interface ItemsDrawerProps {
-    items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
-    onClear?(): void
-}
+import { PRINCIPLES, PrincipleString, VisibleItem } from "../types"
 
 function PrincipleCounter({
     principle,
@@ -68,6 +61,12 @@ function PrincipleCounterStack({ items }: { items: VisibleItem[] }) {
             </Stack>
         </>
     )
+}
+
+interface ItemsDrawerProps {
+    items: VisibleItem[]
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    onClear?(): void
 }
 
 function ItemsDrawer({ items, itemRefs, onClear }: ItemsDrawerProps) {
