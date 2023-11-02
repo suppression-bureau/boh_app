@@ -10,20 +10,16 @@ import {
 } from "react"
 import { useQuery } from "urql"
 
-import Divider from "@mui/material/Divider"
-import Drawer from "@mui/material/Drawer"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemButton, {
     ListItemButtonProps,
 } from "@mui/material/ListItemButton"
-import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 
-import Delete from "@mui/icons-material/Delete"
-
+import ItemsDrawer from "../components/ItemsDrawer"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { AspectIconGroup } from "../routes/Aspects"
@@ -56,7 +52,7 @@ export const itemsQueryDocument = graphql(`
 `)
 
 type ItemFromQuery = types.ItemsQuery["item"][number]
-interface VisibleItem extends ItemFromQuery {
+export interface VisibleItem extends ItemFromQuery {
     isVisible: boolean
 }
 type AspectFromQuery = ItemFromQuery["aspects"][number]
@@ -202,54 +198,6 @@ const ItemsList = memo(function ItemsList({
         </List>
     )
 })
-
-interface ItemsDrawerProps {
-    items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
-    onClear?(): void
-}
-
-function ItemsDrawer({ items, itemRefs, onClear }: ItemsDrawerProps) {
-    return (
-        <Drawer
-            variant="persistent"
-            open={items.length > 0}
-            sx={{
-                maxWidth: "250px",
-                "& .MuiDrawer-paper": { maxWidth: "250px" },
-            }}
-        >
-            <List sx={{ flexGrow: 1 }}>
-                {items.map((item) => (
-                    <ListItem key={item.id} disablePadding>
-                        <ListItemButton
-                            onClick={() =>
-                                itemRefs.current
-                                    ?.get(item.id)
-                                    ?.current?.scrollIntoView({
-                                        behavior: "smooth",
-                                    })
-                            }
-                        >
-                            <ListItemText>{item.id}</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-                <Divider />
-                {onClear && (
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={onClear}>
-                            <ListItemIcon>
-                                <Delete />
-                            </ListItemIcon>
-                            <ListItemText>Clear</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                )}
-            </List>
-        </Drawer>
-    )
-}
 
 type StringSetAction =
     | { type: "clear" }
