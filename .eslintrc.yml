@@ -10,6 +10,7 @@ extends:
   - plugin:react-hooks/recommended
   - plugin:unicorn/recommended
 rules:
+  # imports rules
   no-restricted-imports:
     - error
     - paths:
@@ -17,6 +18,9 @@ rules:
           message: For small bundle size, import from @mui/material/* instead
       patterns:
         - "!@mui/material/*"
+  #
+  react-hooks/exhaustive-deps: error
+  # rules that don’t fit
   unicorn/prevent-abbreviations: off
   unicorn/filename-case: off
 parser: "@typescript-eslint/parser"
