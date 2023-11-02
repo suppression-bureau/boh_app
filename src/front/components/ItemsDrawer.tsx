@@ -1,4 +1,4 @@
-import { RefObject } from "react"
+import { RefObject, useMemo, useRef } from "react"
 
 import Divider from "@mui/material/Divider"
 import Drawer from "@mui/material/Drawer"
@@ -39,7 +39,7 @@ function PrincipleCounter({
 }
 
 function PrincipleCounterStack({ items }: { items: VisibleItem[] }) {
-    return (
+    return items.length > 0 ? (
         <>
             <Typography variant="h6" sx={{ margin: 2 }}>
                 Totals:
@@ -60,16 +60,21 @@ function PrincipleCounterStack({ items }: { items: VisibleItem[] }) {
                 ))}
             </Stack>
         </>
-    )
+    ) : null
 }
 
 interface ItemsDrawerProps {
     items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>> | undefined
+    selected: Set<string>
     onClear?(): void
 }
 
-function ItemsDrawer({ items, itemRefs, onClear }: ItemsDrawerProps) {
+function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
+    const selectedItems = useMemo(
+        () => items.filter(({ id }) => selected.has(id)),
+        [items, selected],
+    )
     return (
         <Drawer
             variant="persistent"
@@ -80,11 +85,11 @@ function ItemsDrawer({ items, itemRefs, onClear }: ItemsDrawerProps) {
             }}
         >
             <List sx={{ flexGrow: 1 }}>
-                {items.map((item) => (
+                {selectedItems.map((item) => (
                     <ListItem key={item.id} disablePadding>
                         <ListItemButton
                             onClick={() =>
-                                itemRefs.current
+                                itemRefs!.current
                                     ?.get(item.id)
                                     ?.current?.scrollIntoView({
                                         behavior: "smooth",
@@ -96,7 +101,7 @@ function ItemsDrawer({ items, itemRefs, onClear }: ItemsDrawerProps) {
                     </ListItem>
                 ))}
                 <Divider />
-                <PrincipleCounterStack items={items} />
+                <PrincipleCounterStack items={selectedItems} />
                 <Divider />
                 {onClear && (
                     <ListItem disablePadding>

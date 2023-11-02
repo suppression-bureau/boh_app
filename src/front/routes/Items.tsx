@@ -1,8 +1,13 @@
+import { Draw } from "@mui/icons-material"
 import {
+    Dispatch,
+    ReactNode,
     RefObject,
+    createContext,
     forwardRef,
     memo,
     useCallback,
+    useContext,
     useMemo,
     useReducer,
     useRef,
@@ -172,7 +177,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 
 interface ItemsListProps {
     items: ItemFromQuery[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>> | undefined
     onToggleSelect(id: string, selected: boolean): void
 }
 
@@ -192,7 +197,7 @@ const ItemsList = memo(function ItemsList({
             {items.map((item) => (
                 <Item
                     key={item.id}
-                    ref={itemRefs.current?.get(item.id)}
+                    ref={itemRefs!.current?.get(item.id)}
                     onToggleSelect={onToggleSelect}
                     {...item}
                 />
@@ -222,15 +227,31 @@ function reduceStringSet(
     }
 }
 
-const ItemsView = ({ filters }: ItemsProps) => {
+type DrawerContextProps = {
+    data: types.ItemsQuery | undefined
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>> | undefined
+    dispatch: Dispatch<StringSetAction>
+}
+
+const DrawerContext = createContext<DrawerContextProps>({
+    data: undefined,
+    itemRefs: undefined,
+    dispatch: () => undefined,
+})
+
+export const useDrawerContext = (): DrawerContextProps => {
+    return useContext(DrawerContext)
+}
+
+export const DrawerContextProvider = ({
+    children,
+}: {
+    children: ReactNode
+}) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
-    const items = useMemo(
-        () =>
-            filterItems(data!.item, { known: true, ...filters }).filter(
-                ({ isVisible }) => isVisible,
-            ),
-        [data, filters],
-    )
+    const items = data!.item.map((item) => setVisible(item, true))
+    const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
+
     // all possible item refs have a key, even if they’re filtered out
     const itemRefs = useRef(
         new Map<string, RefObject<HTMLDivElement>>(
@@ -238,31 +259,51 @@ const ItemsView = ({ filters }: ItemsProps) => {
             data!.item.map(({ id }) => [id, { current: null }]),
         ),
     )
-    const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
     const clearSelected = useCallback(() => dispatch({ type: "clear" }), [])
+
+    return (
+        <DrawerContext.Provider value={{ data, itemRefs, dispatch }}>
+            {children}
+            <ItemsDrawer
+                items={items}
+                itemRefs={itemRefs}
+                selected={selected}
+                // TODO: this doesn’t work yet since the items manage their selected state themselves
+                onClear={undefined && clearSelected}
+            />
+        </DrawerContext.Provider>
+    )
+}
+
+export const ItemsViewInner = ({ filters }: ItemsProps) => {
+    const { data, itemRefs, dispatch } = useDrawerContext()
+    const items = useMemo(
+        () =>
+            filterItems(data!.item, { known: true, ...filters }).filter(
+                ({ isVisible }) => isVisible,
+            ),
+        [data, filters],
+    )
     const toggleSelected = useCallback(
         (id: string, selected: boolean) =>
             dispatch({ type: "toggle", id, selected }),
         [],
     )
-    const selectedItems = useMemo(
-        () => items.filter(({ id }) => selected.has(id)),
-        [items, selected],
-    )
     return (
-        <>
-            <ItemsList
-                items={items}
-                itemRefs={itemRefs}
-                onToggleSelect={toggleSelected}
-            />
-            <ItemsDrawer
-                items={selectedItems}
-                itemRefs={itemRefs}
-                // TODO: this doesn’t work yet since the items manage their selected state themselves
-                onClear={undefined && clearSelected}
-            />
-        </>
+        <ItemsList
+            items={items}
+            itemRefs={itemRefs}
+            onToggleSelect={toggleSelected}
+        />
     )
 }
+
+function ItemsView({ filters }: ItemsProps) {
+    return (
+        <DrawerContextProvider>
+            <ItemsViewInner filters={filters} />
+        </DrawerContextProvider>
+    )
+}
+
 export default ItemsView
