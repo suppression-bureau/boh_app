@@ -79,6 +79,7 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
         () => items.filter(({ id }) => selected.has(id)),
         [items, selected],
     )
+    if (selected.size === 0) return
     return (
         <Drawer
             variant="persistent"
