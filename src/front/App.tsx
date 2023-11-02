@@ -84,6 +84,11 @@ const App = () => {
                         root: buttonStyle,
                     },
                 },
+                MuiStack: {
+                    defaultProps: {
+                        useFlexGap: true,
+                    },
+                },
             },
         })
         return responsiveFontSizes(baseTheme)

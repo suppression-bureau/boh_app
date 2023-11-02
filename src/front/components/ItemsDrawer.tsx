@@ -15,14 +15,16 @@ import Delete from "@mui/icons-material/Delete"
 import { PrincipleIcon } from "../routes/Principles"
 import { PRINCIPLES, PrincipleString, VisibleItem } from "../types"
 
-function PrincipleCounter({
-    principle,
-    items,
-}: {
+interface PrincipleCounterProps {
     principle: PrincipleString
     items: VisibleItem[]
-}) {
-    const total = items.reduce((total, item) => total + item[principle]!, 0)
+}
+
+function PrincipleCounter({ principle, items }: PrincipleCounterProps) {
+    const total = items.reduce(
+        (total, item) => total + (item[principle] ?? 0),
+        0,
+    )
     return total ? (
         <Stack direction="row" alignItems="center">
             <PrincipleIcon id={principle} />
@@ -38,8 +40,12 @@ function PrincipleCounter({
     ) : undefined
 }
 
-function PrincipleCounterStack({ items }: { items: VisibleItem[] }) {
-    return items.length > 0 ? (
+interface PrincipleCounterStackProps {
+    items: VisibleItem[]
+}
+
+const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
+    items.length > 0 ? (
         <>
             <Typography variant="h6" sx={{ margin: 2 }}>
                 Totals:
@@ -48,7 +54,6 @@ function PrincipleCounterStack({ items }: { items: VisibleItem[] }) {
                 direction="row"
                 spacing={2}
                 flexWrap="wrap"
-                useFlexGap
                 sx={{ margin: 2 }}
             >
                 {PRINCIPLES.map((principle) => (
@@ -61,11 +66,10 @@ function PrincipleCounterStack({ items }: { items: VisibleItem[] }) {
             </Stack>
         </>
     ) : undefined
-}
 
 interface ItemsDrawerProps {
     items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>> | undefined
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
     selected: Set<string>
     onClear?(): void
 }
@@ -89,7 +93,7 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
                     <ListItem key={item.id} disablePadding>
                         <ListItemButton
                             onClick={() =>
-                                itemRefs!.current
+                                itemRefs.current
                                     ?.get(item.id)
                                     ?.current?.scrollIntoView({
                                         behavior: "smooth",

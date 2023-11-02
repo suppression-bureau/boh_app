@@ -25,7 +25,6 @@ import Typography from "@mui/material/Typography"
 
 import ItemsDrawer from "../components/ItemsDrawer"
 import { graphql } from "../gql"
-import * as types from "../gql/graphql"
 import { AspectIconGroup } from "../routes/Aspects"
 import { PrincipleIcon } from "../routes/Principles"
 import {
@@ -110,8 +109,8 @@ function filterItems(
     }
     // now, if we filtered by aspects, the items lacking one or more of the aspects are no longer visible
     // now we apply isVisible to all items which were filtered
-    const filteredItemsSet = new Set(filteredState.map(({ id }) => id))
-    const filteredItems = [...filteredItemsSet]
+    const filteredItems = filteredState.map(({ id }) => id)
+    const filteredItemsSet = new Set(filteredItems)
     return state.map((item) =>
         setVisible(
             item,
@@ -240,14 +239,15 @@ function reduceStringSet(
 }
 
 interface DrawerContextProps {
-    data: types.ItemsQuery | undefined
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>> | undefined
+    items: ItemFromQuery[]
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
     dispatch: Dispatch<StringSetAction>
 }
 
 const DrawerContext = createContext<DrawerContextProps>({
-    data: undefined,
-    itemRefs: undefined,
+    items: [],
+    // eslint-disable-next-line unicorn/no-null
+    itemRefs: { current: null },
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     dispatch() {},
 })
@@ -256,11 +256,13 @@ export const useDrawerContext = (): DrawerContextProps => {
     return useContext(DrawerContext)
 }
 
+interface DrawerContextProviderProps {
+    children: ReactNode
+}
+
 export const DrawerContextProvider = ({
     children,
-}: {
-    children: ReactNode
-}) => {
+}: DrawerContextProviderProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
     const items = data!.item.map((item) => setVisible(item, true))
     const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
@@ -275,7 +277,9 @@ export const DrawerContextProvider = ({
     const clearSelected = useCallback(() => dispatch({ type: "clear" }), [])
 
     return (
-        <DrawerContext.Provider value={{ data, itemRefs, dispatch }}>
+        <DrawerContext.Provider
+            value={{ items: data!.item, itemRefs, dispatch }}
+        >
             {children}
             <ItemsDrawer
                 items={items}
@@ -289,13 +293,13 @@ export const DrawerContextProvider = ({
 }
 
 export const ItemsView = ({ filters }: ItemsProps) => {
-    const { data, itemRefs, dispatch } = useDrawerContext()
-    const items = useMemo(
+    const { items, itemRefs, dispatch } = useDrawerContext()
+    const filteredItems = useMemo(
         () =>
-            filterItems(data!.item, { known: true, ...filters }).filter(
+            filterItems(items, { known: true, ...filters }).filter(
                 ({ isVisible }) => isVisible,
             ),
-        [data, filters],
+        [items, filters],
     )
     const toggleSelected = useCallback(
         (id: string, selected: boolean) =>
@@ -304,7 +308,7 @@ export const ItemsView = ({ filters }: ItemsProps) => {
     )
     return (
         <ItemsList
-            items={items}
+            items={filteredItems}
             itemRefs={itemRefs}
             onToggleSelect={toggleSelected}
         />
