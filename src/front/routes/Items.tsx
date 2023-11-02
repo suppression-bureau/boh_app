@@ -111,8 +111,6 @@ function filterItems(
     }
     // now, if we filtered by aspects, the items lacking one or more of the aspects are no longer visible
     // now we apply isVisible to all items which were filtered
-    console.log(filteredState)
-
     const filteredItemsSet = new Set(filteredState.map(({ id }) => id))
     const filteredItems = Array.from(filteredItemsSet)
     return state.map((item) =>

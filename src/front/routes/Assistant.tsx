@@ -13,7 +13,7 @@ import LoadingIndicator from "../components/LoadingIndicator"
 import PrincipleFilterButton from "../components/PrincipleFilterButton"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
-import { DrawerContextProvider, ItemsView, useDrawerContext } from "./Items"
+import { DrawerContextProvider, ItemsView } from "./Items"
 
 const assistantQueryDocument = graphql(`
     query Assistant {
