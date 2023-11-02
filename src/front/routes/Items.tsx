@@ -1,8 +1,12 @@
 import {
+    Dispatch,
+    ReactNode,
     RefObject,
+    createContext,
     forwardRef,
     memo,
     useCallback,
+    useContext,
     useMemo,
     useReducer,
     useRef,
@@ -10,25 +14,26 @@ import {
 } from "react"
 import { useQuery } from "urql"
 
-import Divider from "@mui/material/Divider"
-import Drawer from "@mui/material/Drawer"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemButton, {
     ListItemButtonProps,
 } from "@mui/material/ListItemButton"
-import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 
-import Delete from "@mui/icons-material/Delete"
-
+import ItemsDrawer from "../components/ItemsDrawer"
 import { graphql } from "../gql"
-import * as types from "../gql/graphql"
 import { AspectIconGroup } from "../routes/Aspects"
 import { PrincipleIcon } from "../routes/Principles"
-import { PRINCIPLES, PrincipleString } from "../types"
+import {
+    ItemFromQuery,
+    PRINCIPLES,
+    Principle,
+    PrincipleString,
+    VisibleItem,
+} from "../types"
 
 export const itemsQueryDocument = graphql(`
     query Items {
@@ -55,22 +60,22 @@ export const itemsQueryDocument = graphql(`
     }
 `)
 
-type ItemFromQuery = types.ItemsQuery["item"][number]
-interface VisibleItem extends ItemFromQuery {
-    isVisible: boolean
-}
 type AspectFromQuery = ItemFromQuery["aspects"][number]
 
 interface ItemsProps {
     filters?: {
         known?: boolean
         aspects?: AspectFromQuery[]
-        principles?: Pick<types.Principle, "id">[]
+        principles?: Principle[]
     }
 }
 
-function setVisible(item: ItemFromQuery, visible: boolean): VisibleItem {
-    return { ...item, isVisible: visible }
+function setVisible(
+    item: ItemFromQuery,
+    visible: boolean,
+    index = 0,
+): VisibleItem {
+    return { ...item, isVisible: visible, index: index }
 }
 
 function filterItems(
@@ -104,8 +109,15 @@ function filterItems(
     }
     // now, if we filtered by aspects, the items lacking one or more of the aspects are no longer visible
     // now we apply isVisible to all items which were filtered
-    const filteredItems = new Set(filteredState.map(({ id }) => id))
-    return state.map((item) => setVisible(item, filteredItems.has(item.id)))
+    const filteredItems = filteredState.map(({ id }) => id)
+    const filteredItemsSet = new Set(filteredItems)
+    return state.map((item) =>
+        setVisible(
+            item,
+            filteredItemsSet.has(item.id),
+            filteredItems.indexOf(item.id),
+        ),
+    )
 }
 
 const ItemPrincipleValue = ({
@@ -173,8 +185,8 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 })
 
 interface ItemsListProps {
-    items: ItemFromQuery[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    items: VisibleItem[]
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>> | undefined
     onToggleSelect(id: string, selected: boolean): void
 }
 
@@ -191,65 +203,19 @@ const ItemsList = memo(function ItemsList({
                 marginInline: "auto",
             }}
         >
-            {items.map((item) => (
-                <Item
-                    key={item.id}
-                    ref={itemRefs.current?.get(item.id)}
-                    onToggleSelect={onToggleSelect}
-                    {...item}
-                />
-            ))}
+            {items
+                .toSorted((a, b) => a.index - b.index)
+                .map((item) => (
+                    <Item
+                        key={item.id}
+                        ref={itemRefs!.current?.get(item.id)}
+                        onToggleSelect={onToggleSelect}
+                        {...item}
+                    />
+                ))}
         </List>
     )
 })
-
-interface ItemsDrawerProps {
-    items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
-    onClear?(): void
-}
-
-function ItemsDrawer({ items, itemRefs, onClear }: ItemsDrawerProps) {
-    return (
-        <Drawer
-            variant="persistent"
-            open={items.length > 0}
-            sx={{
-                maxWidth: "250px",
-                "& .MuiDrawer-paper": { maxWidth: "250px" },
-            }}
-        >
-            <List sx={{ flexGrow: 1 }}>
-                {items.map((item) => (
-                    <ListItem key={item.id} disablePadding>
-                        <ListItemButton
-                            onClick={() =>
-                                itemRefs.current
-                                    ?.get(item.id)
-                                    ?.current?.scrollIntoView({
-                                        behavior: "smooth",
-                                    })
-                            }
-                        >
-                            <ListItemText>{item.id}</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-                <Divider />
-                {onClear && (
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={onClear}>
-                            <ListItemIcon>
-                                <Delete />
-                            </ListItemIcon>
-                            <ListItemText>Clear</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                )}
-            </List>
-        </Drawer>
-    )
-}
 
 type StringSetAction =
     | { type: "clear" }
@@ -272,15 +238,35 @@ function reduceStringSet(
     }
 }
 
-const ItemsView = ({ filters }: ItemsProps) => {
+interface DrawerContextProps {
+    items: ItemFromQuery[]
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    dispatch: Dispatch<StringSetAction>
+}
+
+const DrawerContext = createContext<DrawerContextProps>({
+    items: [],
+    // eslint-disable-next-line unicorn/no-null
+    itemRefs: { current: null },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    dispatch() {},
+})
+
+export const useDrawerContext = (): DrawerContextProps => {
+    return useContext(DrawerContext)
+}
+
+interface DrawerContextProviderProps {
+    children: ReactNode
+}
+
+export const DrawerContextProvider = ({
+    children,
+}: DrawerContextProviderProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
-    const items = useMemo(
-        () =>
-            filterItems(data!.item, { known: true, ...filters }).filter(
-                ({ isVisible }) => isVisible,
-            ),
-        [data, filters],
-    )
+    const items = data!.item.map((item) => setVisible(item, true))
+    const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
+
     // all possible item refs have a key, even if they’re filtered out
     const itemRefs = useRef(
         new Map<string, RefObject<HTMLDivElement>>(
@@ -288,31 +274,53 @@ const ItemsView = ({ filters }: ItemsProps) => {
             data!.item.map(({ id }) => [id, { current: null }]),
         ),
     )
-    const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
     const clearSelected = useCallback(() => dispatch({ type: "clear" }), [])
-    const toggleSelected = useCallback(
-        (id: string, selected: boolean) =>
-            dispatch({ type: "toggle", id, selected }),
-        [],
-    )
-    const selectedItems = useMemo(
-        () => items.filter(({ id }) => selected.has(id)),
-        [items, selected],
-    )
+
     return (
-        <>
-            <ItemsList
+        <DrawerContext.Provider
+            value={{ items: data!.item, itemRefs, dispatch }}
+        >
+            {children}
+            <ItemsDrawer
                 items={items}
                 itemRefs={itemRefs}
-                onToggleSelect={toggleSelected}
-            />
-            <ItemsDrawer
-                items={selectedItems}
-                itemRefs={itemRefs}
+                selected={selected}
                 // TODO: this doesn’t work yet since the items manage their selected state themselves
                 onClear={undefined && clearSelected}
             />
-        </>
+        </DrawerContext.Provider>
     )
 }
-export default ItemsView
+
+export const ItemsView = ({ filters }: ItemsProps) => {
+    const { items, itemRefs, dispatch } = useDrawerContext()
+    const filteredItems = useMemo(
+        () =>
+            filterItems(items, { known: true, ...filters }).filter(
+                ({ isVisible }) => isVisible,
+            ),
+        [items, filters],
+    )
+    const toggleSelected = useCallback(
+        (id: string, selected: boolean) =>
+            dispatch({ type: "toggle", id, selected }),
+        [dispatch],
+    )
+    return (
+        <ItemsList
+            items={filteredItems}
+            itemRefs={itemRefs}
+            onToggleSelect={toggleSelected}
+        />
+    )
+}
+
+function AllItemsView({ filters }: ItemsProps) {
+    return (
+        <DrawerContextProvider>
+            <ItemsView filters={filters} />
+        </DrawerContextProvider>
+    )
+}
+
+export default AllItemsView

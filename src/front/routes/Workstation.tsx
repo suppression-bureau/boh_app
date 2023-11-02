@@ -19,7 +19,7 @@ import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { Principle } from "../types"
 import { AspectIconGroup } from "./Aspects"
-import ItemsView, { itemsQueryDocument } from "./Items"
+import { DrawerContextProvider, ItemsView, itemsQueryDocument } from "./Items"
 import { PrincipleIconGroup } from "./Principles"
 import { SkillsStack, skillQueryDocument } from "./Skills"
 
@@ -164,17 +164,19 @@ const Workstation = ({ workstation }: WorkstationProps) => (
             titleTypographyProps={{ variant: "h5" }}
             avatar={<PrincipleIconGroup principles={workstation.principles} />}
         />
-        <Stack spacing={2}>
-            {workstation.workstation_slots
-                .toSorted((a, b) => a.index - b.index)
-                .map((slot) => (
-                    <WorkstationSlot
-                        key={slot.id}
-                        workstationSlot={slot}
-                        principles={workstation.principles}
-                    />
-                ))}
-        </Stack>
+        <DrawerContextProvider>
+            <Stack spacing={2}>
+                {workstation.workstation_slots
+                    .toSorted((a, b) => a.index - b.index)
+                    .map((slot) => (
+                        <WorkstationSlot
+                            key={slot.id}
+                            workstationSlot={slot}
+                            principles={workstation.principles}
+                        />
+                    ))}
+            </Stack>
+        </DrawerContextProvider>
     </Card>
 )
 
