@@ -103,7 +103,7 @@ jobs:
 
       - name: Commit autofixes
         uses: stefanzweifel/git-auto-commit-action@v5
-        if: ${{ always() }}
+        if: failure()
         with:
           commit_message: "chore: auto-fix eslint errors"
           commit_user_name: spencer-hobson[bot]

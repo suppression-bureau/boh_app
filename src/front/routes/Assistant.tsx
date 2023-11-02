@@ -81,12 +81,12 @@ const AssistantPrincipleSelector = ({
     const handleSelectAssistant = useCallback(
         (_: unknown, a: AssistantFromQuery | undefined | null) =>
             onSelectAssistant?.(a ?? undefined),
-        [],
+        [onSelectAssistant],
     )
     const handleSelectPrinciple = useCallback(
         (_: unknown, p: PrincipleFromQuery | undefined) =>
             onSelectPrinciple?.(p),
-        [],
+        [onSelectPrinciple],
     )
     return (
         <Card sx={{ padding: 2 }}>
