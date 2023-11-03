@@ -2,10 +2,15 @@ import { Suspense, useCallback, useState } from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
+import Avatar, { AvatarProps } from "@mui/material/Avatar"
 import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
 import CardContent from "@mui/material/CardContent"
 import Container from "@mui/material/Container"
+import ListItem from "@mui/material/ListItem"
+import ListItemButton from "@mui/material/ListItemButton"
+import ListItemIcon from "@mui/material/ListItemIcon"
+import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import ToggleButton from "@mui/material/ToggleButton"
@@ -45,12 +50,56 @@ interface AssistantItemProps {
     assistant: AssistantFromQuery
 }
 
+interface ExaltationIconProps extends Omit<AvatarProps, "src"> {
+    exaltation: string
+}
+
+const ExaltationIcon = ({
+    exaltation,
+    alt = exaltation,
+    title = exaltation,
+    variant = "square",
+    ...props
+}: ExaltationIconProps) => (
+    <Avatar
+        alt={alt}
+        title={title}
+        variant={variant}
+        src={
+            new URL(`/data/exaltation/${exaltation}.png`, import.meta.url).href
+        }
+        {...props}
+    />
+)
+
+interface AssistantIconProps extends Omit<AvatarProps, "src"> {
+    assistant: string
+}
+
+const AssistantIcon = ({
+    assistant,
+    alt = assistant,
+    title = assistant,
+    variant = "square",
+    ...props
+}: AssistantIconProps) => (
+    <Avatar
+        alt={alt}
+        title={title}
+        variant={variant}
+        src={new URL(`/data/assistant/${assistant}.png`, import.meta.url).href}
+        {...props}
+    />
+)
+
 const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
     <Stack>
         {assistant.aspects.map((aspect) => (
             <div key={aspect.id}>
                 <Typography variant="h5" color={"secondary"}>
-                    {aspect.id}
+                    <Stack direction="row" spacing={1} alignItems="center">
+                        <ExaltationIcon exaltation={aspect.id} /> {aspect.id}
+                    </Stack>
                 </Typography>
                 <ItemsView
                     filters={{
@@ -93,8 +142,18 @@ const AssistantPrincipleSelector = ({
             <CardContent>
                 <Autocomplete<AssistantFromQuery>
                     options={assistants}
-                    getOptionLabel={({ id }) => id}
                     isOptionEqualToValue={(a, b) => a.id === b.id}
+                    getOptionLabel={({ id }) => id}
+                    renderOption={(props, { id }) => (
+                        <ListItem {...props} disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    <AssistantIcon assistant={id} />
+                                </ListItemIcon>
+                                <ListItemText>{id}</ListItemText>
+                            </ListItemButton>
+                        </ListItem>
+                    )}
                     renderInput={(params) => (
                         <TextField {...params} label="Select your Assistant" />
                     )}
@@ -102,7 +161,7 @@ const AssistantPrincipleSelector = ({
                 />
             </CardContent>
             {selectedAssistant && (
-                <CardActions>
+                <CardActions sx={{ justifyContent: "space-between" }}>
                     <ToggleButtonGroup
                         exclusive
                         value={selectedPrinciple}
@@ -123,6 +182,10 @@ const AssistantPrincipleSelector = ({
                             ),
                         )}
                     </ToggleButtonGroup>
+                    <AssistantIcon
+                        assistant={selectedAssistant.id}
+                        sx={{ width: "3rem", height: "3rem" }}
+                    />
                 </CardActions>
             )}
         </Card>
