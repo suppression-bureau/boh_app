@@ -208,7 +208,9 @@
     },
     "wisdom_2": {
       "id": "Illumination"
-    }
+    },
+    "level": 5,
+    "committed": true
   },
   {
     "id": "Furs & Feathers",
@@ -627,7 +629,8 @@
     "wisdom_2": {
       "id": "Skolekosophy"
     },
-    "level": 3
+    "level": 4,
+    "committed": true
   },
   {
     "id": "Resurgences & Emergences",
@@ -856,7 +859,8 @@
     "wisdom_2": {
       "id": "Skolekosophy"
     },
-    "level": 6
+    "level": 6,
+    "committed": true
   },
   {
     "id": "Spices & Savours",
@@ -905,7 +909,9 @@
     },
     "wisdom_2": {
       "id": "Preservation"
-    }
+    },
+    "level": 6,
+    "committed": true
   },
   {
     "id": "Strings & Songs",
@@ -920,7 +926,9 @@
     },
     "wisdom_2": {
       "id": "Nyctodromy"
-    }
+    },
+    "level": 5,
+    "committed": true
   },
   {
     "id": "Surgeries & Exsanguinations",
