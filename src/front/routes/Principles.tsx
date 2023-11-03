@@ -19,14 +19,14 @@ const principleQueryDocument = graphql(`
 
 type PrincipleFromQuery = types.PrincipleQuery["principle"][number]
 
-interface PrincipleIconProps extends Omit<AvatarProps, "src"> {
-    id: string
+export interface PrincipleIconProps extends Omit<AvatarProps, "src"> {
+    principle: string
 }
 
 const PrincipleIcon = ({
-    id,
-    alt = id,
-    title = id,
+    principle,
+    alt = principle,
+    title = principle,
     variant = "square",
     ...props
 }: PrincipleIconProps) => (
@@ -34,7 +34,7 @@ const PrincipleIcon = ({
         alt={alt}
         title={title}
         variant={variant}
-        src={new URL(`/data/principle/${id}.png`, import.meta.url).href}
+        src={new URL(`/data/principle/${principle}.png`, import.meta.url).href}
         {...props}
     />
 )
@@ -47,7 +47,7 @@ function PrincipleIconGroup({ principles }: PrincipleIconGroupProps) {
     return (
         <AvatarStack>
             {principles.map(({ id }) => (
-                <PrincipleIcon key={id} id={id} />
+                <PrincipleIcon key={id} principle={id} />
             ))}
         </AvatarStack>
     )
@@ -70,7 +70,7 @@ function PrincipleCard({
             <CardHeader
                 title={String(title)}
                 titleTypographyProps={{ variant: "h6" }}
-                avatar={<PrincipleIcon id={id} />}
+                avatar={<PrincipleIcon principle={id} />}
                 sx={{ padding: disablePadding ? 0 : 2 }}
             />
         </Card>

@@ -128,7 +128,7 @@ const ItemPrincipleValue = ({
 }) => {
     return (
         <>
-            <PrincipleIcon id={principle} />
+            <PrincipleIcon principle={principle} />
             <Typography
                 variant="h6"
                 sx={{
