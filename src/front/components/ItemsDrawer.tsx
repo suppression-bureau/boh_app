@@ -85,49 +85,48 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
         <Drawer
             variant="persistent"
             open={items.length > 0}
-            sx={{ "& .MuiDrawer-paper": { maxWidth: "245px" } }}
-        >
-            <List
-                sx={{
+            sx={{
+                "& .MuiDrawer-paper": {
+                    maxWidth: "245px",
                     height: "100vh",
                     display: "flex",
                     flexDirection: "column",
-                }}
-            >
-                <Box sx={{ overflow: "auto", flexGrow: 1 }}>
-                    {selectedItems.map((item) => (
-                        <ListItem key={item.id} disablePadding>
-                            <ListItemButton
-                                onClick={() =>
-                                    itemRefs.current
-                                        ?.get(item.id)
-                                        ?.current?.scrollIntoView({
-                                            behavior: "smooth",
-                                        })
-                                }
-                            >
-                                <ListItemText>{item.id}</ListItemText>
+                },
+            }}
+        >
+            <List sx={{ overflow: "auto", flexGrow: 1 }}>
+                {selectedItems.map((item) => (
+                    <ListItem key={item.id} disablePadding>
+                        <ListItemButton
+                            onClick={() =>
+                                itemRefs.current
+                                    ?.get(item.id)
+                                    ?.current?.scrollIntoView({
+                                        behavior: "smooth",
+                                    })
+                            }
+                        >
+                            <ListItemText>{item.id}</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
+            <List sx={{ flexGrow: 0 }}>
+                <Divider />
+                <PrincipleCounterStack items={selectedItems} />
+                {onClear && (
+                    <>
+                        <Divider />
+                        <ListItem disablePadding>
+                            <ListItemButton onClick={onClear}>
+                                <ListItemIcon>
+                                    <Delete />
+                                </ListItemIcon>
+                                <ListItemText>Clear</ListItemText>
                             </ListItemButton>
                         </ListItem>
-                    ))}
-                </Box>
-                <Box sx={{ flexGrow: 0 }}>
-                    <Divider />
-                    <PrincipleCounterStack items={selectedItems} />
-                    {onClear && (
-                        <>
-                            <Divider />
-                            <ListItem disablePadding>
-                                <ListItemButton onClick={onClear}>
-                                    <ListItemIcon>
-                                        <Delete />
-                                    </ListItemIcon>
-                                    <ListItemText>Clear</ListItemText>
-                                </ListItemButton>
-                            </ListItem>
-                        </>
-                    )}
-                </Box>
+                    </>
+                )}
             </List>
         </Drawer>
     )
