@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, cast
+from typing import TYPE_CHECKING, ClassVar, cast, get_args
 
 from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
+from sqlalchemy.types import Enum as SqlaEnum
+
+from .data.types import PrincipleID
 
 if TYPE_CHECKING:
     from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -94,8 +97,11 @@ class Aspect(Base, NameMixin):
     assistants: Mapped[list[Assistant]] = relationship(back_populates="aspects", secondary=assistant_aspect_association)
 
 
-class Principle(Base, NameMixin):
+class Principle(Base):
     __tablename__ = "principle"
+
+    # use special enum instead of NameMixin
+    id: Mapped[PrincipleID] = mapped_column(SqlaEnum(*get_args(PrincipleID), name="principle_id"), primary_key=True)
 
     primary_skills: Mapped[list[Skill]] = relationship(
         back_populates="primary_principle", primaryjoin="Skill.primary_principle_id==Principle.id"

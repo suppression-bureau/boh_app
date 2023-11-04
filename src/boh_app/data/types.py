@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import NotRequired, TypedDict
+from typing import Literal, NotRequired, TypedDict
 
 
 class Workstation(TypedDict):
@@ -18,8 +18,11 @@ class Slot(TypedDict):
     accepts: NotRequired[list[Aspect]]
 
 
+PrincipleID = Literal["edge", "forge", "grail", "heart", "knock", "lantern", "moon", "moth", "nectar", "rose", "scale", "sky", "winter"]
+
+
 class Principle(TypedDict):
-    id: str
+    id: PrincipleID
 
 
 class Wisdom(TypedDict):

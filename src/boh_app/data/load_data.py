@@ -1,12 +1,14 @@
 import json
 import warnings
 from pathlib import Path
-from typing import Any
+from typing import Any, get_args
 
 from sqlalchemy.exc import SAWarning
 from sqlalchemy.orm import Session
 
-from ..models import Base, get_tablename_model_mapping
+from boh_app.data.types import PrincipleID
+
+from ..models import Base, Principle, get_tablename_model_mapping
 from ..settings import CACHE_DIR
 
 HERE = Path(__file__).parent
@@ -45,6 +47,7 @@ def load_all(session: Session) -> None:
     """Load sorted data into database."""
     data_file_paths = find_files()
     tablename2model = get_tablename_model_mapping()
+    add_data([{"id": p} for p in get_args(PrincipleID)], Principle, session=session)
     for name in [t.fullname for t in Base.metadata.sorted_tables]:
         if name in data_file_paths:
             path = data_file_paths[name]
