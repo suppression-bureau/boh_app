@@ -1,9 +1,10 @@
-import { createContext, useContext, useState } from "react"
+import { RefObject, createContext, useContext, useRef, useState } from "react"
 
 export interface DrawerContextProps {
     open: boolean
     setOpen(this: void, open: boolean): void
     width: number
+    ref: RefObject<HTMLDivElement>
 }
 
 const DrawerContext = createContext<DrawerContextProps>({
@@ -11,6 +12,8 @@ const DrawerContext = createContext<DrawerContextProps>({
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     setOpen() {},
     width: 245,
+    // eslint-disable-next-line unicorn/no-null
+    ref: { current: null },
 })
 
 export interface DrawerContextProviderProps {
@@ -24,8 +27,9 @@ export const DrawerContextProvider = ({
     children,
 }: DrawerContextProviderProps = {}) => {
     const [open, setOpen] = useState(false)
+    const ref = useRef<HTMLDivElement>(null)
     return (
-        <DrawerContext.Provider value={{ open, setOpen, width }}>
+        <DrawerContext.Provider value={{ open, setOpen, width, ref }}>
             {children}
         </DrawerContext.Provider>
     )

@@ -1,3 +1,4 @@
+import { Portal } from "@mui/material"
 import { RefObject, useEffect, useMemo } from "react"
 
 import Divider from "@mui/material/Divider"
@@ -80,22 +81,10 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
         () => items.filter(({ id }) => selected.has(id)),
         [items, selected],
     )
-    const { open, setOpen, width } = useDrawerContext()
+    const { setOpen, ref } = useDrawerContext()
     useEffect(() => setOpen(selectedItems.length > 0), [selectedItems, setOpen])
-    if (!open) return
     return (
-        <Drawer
-            variant="persistent"
-            open={open}
-            sx={{
-                "& .MuiDrawer-paper": {
-                    width: `${width}px`,
-                    height: "100vh",
-                    display: "flex",
-                    flexDirection: "column",
-                },
-            }}
-        >
+        <Portal container={ref.current}>
             <List sx={{ overflow: "auto", flexGrow: 1 }}>
                 {selectedItems.map((item) => (
                     <ListItem key={item.id} disablePadding>
@@ -130,7 +119,7 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
                     </>
                 )}
             </List>
-        </Drawer>
+        </Portal>
     )
 }
 export default ItemsDrawer

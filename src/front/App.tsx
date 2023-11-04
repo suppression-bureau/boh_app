@@ -11,6 +11,7 @@ import SlideRoutes from "react-slide-routes"
 
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
 import CssBaseline from "@mui/material/CssBaseline"
+import MuiDrawer from "@mui/material/Drawer"
 import Stack from "@mui/material/Stack"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
@@ -101,31 +102,10 @@ const App = () => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Stack
-                direction="column"
-                justifyContent="start"
-                justifyItems="center"
-                sx={{
-                    "&>*": { flexShrink: 0 },
-                    "&>.slide-routes": { flexGrow: 1 },
-                }}
-            >
-                <AppNav />
-                <Suspense fallback={<LoadingIndicator sx={{ m: "auto" }} />}>
-                    <SlideRoutes>
-                        <Route index element={<Home />} />
-                        <Route path="aspects" element={<Aspects />} />
-                        <Route path="principles" element={<Principles />} />
-                        <Route path="skills" element={<SkillsView />} />
-                        <Route path="items" element={<AllItemsView />} />
-                        <Route path="assistance" element={<AssistantView />} />
-                        <Route
-                            path="workstations"
-                            element={<WorkstationView />}
-                        />
-                        <Route path="*" element={<Navigate replace to="/" />} />
-                    </SlideRoutes>
-                </Suspense>
+            <AppNav />
+            <Stack direction="row">
+                <Drawer />
+                <Content />
             </Stack>
         </ThemeProvider>
     )
@@ -164,7 +144,7 @@ function AppNav() {
         ?.pattern.path
     return (
         <ElevationScroll>
-            <AppBar open={open} drawerWidth={width} position="sticky">
+            <AppBar open={open} drawerWidth={width} position="fixed">
                 <Toolbar component="nav" sx={{ justifyContent: "center" }}>
                     <Tabs centered value={currentTab}>
                         {ROUTE_LINKS.map(({ label, href, pattern }) => (
@@ -180,6 +160,75 @@ function AppNav() {
                 </Toolbar>
             </AppBar>
         </ElevationScroll>
+    )
+}
+
+const Drawer = () => {
+    const { open, width, ref } = useDrawerContext()
+    return (
+        <MuiDrawer
+            variant="persistent"
+            open={open}
+            anchor="left"
+            sx={{
+                width: `${width}px`,
+                flexShrink: 0,
+            }}
+            PaperProps={{
+                ref,
+                sx: {
+                    width: `${width}px`,
+                    height: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                },
+            }}
+        />
+    )
+}
+
+const Main = styled("main", {
+    shouldForwardProp: (prop) => prop !== "open" && prop !== "drawerWidth",
+})<{
+    open?: boolean
+    drawerWidth: number
+}>(({ theme, open, drawerWidth }) => ({
+    flexGrow: 1,
+    paddingBlockEnd: theme.spacing(3),
+    transition: theme.transitions.create("margin", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    marginLeft: `-${drawerWidth}px`,
+    ...(open && {
+        transition: theme.transitions.create("margin", {
+            easing: theme.transitions.easing.easeOut,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+        marginLeft: 0,
+    }),
+}))
+
+const Offset = styled("div")(({ theme }) => theme.mixins.toolbar)
+
+const Content = () => {
+    const { open, width } = useDrawerContext()
+    return (
+        <Main open={open} drawerWidth={width}>
+            <Offset />
+            <Suspense fallback={<LoadingIndicator sx={{ m: "auto" }} />}>
+                <SlideRoutes>
+                    <Route index element={<Home />} />
+                    <Route path="aspects" element={<Aspects />} />
+                    <Route path="principles" element={<Principles />} />
+                    <Route path="skills" element={<SkillsView />} />
+                    <Route path="items" element={<AllItemsView />} />
+                    <Route path="assistance" element={<AssistantView />} />
+                    <Route path="workstations" element={<WorkstationView />} />
+                    <Route path="*" element={<Navigate replace to="/" />} />
+                </SlideRoutes>
+            </Suspense>
+        </Main>
     )
 }
 
