@@ -9,7 +9,6 @@ import {
 } from "react-router-dom"
 import SlideRoutes from "react-slide-routes"
 
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
 import CssBaseline from "@mui/material/CssBaseline"
 import MuiDrawer from "@mui/material/Drawer"
 import Stack from "@mui/material/Stack"
@@ -19,15 +18,15 @@ import Toolbar from "@mui/material/Toolbar"
 import { amber } from "@mui/material/colors"
 import {
     ThemeProvider,
-    alpha,
     createTheme,
     responsiveFontSizes,
     styled,
 } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
-import ElevationScroll from "./ElevationScroll.tsx"
-import { useDrawerContext } from "./components/Drawer.tsx"
+import { useDrawerContext } from "./components/Drawer/index.tsx"
+import { AppBar, Main } from "./components/Drawer/styled.tsx"
+import ElevationScroll from "./components/ElevationScroll.tsx"
 import LoadingIndicator from "./components/LoadingIndicator.tsx"
 import Aspects from "./routes/Aspects"
 import AssistantView from "./routes/Assistant.tsx"
@@ -62,7 +61,7 @@ function useRouteMatch(
     return undefined
 }
 
-const makeBaseTheme = (dark: boolean) => {
+function makeBaseTheme(dark: boolean) {
     const buttonStyle = { fontWeight: "bold" }
     return createTheme({
         palette: {
@@ -93,51 +92,6 @@ const makeBaseTheme = (dark: boolean) => {
     })
 }
 
-const App = () => {
-    const dark = useMediaQuery("(prefers-color-scheme: dark)")
-    const theme = useMemo(
-        () => responsiveFontSizes(makeBaseTheme(dark)),
-        [dark],
-    )
-    return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <AppNav />
-            <Stack direction="row">
-                <Drawer />
-                <Content />
-            </Stack>
-        </ThemeProvider>
-    )
-}
-
-interface AppBarProps extends MuiAppBarProps {
-    open?: boolean
-    drawerWidth: number
-}
-
-const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== "open" && prop !== "drawerWidth",
-})<AppBarProps>(({ theme, open = false, drawerWidth }) => ({
-    color: theme.palette.text.primary,
-    background: alpha(theme.palette.background.default, 0.7),
-    // TODO re-add contrast(200%) before blur without discoloring dark mode
-    backdropFilter: "blur(15px)",
-    // Drawer stuff
-    transition: theme.transitions.create(["margin", "width"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    ...(open && {
-        width: `calc(100% - ${drawerWidth}px)`,
-        marginInlineStart: `${drawerWidth}px`,
-        transition: theme.transitions.create(["margin", "width"], {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    }),
-}))
-
 function AppNav() {
     const { open, width } = useDrawerContext()
     const currentTab = useRouteMatch(ROUTE_LINKS.map(({ pattern }) => pattern))
@@ -163,7 +117,7 @@ function AppNav() {
     )
 }
 
-const Drawer = () => {
+function Drawer() {
     const { open, width, ref } = useDrawerContext()
     return (
         <MuiDrawer
@@ -187,31 +141,9 @@ const Drawer = () => {
     )
 }
 
-const Main = styled("main", {
-    shouldForwardProp: (prop) => prop !== "open" && prop !== "drawerWidth",
-})<{
-    open?: boolean
-    drawerWidth: number
-}>(({ theme, open, drawerWidth }) => ({
-    flexGrow: 1,
-    paddingBlockEnd: theme.spacing(3),
-    transition: theme.transitions.create("margin", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginInlineStart: `-${drawerWidth}px`,
-    ...(open && {
-        transition: theme.transitions.create("margin", {
-            easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-        marginInlineStart: 0,
-    }),
-}))
-
 const Offset = styled("div")(({ theme }) => theme.mixins.toolbar)
 
-const Content = () => {
+function Content() {
     const { open, width } = useDrawerContext()
     return (
         <Main open={open} drawerWidth={width}>
@@ -232,4 +164,20 @@ const Content = () => {
     )
 }
 
-export default App
+export default function App() {
+    const dark = useMediaQuery("(prefers-color-scheme: dark)")
+    const theme = useMemo(
+        () => responsiveFontSizes(makeBaseTheme(dark)),
+        [dark],
+    )
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <AppNav />
+            <Stack direction="row">
+                <Drawer />
+                <Content />
+            </Stack>
+        </ThemeProvider>
+    )
+}

@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom"
 import * as urql from "urql"
 
 import App from "./App.tsx"
-import { DrawerContextProvider } from "./components/Drawer.tsx"
+import { DrawerContextProvider } from "./components/Drawer/index.tsx"
 
 const client = urql.createClient({
     url: "http://localhost:8000/graphql",
