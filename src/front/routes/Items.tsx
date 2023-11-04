@@ -22,10 +22,10 @@ import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 
+import { PrincipleIcon } from "../components/Icon"
 import ItemsDrawer from "../components/ItemsDrawer"
 import { graphql } from "../gql"
 import { AspectIconGroup } from "../routes/Aspects"
-import { PrincipleIcon } from "../routes/Principles"
 import {
     ItemFromQuery,
     PRINCIPLES,

@@ -2,8 +2,8 @@ import { useCallback } from "react"
 
 import IconButton from "@mui/material/IconButton"
 
-import { PrincipleIcon } from "../routes/Principles"
 import { Principle } from "../types"
+import { PrincipleIcon } from "./Icon"
 
 interface PrincipleFilterButtonProps {
     principle: Principle

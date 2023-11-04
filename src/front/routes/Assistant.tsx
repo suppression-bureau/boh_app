@@ -2,7 +2,6 @@ import { Suspense, useCallback, useState } from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
-import Avatar, { AvatarProps } from "@mui/material/Avatar"
 import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
 import CardContent from "@mui/material/CardContent"
@@ -18,11 +17,15 @@ import ToggleButton from "@mui/material/ToggleButton"
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
 import { useTheme } from "@mui/material/styles"
 
+import {
+    AssistantIcon,
+    ExaltationIcon,
+    PrincipleIcon,
+} from "../components/Icon"
 import LoadingIndicator from "../components/LoadingIndicator"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { DrawerContextProvider, ItemsView } from "./Items"
-import { PrincipleIcon } from "./Principles"
 
 const assistantQueryDocument = graphql(`
     query Assistant {
@@ -50,48 +53,6 @@ interface AssistantItemProps {
     principle: PrincipleFromQuery
     assistant: AssistantFromQuery
 }
-
-interface ExaltationIconProps extends Omit<AvatarProps, "src"> {
-    exaltation: string
-}
-
-const ExaltationIcon = ({
-    exaltation,
-    alt = exaltation,
-    title = exaltation,
-    variant = "square",
-    ...props
-}: ExaltationIconProps) => (
-    <Avatar
-        alt={alt}
-        title={title}
-        variant={variant}
-        src={
-            new URL(`/data/exaltation/${exaltation}.png`, import.meta.url).href
-        }
-        {...props}
-    />
-)
-
-interface AssistantIconProps extends Omit<AvatarProps, "src"> {
-    assistant: string
-}
-
-const AssistantIcon = ({
-    assistant,
-    alt = assistant,
-    title = assistant,
-    variant = "square",
-    ...props
-}: AssistantIconProps) => (
-    <Avatar
-        alt={alt}
-        title={title}
-        variant={variant}
-        src={new URL(`/data/assistant/${assistant}.png`, import.meta.url).href}
-        {...props}
-    />
-)
 
 const AssistantItems = ({ principle, assistant }: AssistantItemProps) =>
     assistant.aspects.map((aspect) => (
