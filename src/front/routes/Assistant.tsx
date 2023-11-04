@@ -5,18 +5,28 @@ import Autocomplete from "@mui/material/Autocomplete"
 import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
 import CardContent from "@mui/material/CardContent"
+import CardHeader from "@mui/material/CardHeader"
 import Container from "@mui/material/Container"
+import ListItem from "@mui/material/ListItem"
+import ListItemButton from "@mui/material/ListItemButton"
+import ListItemIcon from "@mui/material/ListItemIcon"
+import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import ToggleButton from "@mui/material/ToggleButton"
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
-import Typography from "@mui/material/Typography"
+import { useTheme } from "@mui/material/styles"
 
+import {
+    AssistantIcon,
+    ExaltationIcon,
+    PrincipleIcon,
+} from "../components/Icon"
+import { ItemsDrawerContextProvider } from "../components/ItemsDrawer/context"
 import LoadingIndicator from "../components/LoadingIndicator"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
-import { DrawerContextProvider, ItemsView } from "./Items"
-import { PrincipleIcon } from "./Principles"
+import { ItemsView } from "./Items"
 
 const assistantQueryDocument = graphql(`
     query Assistant {
@@ -45,23 +55,24 @@ interface AssistantItemProps {
     assistant: AssistantFromQuery
 }
 
-const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
-    <Stack>
-        {assistant.aspects.map((aspect) => (
-            <div key={aspect.id}>
-                <Typography variant="h5" color={"secondary"}>
-                    {aspect.id}
-                </Typography>
+const AssistantItems = ({ principle, assistant }: AssistantItemProps) =>
+    assistant.aspects.map((aspect) => (
+        <Card key={aspect.id}>
+            <CardHeader
+                avatar={<ExaltationIcon exaltation={aspect.id} />}
+                title={aspect.id}
+                titleTypographyProps={{ variant: "h5", color: "secondary" }}
+            />
+            <CardContent>
                 <ItemsView
                     filters={{
                         principles: [principle],
                         aspects: [aspect],
                     }}
                 />
-            </div>
-        ))}
-    </Stack>
-)
+            </CardContent>
+        </Card>
+    ))
 
 interface AssistantPrincipleSelectorProps {
     assistants: AssistantFromQuery[]
@@ -78,6 +89,8 @@ const AssistantPrincipleSelector = ({
     onSelectAssistant,
     onSelectPrinciple,
 }: AssistantPrincipleSelectorProps) => {
+    const theme = useTheme()
+    const s = `calc(40px + ${theme.spacing(3)})`
     const handleSelectAssistant = useCallback(
         (_: unknown, a: AssistantFromQuery | undefined | null) =>
             onSelectAssistant?.(a ?? undefined),
@@ -90,11 +103,22 @@ const AssistantPrincipleSelector = ({
     )
     return (
         <Card sx={{ padding: 2 }}>
-            <CardContent>
+            <CardContent sx={{ padding: 1 }}>
                 <Autocomplete<AssistantFromQuery>
                     options={assistants}
-                    getOptionLabel={({ id }) => id}
                     isOptionEqualToValue={(a, b) => a.id === b.id}
+                    getOptionLabel={({ id }) => id}
+                    renderOption={(props, { id }) => (
+                        // Can’t use disablePadding here somehow
+                        <ListItem {...props} sx={{ padding: "0!important" }}>
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    <AssistantIcon assistant={id} />
+                                </ListItemIcon>
+                                <ListItemText>{id}</ListItemText>
+                            </ListItemButton>
+                        </ListItem>
+                    )}
                     renderInput={(params) => (
                         <TextField {...params} label="Select your Assistant" />
                     )}
@@ -102,7 +126,7 @@ const AssistantPrincipleSelector = ({
                 />
             </CardContent>
             {selectedAssistant && (
-                <CardActions>
+                <CardActions sx={{ justifyContent: "space-between" }}>
                     <ToggleButtonGroup
                         exclusive
                         value={selectedPrinciple}
@@ -115,7 +139,7 @@ const AssistantPrincipleSelector = ({
                                     value={principle}
                                 >
                                     <PrincipleIcon
-                                        id={principle.id}
+                                        principle={principle.id}
                                         sx={{ marginInlineEnd: 1 }}
                                     />
                                     {count}
@@ -123,6 +147,11 @@ const AssistantPrincipleSelector = ({
                             ),
                         )}
                     </ToggleButtonGroup>
+                    <AssistantIcon
+                        assistant={selectedAssistant.id}
+                        sx={{ width: s, height: s }}
+                        variant="rounded"
+                    />
                 </CardActions>
             )}
         </Card>
@@ -162,12 +191,12 @@ const AssistantView = () => {
                 />
                 <Suspense fallback={<LoadingIndicator />}>
                     {selectedAssistant && selectedPrinciple && (
-                        <DrawerContextProvider>
+                        <ItemsDrawerContextProvider>
                             <AssistantItems
                                 principle={selectedPrinciple}
                                 assistant={selectedAssistant}
                             />
-                        </DrawerContextProvider>
+                        </ItemsDrawerContextProvider>
                     )}
                 </Suspense>
             </Stack>

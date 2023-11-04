@@ -2,8 +2,8 @@ import { useCallback } from "react"
 
 import IconButton from "@mui/material/IconButton"
 
-import { PrincipleIcon } from "../routes/Principles"
 import { Principle } from "../types"
+import { PrincipleIcon } from "./Icon"
 
 interface PrincipleFilterButtonProps {
     principle: Principle
@@ -24,7 +24,7 @@ const PrincipleFilterButton = ({
     const style = {
         backgroundColor: principleMatch ? "primary.main" : undefined,
     }
-    const icon = <PrincipleIcon id={principle.id} />
+    const icon = <PrincipleIcon principle={principle.id} />
     return (
         <IconButton
             onClick={handlePrincipleFilter}

@@ -1,18 +1,4 @@
-import {
-    Dispatch,
-    ReactNode,
-    RefObject,
-    createContext,
-    forwardRef,
-    memo,
-    useCallback,
-    useContext,
-    useMemo,
-    useReducer,
-    useRef,
-    useState,
-} from "react"
-import { useQuery } from "urql"
+import { RefObject, forwardRef, memo, useCallback, useMemo } from "react"
 
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -23,10 +9,12 @@ import ListItemText from "@mui/material/ListItemText"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 
-import ItemsDrawer from "../components/ItemsDrawer"
-import { graphql } from "../gql"
+import { PrincipleIcon } from "../components/Icon"
+import {
+    ItemsDrawerContextProvider,
+    useItemsDrawer,
+} from "../components/ItemsDrawer/context"
 import { AspectIconGroup } from "../routes/Aspects"
-import { PrincipleIcon } from "../routes/Principles"
 import {
     ItemFromQuery,
     PRINCIPLES,
@@ -34,31 +22,6 @@ import {
     PrincipleString,
     VisibleItem,
 } from "../types"
-
-export const itemsQueryDocument = graphql(`
-    query Items {
-        item {
-            id
-            known
-            edge
-            forge
-            grail
-            heart
-            knock
-            lantern
-            moon
-            moth
-            nectar
-            rose
-            scale
-            sky
-            winter
-            aspects {
-                id
-            }
-        }
-    }
-`)
 
 type AspectFromQuery = ItemFromQuery["aspects"][number]
 
@@ -70,7 +33,7 @@ interface ItemsProps {
     }
 }
 
-function setVisible(
+export function setItemVisible(
     item: ItemFromQuery,
     visible: boolean,
     index = 0,
@@ -112,7 +75,7 @@ function filterItems(
     const filteredItems = filteredState.map(({ id }) => id)
     const filteredItemsSet = new Set(filteredItems)
     return state.map((item) =>
-        setVisible(
+        setItemVisible(
             item,
             filteredItemsSet.has(item.id),
             filteredItems.indexOf(item.id),
@@ -129,7 +92,7 @@ const ItemPrincipleValue = ({
 }) => {
     return (
         <>
-            <PrincipleIcon id={principle} />
+            <PrincipleIcon principle={principle} />
             <Typography
                 variant="h6"
                 sx={{
@@ -164,16 +127,20 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
     { onToggleSelect, sx, ...item },
     ref,
 ) {
-    const [selected, setSelected] = useState(false)
+    const { selected, dispatch } = useItemsDrawer()
     const handleToggleSelect = useCallback(() => {
-        setSelected(!selected)
+        dispatch({
+            type: "toggle",
+            id: item.id,
+            selected: !selected.has(item.id),
+        })
         onToggleSelect?.(item.id, !selected)
-    }, [item.id, onToggleSelect, selected])
+    }, [dispatch, item.id, onToggleSelect, selected])
     return (
         <ListItem disablePadding>
             <ListItemButton
                 ref={ref}
-                selected={selected}
+                selected={selected.has(item.id)}
                 onClick={handleToggleSelect}
                 sx={sx}
             >
@@ -186,16 +153,11 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 
 interface ItemsListProps {
     items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>> | undefined
-    onToggleSelect(id: string, selected: boolean): void
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
 }
 
 // This list is long, use memo to prevent rerendering
-const ItemsList = memo(function ItemsList({
-    items,
-    itemRefs,
-    onToggleSelect,
-}: ItemsListProps) {
+const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
     return (
         <List
             sx={{
@@ -208,8 +170,7 @@ const ItemsList = memo(function ItemsList({
                 .map((item) => (
                     <Item
                         key={item.id}
-                        ref={itemRefs!.current?.get(item.id)}
-                        onToggleSelect={onToggleSelect}
+                        ref={itemRefs.current?.get(item.id)}
                         {...item}
                     />
                 ))}
@@ -217,83 +178,8 @@ const ItemsList = memo(function ItemsList({
     )
 })
 
-type StringSetAction =
-    | { type: "clear" }
-    | { type: "toggle"; id: string; selected: boolean }
-
-function reduceStringSet(
-    state: Set<string>,
-    action: StringSetAction,
-): Set<string> {
-    switch (action.type) {
-        case "clear": {
-            return new Set()
-        }
-        case "toggle": {
-            const nextState = new Set(state)
-            if (action.selected) nextState.add(action.id)
-            else nextState.delete(action.id)
-            return nextState
-        }
-    }
-}
-
-interface DrawerContextProps {
-    items: ItemFromQuery[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
-    dispatch: Dispatch<StringSetAction>
-}
-
-const DrawerContext = createContext<DrawerContextProps>({
-    items: [],
-    // eslint-disable-next-line unicorn/no-null
-    itemRefs: { current: null },
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    dispatch() {},
-})
-
-export const useDrawerContext = (): DrawerContextProps => {
-    return useContext(DrawerContext)
-}
-
-interface DrawerContextProviderProps {
-    children: ReactNode
-}
-
-export const DrawerContextProvider = ({
-    children,
-}: DrawerContextProviderProps) => {
-    const [{ data }] = useQuery({ query: itemsQueryDocument })
-    const items = data!.item.map((item) => setVisible(item, true))
-    const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
-
-    // all possible item refs have a key, even if they’re filtered out
-    const itemRefs = useRef(
-        new Map<string, RefObject<HTMLDivElement>>(
-            // eslint-disable-next-line unicorn/no-null
-            data!.item.map(({ id }) => [id, { current: null }]),
-        ),
-    )
-    const clearSelected = useCallback(() => dispatch({ type: "clear" }), [])
-
-    return (
-        <DrawerContext.Provider
-            value={{ items: data!.item, itemRefs, dispatch }}
-        >
-            {children}
-            <ItemsDrawer
-                items={items}
-                itemRefs={itemRefs}
-                selected={selected}
-                // TODO: this doesn’t work yet since the items manage their selected state themselves
-                onClear={undefined && clearSelected}
-            />
-        </DrawerContext.Provider>
-    )
-}
-
 export const ItemsView = ({ filters }: ItemsProps) => {
-    const { items, itemRefs, dispatch } = useDrawerContext()
+    const { items, itemRefs } = useItemsDrawer()
     const filteredItems = useMemo(
         () =>
             filterItems(items, { known: true, ...filters }).filter(
@@ -301,25 +187,14 @@ export const ItemsView = ({ filters }: ItemsProps) => {
             ),
         [items, filters],
     )
-    const toggleSelected = useCallback(
-        (id: string, selected: boolean) =>
-            dispatch({ type: "toggle", id, selected }),
-        [dispatch],
-    )
-    return (
-        <ItemsList
-            items={filteredItems}
-            itemRefs={itemRefs}
-            onToggleSelect={toggleSelected}
-        />
-    )
+    return <ItemsList items={filteredItems} itemRefs={itemRefs} />
 }
 
 function AllItemsView({ filters }: ItemsProps) {
     return (
-        <DrawerContextProvider>
+        <ItemsDrawerContextProvider>
             <ItemsView filters={filters} />
-        </DrawerContextProvider>
+        </ItemsDrawerContextProvider>
     )
 }
 

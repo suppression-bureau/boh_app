@@ -1,39 +1,39 @@
-import { RefObject, useMemo } from "react"
+import { RefObject, useEffect, useMemo } from "react"
 
 import Divider from "@mui/material/Divider"
-import Drawer from "@mui/material/Drawer"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemButton from "@mui/material/ListItemButton"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
+import Portal from "@mui/material/Portal"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 
 import Delete from "@mui/icons-material/Delete"
 
-import { PrincipleIcon } from "../routes/Principles"
-import { PRINCIPLES, PrincipleString, VisibleItem } from "../types"
+import { PRINCIPLES, PrincipleString, VisibleItem } from "../../types"
+import { useDrawerContext } from "../Drawer"
+import { PrincipleIcon, PrincipleIconProps } from "../Icon"
 
-interface PrincipleCounterProps {
+interface PrincipleCounterProps extends PrincipleIconProps {
     principle: PrincipleString
     items: VisibleItem[]
 }
 
-function PrincipleCounter({ principle, items }: PrincipleCounterProps) {
+function PrincipleCounter({
+    principle,
+    items,
+    ...props
+}: PrincipleCounterProps) {
     const total = items.reduce(
         (total, item) => total + (item[principle] ?? 0),
         0,
     )
     return total ? (
         <Stack direction="row" alignItems="center">
-            <PrincipleIcon id={principle} />
-            <Typography
-                variant="h6"
-                sx={{
-                    paddingInline: 1,
-                }}
-            >
+            <PrincipleIcon principle={principle} {...props} />
+            <Typography variant="h6" sx={{ paddingInline: 1 }}>
                 {total}
             </Typography>
         </Stack>
@@ -61,6 +61,7 @@ const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
                         key={principle}
                         principle={principle}
                         items={items}
+                        sx={{ width: "2rem", height: "2rem" }}
                     />
                 ))}
             </Stack>
@@ -79,16 +80,11 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
         () => items.filter(({ id }) => selected.has(id)),
         [items, selected],
     )
+    const { setOpen, ref } = useDrawerContext()
+    useEffect(() => setOpen(selectedItems.length > 0), [selectedItems, setOpen])
     return (
-        <Drawer
-            variant="persistent"
-            open={items.length > 0}
-            sx={{
-                maxWidth: "250px",
-                "& .MuiDrawer-paper": { maxWidth: "250px" },
-            }}
-        >
-            <List sx={{ flexGrow: 1 }}>
+        <Portal container={ref.current}>
+            <List sx={{ overflow: "auto", flexGrow: 1 }}>
                 {selectedItems.map((item) => (
                     <ListItem key={item.id} disablePadding>
                         <ListItemButton
@@ -104,21 +100,25 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
                         </ListItemButton>
                     </ListItem>
                 ))}
+            </List>
+            <List sx={{ flexGrow: 0 }}>
                 <Divider />
                 <PrincipleCounterStack items={selectedItems} />
-                <Divider />
                 {onClear && (
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={onClear}>
-                            <ListItemIcon>
-                                <Delete />
-                            </ListItemIcon>
-                            <ListItemText>Clear</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
+                    <>
+                        <Divider />
+                        <ListItem disablePadding>
+                            <ListItemButton onClick={onClear}>
+                                <ListItemIcon>
+                                    <Delete />
+                                </ListItemIcon>
+                                <ListItemText>Clear</ListItemText>
+                            </ListItemButton>
+                        </ListItem>
+                    </>
                 )}
             </List>
-        </Drawer>
+        </Portal>
     )
 }
 export default ItemsDrawer

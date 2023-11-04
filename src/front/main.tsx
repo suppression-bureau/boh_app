@@ -1,22 +1,25 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
 import { BrowserRouter as Router } from "react-router-dom"
-import { Provider, cacheExchange, createClient, fetchExchange } from "urql"
+import * as urql from "urql"
 
 import App from "./App.tsx"
+import { DrawerContextProvider } from "./components/Drawer/index.tsx"
 
-const client = createClient({
+const client = urql.createClient({
     url: "http://localhost:8000/graphql",
     suspense: true,
-    exchanges: [cacheExchange, fetchExchange],
+    exchanges: [urql.cacheExchange, urql.fetchExchange],
 })
 
 ReactDOM.createRoot(document.querySelector("#root")!).render(
     <React.StrictMode>
-        <Provider value={client}>
+        <urql.Provider value={client}>
             <Router>
-                <App />
+                <DrawerContextProvider>
+                    <App />
+                </DrawerContextProvider>
             </Router>
-        </Provider>
+        </urql.Provider>
     </React.StrictMode>,
 )
