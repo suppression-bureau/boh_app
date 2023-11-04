@@ -163,6 +163,7 @@ function Content() {
         <Main
             open={open}
             drawerWidth={width}
+            component="main"
             sx={{
                 flexGrow: 1,
                 paddingBlockEnd: theme.spacing(3),
@@ -199,7 +200,7 @@ export default function App() {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <AppNav />
-            <Stack direction="row" sx={{ display: "flex", flexGrow: 1 }}>
+            <Stack direction="row" sx={{ flexGrow: 1, display: "flex" }}>
                 <Drawer />
                 <Content />
             </Stack>
