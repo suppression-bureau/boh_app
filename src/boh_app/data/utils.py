@@ -38,10 +38,10 @@ def get_valid_refs(name: str) -> set[str]:
     return {d["id"] for d in get_data(name)}
 
 
-gen_data_types = list[Slot] | list[Workstation] | list[Item] | list[Skill] | list[Recipe]
+GenData = list[Slot] | list[Workstation] | list[Item] | list[Skill] | list[Recipe]
 
 
-def write_gen_file(name: str, data: gen_data_types):
+def write_gen_file(name: str, data: GenData):
     outpath = CACHE_DIR / f"{name}.json"
     logging.info(f"Writing {len(data)} items to {outpath}")
 
