@@ -44,6 +44,13 @@ item_aspect_association = Table(
     Column("item_id", ForeignKey("item.id"), primary_key=True),
 )
 
+skill_wisdom_association = Table(
+    "skill_wisdom",
+    Base.metadata,
+    Column("wisdom_id", ForeignKey("wisdom.id"), primary_key=True),
+    Column("skill_id", ForeignKey("skill.id"), primary_key=True),
+)
+
 workstation_principle_association = Table(
     "workstation_principle",
     Base.metadata,
@@ -122,14 +129,17 @@ class PrincipleCount(Base, IdMixin):
 class Wisdom(Base, NameMixin):
     __tablename__ = "wisdom"
 
+    skills: Mapped[list[Skill]] = relationship(back_populates="wisdoms", secondary=skill_wisdom_association)
+
 
 class Skill(Base, NameMixin):
     __tablename__ = "skill"
 
+    name: Mapped[str]
+
     @classmethod
     def _additional_fields(cls):
         return {
-            "wisdoms": Nested(Wisdom.__marshmallow__, many=True),
             "principles": Nested(Principle.__marshmallow__, many=True),
         }
 
@@ -141,20 +151,11 @@ class Skill(Base, NameMixin):
     secondary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
     secondary_principle: Mapped[Principle] = relationship(back_populates="secondary_skills", foreign_keys=[secondary_principle_id])
 
-    # could also just make wisdoms MANYTOMANY? numerical assignment is arbitrary
-    wisdom_1_id: Mapped[int] = mapped_column(ForeignKey("wisdom.id"))
-    wisdom_1: Mapped[Wisdom] = relationship(foreign_keys=[wisdom_1_id])
-
-    wisdom_2_id: Mapped[int] = mapped_column(ForeignKey("wisdom.id"))
-    wisdom_2: Mapped[Wisdom] = relationship(foreign_keys=[wisdom_2_id])
+    wisdoms: Mapped[list[Wisdom]] = relationship(back_populates="skills", secondary=skill_wisdom_association)
 
     @hybrid_property
     def principles(self) -> list[Principle]:
         return [self.primary_principle, self.secondary_principle]
-
-    @hybrid_property
-    def wisdoms(self) -> list[Wisdom]:
-        return [self.wisdom_1, self.wisdom_2]
 
     recipes: Mapped[list[Recipe]] = relationship(back_populates="skills", secondary=recipe_skill_association)
 
@@ -162,30 +163,31 @@ class Skill(Base, NameMixin):
 class Item(Base, NameMixin):
     __tablename__ = "item"
 
+    name: Mapped[str]
     aspects: Mapped[list[Aspect]] = relationship(back_populates="items", secondary=item_aspect_association)
 
     known: Mapped[bool] = mapped_column(default=False)
 
     # principles
-    edge: Mapped[int | None]
-    forge: Mapped[int | None]
-    grail: Mapped[int | None]
-    heart: Mapped[int | None]
-    knock: Mapped[int | None]
-    lantern: Mapped[int | None]
-    moon: Mapped[int | None]
-    moth: Mapped[int | None]
-    nectar: Mapped[int | None]
-    rose: Mapped[int | None]
-    scale: Mapped[int | None]
-    sky: Mapped[int | None]
-    winter: Mapped[int | None]
+    edge: Mapped[int] = mapped_column(default=0)
+    forge: Mapped[int] = mapped_column(default=0)
+    grail: Mapped[int] = mapped_column(default=0)
+    heart: Mapped[int] = mapped_column(default=0)
+    knock: Mapped[int] = mapped_column(default=0)
+    lantern: Mapped[int] = mapped_column(default=0)
+    moon: Mapped[int] = mapped_column(default=0)
+    moth: Mapped[int] = mapped_column(default=0)
+    nectar: Mapped[int] = mapped_column(default=0)
+    rose: Mapped[int] = mapped_column(default=0)
+    scale: Mapped[int] = mapped_column(default=0)
+    sky: Mapped[int] = mapped_column(default=0)
+    winter: Mapped[int] = mapped_column(default=0)
 
     # TODO: derived from has(product_recipe)
     is_craftable: Mapped[bool] = mapped_column(default=False)
 
     source_recipe: Mapped[list[Recipe]] = relationship(back_populates="product", primaryjoin="Item.id==Recipe.product_id")
-    product_recipe: Mapped[list[Recipe]] = relationship(back_populates="source", primaryjoin="Item.id==Recipe.source_id")
+    product_recipe: Mapped[list[Recipe]] = relationship(back_populates="source_item", primaryjoin="Item.id==Recipe.source_item_id")
 
 
 class Recipe(Base, IdMixin):
@@ -194,13 +196,17 @@ class Recipe(Base, IdMixin):
     product_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
     product: Mapped[Item] = relationship(back_populates="source_recipe", foreign_keys=[product_id])
 
-    source_id: Mapped[int | None] = mapped_column(ForeignKey("item.id"))
-    source: Mapped[Item] = relationship(back_populates="product_recipe", foreign_keys=[source_id])
+    source_item_id: Mapped[int | None] = mapped_column(ForeignKey("item.id"))
+    source_item: Mapped[Item] = relationship(back_populates="product_recipe", foreign_keys=[source_item_id])
+
+    source_aspect_id: Mapped[str | None] = mapped_column(ForeignKey("aspect.id"))
+    source_aspect: Mapped[Aspect] = relationship()
 
     principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))  # TODO:  make nullable
     principle: Mapped[Principle] = relationship()
-
     principle_amount: Mapped[int]
+
+    known: Mapped[bool] = mapped_column(default=False)
 
     skills: Mapped[list[Skill]] = relationship(back_populates="recipes", secondary=recipe_skill_association)
 

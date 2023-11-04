@@ -88,7 +88,7 @@ def empty_db() -> None:
 
 @app.command()
 def gen_items() -> None:
-    """Generate `items.json`. NB: Overwrites existing file and
+    """Generate `item.json`. NB: Overwrites existing file and
     is not run by default during `boh_app.data.load_data.load_all`."""
     from .data.generate_items import gen_items_json
 
@@ -103,6 +103,39 @@ def gen_workstations() -> None:
     from .data.generate_workstations import gen_workstation_json
 
     gen_workstation_json()
+
+
+@app.command()
+def gen_skills() -> None:
+    """Generate `skill.json`. NB: Overwrites existing file and
+    is not run by default during `boh_app.data.load_data.load_all`."""
+    from .data.generate_skills import gen_skills_json
+
+    gen_skills_json()
+
+
+@app.command()
+def gen_recipes() -> None:
+    """Generate `recipe.json`. NB: Overwrites existing file and
+    is not run by default during `boh_app.data.load_data.load_all`."""
+    from .data.generate_recipes import gen_recipes_json
+
+    gen_recipes_json()
+
+
+@app.command()
+def gen_all() -> None:
+    """Generate all data. NB: Overwrites existing files and
+    is not run by default during `boh_app.data.load_data.load_all`."""
+    from .data.generate_items import gen_items_json
+    from .data.generate_recipes import gen_recipes_json
+    from .data.generate_skills import gen_skills_json
+    from .data.generate_workstations import gen_workstation_json
+
+    gen_items_json()
+    gen_skills_json()
+    gen_workstation_json()
+    gen_recipes_json()
 
 
 if __name__ == "__main__":

@@ -71,9 +71,9 @@ class ItemHandler:
 
     def mk_model_data(self, item: dict[str, Any], *, inherits: bool = True) -> Item:
         label = "Label" if inherits else "label"
-
+        id = "ID" if inherits else "id"
         name = item[label].split(" (")[0]  # e.g. "{drink} (Bottle)" | "{drink} (Half-Full)"
-        model = Item(id=name)
+        model = Item(id=item[id], name=name)
         model_aspects = []
 
         for aspect, value in item["aspects"].items():
