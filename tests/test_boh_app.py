@@ -88,7 +88,7 @@ def test_patch_404(client: TestClient):
     assert result.json() == {"detail": "No aspect with ID test_value"}
 
 
-@pytest.mark.xfail("Never actually worked, as serializers req most fields, except when they have db defaults")
+@pytest.mark.xfail(reason="Never actually worked, as serializers req most fields, except when they have db defaults")
 def test_patch_field(client: TestClient, skill_test_data: dict[str, Any]):
     og_skill_data = skill_test_data
 
@@ -99,7 +99,7 @@ def test_patch_field(client: TestClient, skill_test_data: dict[str, Any]):
     assert result.json() == get_loaded_data(updated_data, models.Skill)
 
 
-@pytest.mark.xfail("Never actually worked, as serializers req most fields, except when they have db defaults")
+@pytest.mark.xfail(reason="Never actually worked, as serializers req most fields, except when they have db defaults")
 def test_patch_fk(client: TestClient, skill_test_data: dict[str, Any]):
     og_skill_data = skill_test_data
     new_data = {"primary_principle": {"id": "test_value"}}
