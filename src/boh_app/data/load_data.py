@@ -13,10 +13,9 @@ from ..settings import CACHE_DIR
 HERE = Path(__file__).parent
 
 
-def get_data(name: str = "") -> list[dict[str, Any]]:
+def get_data(name: str) -> list[dict[str, Any]]:
     data_file_paths = find_files()
     path = data_file_paths[name]
-
     with path.open() as a:
         data = json.load(a)
         return data
@@ -45,6 +44,7 @@ def load_all(session: Session) -> None:
     """Load sorted data into database."""
     data_file_paths = find_files()
     tablename2model = get_tablename_model_mapping()
+    # add recipe dependency on skill to ensure skill sorted before recipe
     Base.metadata.tables["recipe"].add_is_dependent_on(Base.metadata.tables["skill"])
     for name in [t.fullname for t in Base.metadata.sorted_tables]:
         if name in data_file_paths:

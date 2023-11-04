@@ -162,7 +162,6 @@ class Skill(Base, NameMixin):
 
 class Item(Base, NameMixin):
     __tablename__ = "item"
-    __table_args__ = ()
 
     name: Mapped[str]
     aspects: Mapped[list[Aspect]] = relationship(back_populates="items", secondary=item_aspect_association)
@@ -170,19 +169,19 @@ class Item(Base, NameMixin):
     known: Mapped[bool] = mapped_column(default=False)
 
     # principles
-    edge: Mapped[int | None]
-    forge: Mapped[int | None]
-    grail: Mapped[int | None]
-    heart: Mapped[int | None]
-    knock: Mapped[int | None]
-    lantern: Mapped[int | None]
-    moon: Mapped[int | None]
-    moth: Mapped[int | None]
-    nectar: Mapped[int | None]
-    rose: Mapped[int | None]
-    scale: Mapped[int | None]
-    sky: Mapped[int | None]
-    winter: Mapped[int | None]
+    edge: Mapped[int] = mapped_column(default=0)
+    forge: Mapped[int] = mapped_column(default=0)
+    grail: Mapped[int] = mapped_column(default=0)
+    heart: Mapped[int] = mapped_column(default=0)
+    knock: Mapped[int] = mapped_column(default=0)
+    lantern: Mapped[int] = mapped_column(default=0)
+    moon: Mapped[int] = mapped_column(default=0)
+    moth: Mapped[int] = mapped_column(default=0)
+    nectar: Mapped[int] = mapped_column(default=0)
+    rose: Mapped[int] = mapped_column(default=0)
+    scale: Mapped[int] = mapped_column(default=0)
+    sky: Mapped[int] = mapped_column(default=0)
+    winter: Mapped[int] = mapped_column(default=0)
 
     # TODO: derived from has(product_recipe)
     is_craftable: Mapped[bool] = mapped_column(default=False)
