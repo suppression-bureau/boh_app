@@ -6,9 +6,11 @@ type BaseIconProps<T extends IconType, ID extends string = string> = Omit<
     AvatarProps,
     "src"
 > & {
-    [id in T]: ID
-} & {
+    // set to "priciple" | ...
     idKey: T
+} & {
+    // a property called "principle" | ... with string value
+    [id in T]: ID
 }
 
 const BaseIcon = <T extends IconType>({
