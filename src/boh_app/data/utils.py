@@ -32,10 +32,10 @@ def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
     return data[inner]
 
 
-def get_valid_refs(name: str) -> list[str]:
+def get_valid_refs(name: str) -> set[str]:
     from boh_app.data.load_data import get_data
 
-    return [d["id"] for d in get_data(name)]
+    return {d["id"] for d in get_data(name)}
 
 
 gen_data_types = list[Slot] | list[Workstation] | list[Item] | list[Skill] | list[Recipe]
