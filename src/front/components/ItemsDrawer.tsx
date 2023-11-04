@@ -1,4 +1,4 @@
-import { RefObject, useMemo } from "react"
+import { RefObject, useEffect, useMemo } from "react"
 
 import Divider from "@mui/material/Divider"
 import Drawer from "@mui/material/Drawer"
@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography"
 import Delete from "@mui/icons-material/Delete"
 
 import { PRINCIPLES, PrincipleString, VisibleItem } from "../types"
+import { useDrawerContext } from "./Drawer"
 import { PrincipleIcon, PrincipleIconProps } from "./Icon"
 
 interface PrincipleCounterProps extends PrincipleIconProps {
@@ -79,14 +80,16 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
         () => items.filter(({ id }) => selected.has(id)),
         [items, selected],
     )
-    if (selected.size === 0) return
+    const { open, setOpen, width } = useDrawerContext()
+    useEffect(() => setOpen(selectedItems.length > 0), [selectedItems, setOpen])
+    if (!open) return
     return (
         <Drawer
             variant="persistent"
-            open={items.length > 0}
+            open={open}
             sx={{
                 "& .MuiDrawer-paper": {
-                    maxWidth: "245px",
+                    width: `${width}px`,
                     height: "100vh",
                     display: "flex",
                     flexDirection: "column",

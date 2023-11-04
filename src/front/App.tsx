@@ -9,7 +9,7 @@ import {
 } from "react-router-dom"
 import SlideRoutes from "react-slide-routes"
 
-import AppBar from "@mui/material/AppBar"
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
 import CssBaseline from "@mui/material/CssBaseline"
 import Stack from "@mui/material/Stack"
 import Tab from "@mui/material/Tab"
@@ -21,11 +21,12 @@ import {
     alpha,
     createTheme,
     responsiveFontSizes,
-    useTheme,
+    styled,
 } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 import ElevationScroll from "./ElevationScroll.tsx"
+import { useDrawerContext } from "./components/Drawer.tsx"
 import LoadingIndicator from "./components/LoadingIndicator.tsx"
 import Aspects from "./routes/Aspects"
 import AssistantView from "./routes/Assistant.tsx"
@@ -60,39 +61,43 @@ function useRouteMatch(
     return undefined
 }
 
+const makeBaseTheme = (dark: boolean) => {
+    const buttonStyle = { fontWeight: "bold" }
+    return createTheme({
+        palette: {
+            mode: dark ? "dark" : "light",
+            primary: amber,
+        },
+        typography: {
+            button: buttonStyle,
+        },
+        components: {
+            MuiButton: {
+                styleOverrides: {
+                    text: buttonStyle,
+                    textPrimary: buttonStyle,
+                },
+            },
+            MuiButtonBase: {
+                styleOverrides: {
+                    root: buttonStyle,
+                },
+            },
+            MuiStack: {
+                defaultProps: {
+                    useFlexGap: true,
+                },
+            },
+        },
+    })
+}
+
 const App = () => {
     const dark = useMediaQuery("(prefers-color-scheme: dark)")
-    const theme = useMemo(() => {
-        const buttonStyle = { fontWeight: "bold" }
-        const baseTheme = createTheme({
-            palette: {
-                mode: dark ? "dark" : "light",
-                primary: amber,
-            },
-            typography: {
-                button: buttonStyle,
-            },
-            components: {
-                MuiButton: {
-                    styleOverrides: {
-                        text: buttonStyle,
-                        textPrimary: buttonStyle,
-                    },
-                },
-                MuiButtonBase: {
-                    styleOverrides: {
-                        root: buttonStyle,
-                    },
-                },
-                MuiStack: {
-                    defaultProps: {
-                        useFlexGap: true,
-                    },
-                },
-            },
-        })
-        return responsiveFontSizes(baseTheme)
-    }, [dark])
+    const theme = useMemo(
+        () => responsiveFontSizes(makeBaseTheme(dark)),
+        [dark],
+    )
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -126,21 +131,40 @@ const App = () => {
     )
 }
 
+interface AppBarProps extends MuiAppBarProps {
+    open?: boolean
+    drawerWidth: number
+}
+
+const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== "open" && prop !== "drawerWidth",
+})<AppBarProps>(({ theme, open = false, drawerWidth }) => ({
+    color: theme.palette.text.primary,
+    background: alpha(theme.palette.background.default, 0.7),
+    // TODO re-add contrast(200%) before blur without discoloring dark mode
+    backdropFilter: "blur(15px)",
+    // Drawer stuff
+    transition: theme.transitions.create(["margin", "width"], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    ...(open && {
+        width: `calc(100% - ${drawerWidth}px)`,
+        marginLeft: `${drawerWidth}px`,
+        transition: theme.transitions.create(["margin", "width"], {
+            easing: theme.transitions.easing.easeOut,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    }),
+}))
+
 function AppNav() {
-    const theme = useTheme()
+    const { open, width } = useDrawerContext()
     const currentTab = useRouteMatch(ROUTE_LINKS.map(({ pattern }) => pattern))
         ?.pattern.path
     return (
         <ElevationScroll>
-            <AppBar
-                position="sticky"
-                sx={{
-                    color: theme.palette.text.primary,
-                    background: alpha(theme.palette.background.default, 0.7),
-                    // TODO re-add contrast(200%) before blur without discoloring dark mode
-                    backdropFilter: "blur(15px)",
-                }}
-            >
+            <AppBar open={open} drawerWidth={width} position="sticky">
                 <Toolbar component="nav" sx={{ justifyContent: "center" }}>
                     <Tabs centered value={currentTab}>
                         {ROUTE_LINKS.map(({ label, href, pattern }) => (

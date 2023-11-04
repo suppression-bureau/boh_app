@@ -163,7 +163,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
     { onToggleSelect, sx, ...item },
     ref,
 ) {
-    const { selected, dispatch } = useDrawerContext()
+    const { selected, dispatch } = useItemsDrawer()
     const handleToggleSelect = useCallback(() => {
         dispatch({
             type: "toggle",
@@ -235,14 +235,14 @@ function reduceStringSet(
     }
 }
 
-interface DrawerContextProps {
+interface ItemsDrawerContextProps {
     items: ItemFromQuery[]
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
     selected: Set<string>
     dispatch: Dispatch<StringSetAction>
 }
 
-const DrawerContext = createContext<DrawerContextProps>({
+const ItemsDrawerContext = createContext<ItemsDrawerContextProps>({
     items: [],
     // eslint-disable-next-line unicorn/no-null
     itemRefs: { current: null },
@@ -251,17 +251,17 @@ const DrawerContext = createContext<DrawerContextProps>({
     dispatch() {},
 })
 
-export const useDrawerContext = (): DrawerContextProps => {
-    return useContext(DrawerContext)
+export const useItemsDrawer = (): ItemsDrawerContextProps => {
+    return useContext(ItemsDrawerContext)
 }
 
-interface DrawerContextProviderProps {
+interface ItemsDrawerContextProviderProps {
     children: ReactNode
 }
 
-export const DrawerContextProvider = ({
+export const ItemsDrawerContextProvider = ({
     children,
-}: DrawerContextProviderProps) => {
+}: ItemsDrawerContextProviderProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
     const items = data!.item.map((item) => setVisible(item, true))
     const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
@@ -276,7 +276,7 @@ export const DrawerContextProvider = ({
     const clearSelected = useCallback(() => dispatch({ type: "clear" }), [])
 
     return (
-        <DrawerContext.Provider
+        <ItemsDrawerContext.Provider
             value={{ items: data!.item, itemRefs, selected, dispatch }}
         >
             {children}
@@ -286,12 +286,12 @@ export const DrawerContextProvider = ({
                 selected={selected}
                 onClear={clearSelected}
             />
-        </DrawerContext.Provider>
+        </ItemsDrawerContext.Provider>
     )
 }
 
 export const ItemsView = ({ filters }: ItemsProps) => {
-    const { items, itemRefs } = useDrawerContext()
+    const { items, itemRefs } = useItemsDrawer()
     const filteredItems = useMemo(
         () =>
             filterItems(items, { known: true, ...filters }).filter(
@@ -304,9 +304,9 @@ export const ItemsView = ({ filters }: ItemsProps) => {
 
 function AllItemsView({ filters }: ItemsProps) {
     return (
-        <DrawerContextProvider>
+        <ItemsDrawerContextProvider>
             <ItemsView filters={filters} />
-        </DrawerContextProvider>
+        </ItemsDrawerContextProvider>
     )
 }
 

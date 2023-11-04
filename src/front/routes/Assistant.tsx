@@ -25,7 +25,7 @@ import {
 import LoadingIndicator from "../components/LoadingIndicator"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
-import { DrawerContextProvider, ItemsView } from "./Items"
+import { ItemsDrawerContextProvider, ItemsView } from "./Items"
 
 const assistantQueryDocument = graphql(`
     query Assistant {
@@ -190,12 +190,12 @@ const AssistantView = () => {
                 />
                 <Suspense fallback={<LoadingIndicator />}>
                     {selectedAssistant && selectedPrinciple && (
-                        <DrawerContextProvider>
+                        <ItemsDrawerContextProvider>
                             <AssistantItems
                                 principle={selectedPrinciple}
                                 assistant={selectedAssistant}
                             />
-                        </DrawerContextProvider>
+                        </ItemsDrawerContextProvider>
                     )}
                 </Suspense>
             </Stack>
