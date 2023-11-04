@@ -1,17 +1,4 @@
-import {
-    Dispatch,
-    ReactNode,
-    RefObject,
-    createContext,
-    forwardRef,
-    memo,
-    useCallback,
-    useContext,
-    useMemo,
-    useReducer,
-    useRef,
-} from "react"
-import { useQuery } from "urql"
+import { RefObject, forwardRef, memo, useCallback, useMemo } from "react"
 
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -23,8 +10,10 @@ import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 
 import { PrincipleIcon } from "../components/Icon"
-import ItemsDrawer from "../components/ItemsDrawer"
-import { graphql } from "../gql"
+import {
+    ItemsDrawerContextProvider,
+    useItemsDrawer,
+} from "../components/ItemsDrawer/context"
 import { AspectIconGroup } from "../routes/Aspects"
 import {
     ItemFromQuery,
@@ -33,31 +22,6 @@ import {
     PrincipleString,
     VisibleItem,
 } from "../types"
-
-export const itemsQueryDocument = graphql(`
-    query Items {
-        item {
-            id
-            known
-            edge
-            forge
-            grail
-            heart
-            knock
-            lantern
-            moon
-            moth
-            nectar
-            rose
-            scale
-            sky
-            winter
-            aspects {
-                id
-            }
-        }
-    }
-`)
 
 type AspectFromQuery = ItemFromQuery["aspects"][number]
 
@@ -69,7 +33,7 @@ interface ItemsProps {
     }
 }
 
-function setVisible(
+export function setItemVisible(
     item: ItemFromQuery,
     visible: boolean,
     index = 0,
@@ -111,7 +75,7 @@ function filterItems(
     const filteredItems = filteredState.map(({ id }) => id)
     const filteredItemsSet = new Set(filteredItems)
     return state.map((item) =>
-        setVisible(
+        setItemVisible(
             item,
             filteredItemsSet.has(item.id),
             filteredItems.indexOf(item.id),
@@ -163,7 +127,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
     { onToggleSelect, sx, ...item },
     ref,
 ) {
-    const { selected, dispatch } = useDrawerContext()
+    const { selected, dispatch } = useItemsDrawer()
     const handleToggleSelect = useCallback(() => {
         dispatch({
             type: "toggle",
@@ -214,84 +178,8 @@ const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
     )
 })
 
-type StringSetAction =
-    | { type: "clear" }
-    | { type: "toggle"; id: string; selected: boolean }
-
-function reduceStringSet(
-    state: Set<string>,
-    action: StringSetAction,
-): Set<string> {
-    switch (action.type) {
-        case "clear": {
-            return new Set()
-        }
-        case "toggle": {
-            const nextState = new Set(state)
-            if (action.selected) nextState.add(action.id)
-            else nextState.delete(action.id)
-            return nextState
-        }
-    }
-}
-
-interface DrawerContextProps {
-    items: ItemFromQuery[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
-    selected: Set<string>
-    dispatch: Dispatch<StringSetAction>
-}
-
-const DrawerContext = createContext<DrawerContextProps>({
-    items: [],
-    // eslint-disable-next-line unicorn/no-null
-    itemRefs: { current: null },
-    selected: new Set(),
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    dispatch() {},
-})
-
-export const useDrawerContext = (): DrawerContextProps => {
-    return useContext(DrawerContext)
-}
-
-interface DrawerContextProviderProps {
-    children: ReactNode
-}
-
-export const DrawerContextProvider = ({
-    children,
-}: DrawerContextProviderProps) => {
-    const [{ data }] = useQuery({ query: itemsQueryDocument })
-    const items = data!.item.map((item) => setVisible(item, true))
-    const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
-
-    // all possible item refs have a key, even if they’re filtered out
-    const itemRefs = useRef(
-        new Map<string, RefObject<HTMLDivElement>>(
-            // eslint-disable-next-line unicorn/no-null
-            data!.item.map(({ id }) => [id, { current: null }]),
-        ),
-    )
-    const clearSelected = useCallback(() => dispatch({ type: "clear" }), [])
-
-    return (
-        <DrawerContext.Provider
-            value={{ items: data!.item, itemRefs, selected, dispatch }}
-        >
-            {children}
-            <ItemsDrawer
-                items={items}
-                itemRefs={itemRefs}
-                selected={selected}
-                onClear={clearSelected}
-            />
-        </DrawerContext.Provider>
-    )
-}
-
 export const ItemsView = ({ filters }: ItemsProps) => {
-    const { items, itemRefs } = useDrawerContext()
+    const { items, itemRefs } = useItemsDrawer()
     const filteredItems = useMemo(
         () =>
             filterItems(items, { known: true, ...filters }).filter(
@@ -304,9 +192,9 @@ export const ItemsView = ({ filters }: ItemsProps) => {
 
 function AllItemsView({ filters }: ItemsProps) {
     return (
-        <DrawerContextProvider>
+        <ItemsDrawerContextProvider>
             <ItemsView filters={filters} />
-        </DrawerContextProvider>
+        </ItemsDrawerContextProvider>
     )
 }
 

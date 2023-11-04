@@ -1,19 +1,20 @@
-import { RefObject, useMemo } from "react"
+import { RefObject, useEffect, useMemo } from "react"
 
 import Divider from "@mui/material/Divider"
-import Drawer from "@mui/material/Drawer"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemButton from "@mui/material/ListItemButton"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
+import Portal from "@mui/material/Portal"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 
 import Delete from "@mui/icons-material/Delete"
 
-import { PRINCIPLES, PrincipleString, VisibleItem } from "../types"
-import { PrincipleIcon, PrincipleIconProps } from "./Icon"
+import { PRINCIPLES, PrincipleString, VisibleItem } from "../../types"
+import { useDrawerContext } from "../Drawer"
+import { PrincipleIcon, PrincipleIconProps } from "../Icon"
 
 interface PrincipleCounterProps extends PrincipleIconProps {
     principle: PrincipleString
@@ -79,20 +80,10 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
         () => items.filter(({ id }) => selected.has(id)),
         [items, selected],
     )
-    if (selected.size === 0) return
+    const { setOpen, ref } = useDrawerContext()
+    useEffect(() => setOpen(selectedItems.length > 0), [selectedItems, setOpen])
     return (
-        <Drawer
-            variant="persistent"
-            open={items.length > 0}
-            sx={{
-                "& .MuiDrawer-paper": {
-                    maxWidth: "245px",
-                    height: "100vh",
-                    display: "flex",
-                    flexDirection: "column",
-                },
-            }}
-        >
+        <Portal container={ref.current}>
             <List sx={{ overflow: "auto", flexGrow: 1 }}>
                 {selectedItems.map((item) => (
                     <ListItem key={item.id} disablePadding>
@@ -127,7 +118,7 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
                     </>
                 )}
             </List>
-        </Drawer>
+        </Portal>
     )
 }
 export default ItemsDrawer

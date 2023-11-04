@@ -13,13 +13,17 @@ import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
 
 import ErrorDisplay from "../components/ErrorDisplay"
+import {
+    ItemsDrawerContextProvider,
+    itemsQueryDocument,
+} from "../components/ItemsDrawer/context"
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { Principle } from "../types"
 import { AspectIconGroup } from "./Aspects"
-import { DrawerContextProvider, ItemsView, itemsQueryDocument } from "./Items"
+import { ItemsView } from "./Items"
 import { PrincipleIconGroup } from "./Principles"
 import { SkillsStack, skillQueryDocument } from "./Skills"
 
@@ -164,23 +168,21 @@ const Workstation = ({ workstation }: WorkstationProps) => (
             titleTypographyProps={{ variant: "h5" }}
             avatar={<PrincipleIconGroup principles={workstation.principles} />}
         />
-        <DrawerContextProvider>
-            <Stack spacing={2}>
-                {workstation.workstation_slots
-                    .toSorted((a, b) => a.index - b.index)
-                    .map((slot) => (
-                        <WorkstationSlot
-                            key={slot.id}
-                            workstationSlot={slot}
-                            principles={workstation.principles}
-                        />
-                    ))}
-            </Stack>
-        </DrawerContextProvider>
+        <Stack spacing={2}>
+            {workstation.workstation_slots
+                .toSorted((a, b) => a.index - b.index)
+                .map((slot) => (
+                    <WorkstationSlot
+                        key={slot.id}
+                        workstationSlot={slot}
+                        principles={workstation.principles}
+                    />
+                ))}
+        </Stack>
     </Card>
 )
 
-const WorkstationView = () => {
+export default function WorkstationView() {
     const [{ data }] = useQuery({ query: workstationQueryDocument })
     // prefetch
     useQuery({ query: skillQueryDocument })
@@ -209,15 +211,16 @@ const WorkstationView = () => {
                 selectedPrinciple={selectedPrinciple}
                 onSelectPrinciple={handleSelectedPrinciple}
             />
-            {state
-                .filter(({ isVisible }) => isVisible)
-                .map((workstation) => (
-                    <Workstation
-                        key={workstation.id}
-                        workstation={workstation}
-                    />
-                ))}
+            <ItemsDrawerContextProvider>
+                {state
+                    .filter(({ isVisible }) => isVisible)
+                    .map((workstation) => (
+                        <Workstation
+                            key={workstation.id}
+                            workstation={workstation}
+                        />
+                    ))}
+            </ItemsDrawerContextProvider>
         </Stack>
     )
 }
-export default WorkstationView
