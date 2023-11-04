@@ -2,16 +2,19 @@ import Avatar, { AvatarProps } from "@mui/material/Avatar"
 
 export type IconType = "principle" | "aspect" | "exaltation" | "assistant"
 
-type BaseIconProps<ID extends IconType> = Omit<AvatarProps, "src"> & {
-    [id in ID]: string
+type BaseIconProps<T extends IconType, ID extends string = string> = Omit<
+    AvatarProps,
+    "src"
+> & {
+    [id in T]: ID
 } & {
-    idKey: ID
+    idKey: T
 }
 
-const BaseIcon = <ID extends IconType>({
+const BaseIcon = <T extends IconType>({
     idKey,
     ...allProps
-}: BaseIconProps<ID>) => {
+}: BaseIconProps<T>) => {
     const {
         [idKey]: id,
         alt = id,
@@ -35,6 +38,7 @@ export const AspectIcon = (props: AspectIconProps) => (
     <BaseIcon idKey="aspect" {...props} />
 )
 
+// TODO set to BaseIconProps<"principle", PrincipleString> once we can
 export type PrincipleIconProps = Omit<BaseIconProps<"principle">, "idKey">
 export const PrincipleIcon = (props: PrincipleIconProps) => (
     <BaseIcon idKey="principle" {...props} />
