@@ -18,9 +18,11 @@ import Toolbar from "@mui/material/Toolbar"
 import { amber } from "@mui/material/colors"
 import {
     ThemeProvider,
+    alpha,
     createTheme,
     responsiveFontSizes,
     styled,
+    useTheme,
 } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
@@ -93,12 +95,23 @@ function makeBaseTheme(dark: boolean) {
 }
 
 function AppNav() {
+    const theme = useTheme()
     const { open, width } = useDrawerContext()
     const currentTab = useRouteMatch(ROUTE_LINKS.map(({ pattern }) => pattern))
         ?.pattern.path
     return (
         <ElevationScroll>
-            <AppBar open={open} drawerWidth={width} position="fixed">
+            <AppBar
+                open={open}
+                drawerWidth={width}
+                position="fixed"
+                sx={{
+                    color: theme.palette.text.primary,
+                    background: alpha(theme.palette.background.default, 0.7),
+                    // TODO re-add contrast(200%) before blur without discoloring dark mode
+                    backdropFilter: "blur(15px)",
+                }}
+            >
                 <Toolbar component="nav" sx={{ justifyContent: "center" }}>
                     <Tabs centered value={currentTab}>
                         {ROUTE_LINKS.map(({ label, href, pattern }) => (
@@ -144,9 +157,17 @@ function Drawer() {
 const Offset = styled("div")(({ theme }) => theme.mixins.toolbar)
 
 function Content() {
+    const theme = useTheme()
     const { open, width } = useDrawerContext()
     return (
-        <Main open={open} drawerWidth={width}>
+        <Main
+            open={open}
+            drawerWidth={width}
+            sx={{
+                flexGrow: 1,
+                paddingBlockEnd: theme.spacing(3),
+            }}
+        >
             <Offset />
             <Suspense fallback={<LoadingIndicator sx={{ m: "auto" }} />}>
                 <SlideRoutes>
