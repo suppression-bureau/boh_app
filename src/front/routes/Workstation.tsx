@@ -168,23 +168,21 @@ const Workstation = ({ workstation }: WorkstationProps) => (
             titleTypographyProps={{ variant: "h5" }}
             avatar={<PrincipleIconGroup principles={workstation.principles} />}
         />
-        <ItemsDrawerContextProvider>
-            <Stack spacing={2}>
-                {workstation.workstation_slots
-                    .toSorted((a, b) => a.index - b.index)
-                    .map((slot) => (
-                        <WorkstationSlot
-                            key={slot.id}
-                            workstationSlot={slot}
-                            principles={workstation.principles}
-                        />
-                    ))}
-            </Stack>
-        </ItemsDrawerContextProvider>
+        <Stack spacing={2}>
+            {workstation.workstation_slots
+                .toSorted((a, b) => a.index - b.index)
+                .map((slot) => (
+                    <WorkstationSlot
+                        key={slot.id}
+                        workstationSlot={slot}
+                        principles={workstation.principles}
+                    />
+                ))}
+        </Stack>
     </Card>
 )
 
-const WorkstationView = () => {
+export default function WorkstationView() {
     const [{ data }] = useQuery({ query: workstationQueryDocument })
     // prefetch
     useQuery({ query: skillQueryDocument })
@@ -213,15 +211,16 @@ const WorkstationView = () => {
                 selectedPrinciple={selectedPrinciple}
                 onSelectPrinciple={handleSelectedPrinciple}
             />
-            {state
-                .filter(({ isVisible }) => isVisible)
-                .map((workstation) => (
-                    <Workstation
-                        key={workstation.id}
-                        workstation={workstation}
-                    />
-                ))}
+            <ItemsDrawerContextProvider>
+                {state
+                    .filter(({ isVisible }) => isVisible)
+                    .map((workstation) => (
+                        <Workstation
+                            key={workstation.id}
+                            workstation={workstation}
+                        />
+                    ))}
+            </ItemsDrawerContextProvider>
         </Stack>
     )
 }
-export default WorkstationView
