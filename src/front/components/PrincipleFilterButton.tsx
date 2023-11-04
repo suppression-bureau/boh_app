@@ -24,7 +24,7 @@ const PrincipleFilterButton = ({
     const style = {
         backgroundColor: principleMatch ? "primary.main" : undefined,
     }
-    const icon = <PrincipleIcon id={principle.id} />
+    const icon = <PrincipleIcon principle={principle.id} />
     return (
         <IconButton
             onClick={handlePrincipleFilter}
