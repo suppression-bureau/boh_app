@@ -12,28 +12,27 @@ import Typography from "@mui/material/Typography"
 
 import Delete from "@mui/icons-material/Delete"
 
-import { PrincipleIcon } from "../routes/Principles"
+import { PrincipleIcon, PrincipleIconProps } from "../routes/Principles"
 import { PRINCIPLES, PrincipleString, VisibleItem } from "../types"
 
-interface PrincipleCounterProps {
+interface PrincipleCounterProps extends PrincipleIconProps {
     principle: PrincipleString
     items: VisibleItem[]
 }
 
-function PrincipleCounter({ principle, items }: PrincipleCounterProps) {
+function PrincipleCounter({
+    principle,
+    items,
+    ...props
+}: PrincipleCounterProps) {
     const total = items.reduce(
         (total, item) => total + (item[principle] ?? 0),
         0,
     )
     return total ? (
         <Stack direction="row" alignItems="center">
-            <PrincipleIcon id={principle} />
-            <Typography
-                variant="h6"
-                sx={{
-                    paddingInline: 1,
-                }}
-            >
+            <PrincipleIcon principle={principle} {...props} />
+            <Typography variant="h6" sx={{ paddingInline: 1 }}>
                 {total}
             </Typography>
         </Stack>
@@ -61,6 +60,7 @@ const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
                         key={principle}
                         principle={principle}
                         items={items}
+                        sx={{ width: "2rem", height: "2rem" }}
                     />
                 ))}
             </Stack>
@@ -79,16 +79,21 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
         () => items.filter(({ id }) => selected.has(id)),
         [items, selected],
     )
+    if (selected.size === 0) return
     return (
         <Drawer
             variant="persistent"
             open={items.length > 0}
             sx={{
-                maxWidth: "250px",
-                "& .MuiDrawer-paper": { maxWidth: "250px" },
+                "& .MuiDrawer-paper": {
+                    maxWidth: "245px",
+                    height: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                },
             }}
         >
-            <List sx={{ flexGrow: 1 }}>
+            <List sx={{ overflow: "auto", flexGrow: 1 }}>
                 {selectedItems.map((item) => (
                     <ListItem key={item.id} disablePadding>
                         <ListItemButton
@@ -104,18 +109,22 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
                         </ListItemButton>
                     </ListItem>
                 ))}
+            </List>
+            <List sx={{ flexGrow: 0 }}>
                 <Divider />
                 <PrincipleCounterStack items={selectedItems} />
-                <Divider />
                 {onClear && (
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={onClear}>
-                            <ListItemIcon>
-                                <Delete />
-                            </ListItemIcon>
-                            <ListItemText>Clear</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
+                    <>
+                        <Divider />
+                        <ListItem disablePadding>
+                            <ListItemButton onClick={onClear}>
+                                <ListItemIcon>
+                                    <Delete />
+                                </ListItemIcon>
+                                <ListItemText>Clear</ListItemText>
+                            </ListItemButton>
+                        </ListItem>
+                    </>
                 )}
             </List>
         </Drawer>

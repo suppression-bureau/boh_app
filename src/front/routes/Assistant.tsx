@@ -174,7 +174,7 @@ const AssistantPrincipleSelector = ({
                                     value={principle}
                                 >
                                     <PrincipleIcon
-                                        id={principle.id}
+                                        principle={principle.id}
                                         sx={{ marginInlineEnd: 1 }}
                                     />
                                     {count}
