@@ -6,6 +6,7 @@ import Avatar, { AvatarProps } from "@mui/material/Avatar"
 import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
 import CardContent from "@mui/material/CardContent"
+import CardHeader from "@mui/material/CardHeader"
 import Container from "@mui/material/Container"
 import ListItem from "@mui/material/ListItem"
 import ListItemButton from "@mui/material/ListItemButton"
@@ -15,7 +16,7 @@ import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import ToggleButton from "@mui/material/ToggleButton"
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
-import Typography from "@mui/material/Typography"
+import { useTheme } from "@mui/material/styles"
 
 import LoadingIndicator from "../components/LoadingIndicator"
 import { graphql } from "../gql"
@@ -92,25 +93,24 @@ const AssistantIcon = ({
     />
 )
 
-const AssistantItems = ({ principle, assistant }: AssistantItemProps) => (
-    <Stack>
-        {assistant.aspects.map((aspect) => (
-            <div key={aspect.id}>
-                <Typography variant="h5" color={"secondary"}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                        <ExaltationIcon exaltation={aspect.id} /> {aspect.id}
-                    </Stack>
-                </Typography>
+const AssistantItems = ({ principle, assistant }: AssistantItemProps) =>
+    assistant.aspects.map((aspect) => (
+        <Card key={aspect.id}>
+            <CardHeader
+                avatar={<ExaltationIcon exaltation={aspect.id} />}
+                title={aspect.id}
+                titleTypographyProps={{ variant: "h5", color: "secondary" }}
+            />
+            <CardContent>
                 <ItemsView
                     filters={{
                         principles: [principle],
                         aspects: [aspect],
                     }}
                 />
-            </div>
-        ))}
-    </Stack>
-)
+            </CardContent>
+        </Card>
+    ))
 
 interface AssistantPrincipleSelectorProps {
     assistants: AssistantFromQuery[]
@@ -127,6 +127,8 @@ const AssistantPrincipleSelector = ({
     onSelectAssistant,
     onSelectPrinciple,
 }: AssistantPrincipleSelectorProps) => {
+    const theme = useTheme()
+    const s = `calc(40px + ${theme.spacing(3)})`
     const handleSelectAssistant = useCallback(
         (_: unknown, a: AssistantFromQuery | undefined | null) =>
             onSelectAssistant?.(a ?? undefined),
@@ -139,13 +141,14 @@ const AssistantPrincipleSelector = ({
     )
     return (
         <Card sx={{ padding: 2 }}>
-            <CardContent>
+            <CardContent sx={{ padding: 1 }}>
                 <Autocomplete<AssistantFromQuery>
                     options={assistants}
                     isOptionEqualToValue={(a, b) => a.id === b.id}
                     getOptionLabel={({ id }) => id}
                     renderOption={(props, { id }) => (
-                        <ListItem {...props} disablePadding>
+                        // Can’t use disablePadding here somehow
+                        <ListItem {...props} sx={{ padding: "0!important" }}>
                             <ListItemButton>
                                 <ListItemIcon>
                                     <AssistantIcon assistant={id} />
@@ -184,7 +187,8 @@ const AssistantPrincipleSelector = ({
                     </ToggleButtonGroup>
                     <AssistantIcon
                         assistant={selectedAssistant.id}
-                        sx={{ width: "3rem", height: "3rem" }}
+                        sx={{ width: s, height: s }}
+                        variant="rounded"
                     />
                 </CardActions>
             )}
