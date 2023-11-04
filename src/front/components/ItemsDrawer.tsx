@@ -12,8 +12,8 @@ import Typography from "@mui/material/Typography"
 
 import Delete from "@mui/icons-material/Delete"
 
-import { PrincipleIcon, PrincipleIconProps } from "../routes/Principles"
 import { PRINCIPLES, PrincipleString, VisibleItem } from "../types"
+import { PrincipleIcon, PrincipleIconProps } from "./Icon"
 
 interface PrincipleCounterProps extends PrincipleIconProps {
     principle: PrincipleString

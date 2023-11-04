@@ -1,11 +1,11 @@
 import { useQuery } from "urql"
 
-import Avatar, { AvatarProps } from "@mui/material/Avatar"
 import Box from "@mui/material/Box"
 import Card, { CardProps } from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 
 import AvatarStack from "../components/AvatarStack"
+import { PrincipleIcon } from "../components/Icon"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 
@@ -18,26 +18,6 @@ const principleQueryDocument = graphql(`
 `)
 
 type PrincipleFromQuery = types.PrincipleQuery["principle"][number]
-
-export interface PrincipleIconProps extends Omit<AvatarProps, "src"> {
-    principle: string
-}
-
-const PrincipleIcon = ({
-    principle,
-    alt = principle,
-    title = principle,
-    variant = "square",
-    ...props
-}: PrincipleIconProps) => (
-    <Avatar
-        alt={alt}
-        title={title}
-        variant={variant}
-        src={new URL(`/data/principle/${principle}.png`, import.meta.url).href}
-        {...props}
-    />
-)
 
 interface PrincipleIconGroupProps {
     principles: PrincipleFromQuery[]
@@ -97,9 +77,4 @@ const Principles = () => {
     )
 }
 
-export {
-    PrincipleIcon,
-    PrincipleIconGroup,
-    PrincipleCard,
-    Principles as default,
-}
+export { PrincipleIconGroup, PrincipleCard, Principles as default }
