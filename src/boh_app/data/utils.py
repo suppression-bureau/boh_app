@@ -5,7 +5,7 @@ from typing import Any
 
 from ..settings import CACHE_DIR
 from ..utils import find_boh_dir
-from .types import Item, Slot, Workstation
+from .types import Item, Recipe, Skill, Slot, Workstation
 
 
 class SteamFiles(StrEnum):
@@ -15,7 +15,11 @@ class SteamFiles(StrEnum):
     SOUL2 = "elements/abilities2.json"
     SOUL3 = "elements/abilities3.json"
     SOUL4 = "elements/abilities4.json"
+    SKILL = "elements/skills.json"
     WORKSTATION = "verbs/workstations_library_world.json"
+    RECIPE_KEEPER = "recipes/crafting_2_keeper.json"
+    RECIPE_SCHOLAR = "recipes/crafting_3_scholar.json"
+    RECIPE_PRENTICE = "recipes/crafting_4b_prentice.json"
 
 
 def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
@@ -34,7 +38,10 @@ def get_valid_refs(name: str) -> list[str]:
     return [d["id"] for d in get_data(name)]
 
 
-def write_gen_file(name: str, data: list[Slot] | list[Workstation] | list[Item]):
+gen_data_types = list[Slot] | list[Workstation] | list[Item] | list[Skill] | list[Recipe]
+
+
+def write_gen_file(name: str, data: gen_data_types):
     outpath = CACHE_DIR / f"{name}.json"
     logging.info(f"Writing {len(data)} items to {outpath}")
 
