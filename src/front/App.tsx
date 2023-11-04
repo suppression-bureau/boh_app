@@ -130,7 +130,7 @@ const AppBar = styled(MuiAppBar, {
     }),
     ...(open && {
         width: `calc(100% - ${drawerWidth}px)`,
-        marginLeft: `${drawerWidth}px`,
+        marginInlineStart: `${drawerWidth}px`,
         transition: theme.transitions.create(["margin", "width"], {
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
@@ -199,13 +199,13 @@ const Main = styled("main", {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: `-${drawerWidth}px`,
+    marginInlineStart: `-${drawerWidth}px`,
     ...(open && {
         transition: theme.transitions.create("margin", {
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
         }),
-        marginLeft: 0,
+        marginInlineStart: 0,
     }),
 }))
 
