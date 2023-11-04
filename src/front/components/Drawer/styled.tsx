@@ -1,4 +1,5 @@
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
+import Box from "@mui/material/Box"
 import { Theme, styled } from "@mui/material/styles"
 
 const makeLeaveTransition = (theme: Theme, props: string | string[]) =>
@@ -34,7 +35,7 @@ interface MainProps {
     drawerWidth: number
 }
 
-export const Main = styled("main", {
+export const Main = styled(Box, {
     shouldForwardProp: (prop) => prop !== "open" && prop !== "drawerWidth",
 })<MainProps>(({ theme, open, drawerWidth }) => ({
     transition: makeLeaveTransition(theme, "margin"),

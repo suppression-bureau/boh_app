@@ -166,6 +166,10 @@ function Content() {
             sx={{
                 flexGrow: 1,
                 paddingBlockEnd: theme.spacing(3),
+                display: "flex",
+                flexDirection: "column",
+                "& > *": { flexGrow: 0 },
+                "& > .slide-routes": { flexGrow: 1 },
             }}
         >
             <Offset />
@@ -195,7 +199,7 @@ export default function App() {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <AppNav />
-            <Stack direction="row">
+            <Stack direction="row" sx={{ display: "flex", flexGrow: 1 }}>
                 <Drawer />
                 <Content />
             </Stack>
