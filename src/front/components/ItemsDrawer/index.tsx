@@ -12,9 +12,9 @@ import Typography from "@mui/material/Typography"
 
 import Delete from "@mui/icons-material/Delete"
 
-import { PRINCIPLES, PrincipleString, VisibleItem } from "../types"
-import { useDrawerContext } from "./Drawer"
-import { PrincipleIcon, PrincipleIconProps } from "./Icon"
+import { PRINCIPLES, PrincipleString, VisibleItem } from "../../types"
+import { useDrawerContext } from "../Drawer"
+import { PrincipleIcon, PrincipleIconProps } from "../Icon"
 
 interface PrincipleCounterProps extends PrincipleIconProps {
     principle: PrincipleString

@@ -13,17 +13,17 @@ import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
 
 import ErrorDisplay from "../components/ErrorDisplay"
+import {
+    ItemsDrawerContextProvider,
+    itemsQueryDocument,
+} from "../components/ItemsDrawer/context"
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { Principle } from "../types"
 import { AspectIconGroup } from "./Aspects"
-import {
-    ItemsDrawerContextProvider,
-    ItemsView,
-    itemsQueryDocument,
-} from "./Items"
+import { ItemsView } from "./Items"
 import { PrincipleIconGroup } from "./Principles"
 import { SkillsStack, skillQueryDocument } from "./Skills"
 

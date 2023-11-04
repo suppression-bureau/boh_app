@@ -22,10 +22,11 @@ import {
     ExaltationIcon,
     PrincipleIcon,
 } from "../components/Icon"
+import { ItemsDrawerContextProvider } from "../components/ItemsDrawer/context"
 import LoadingIndicator from "../components/LoadingIndicator"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
-import { ItemsDrawerContextProvider, ItemsView } from "./Items"
+import { ItemsView } from "./Items"
 
 const assistantQueryDocument = graphql(`
     query Assistant {
