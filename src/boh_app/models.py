@@ -197,19 +197,19 @@ class RecipeInternal(Base, NameMixin):
     recipe: Mapped[Recipe] = relationship(back_populates="recipe_internals")
 
 
-class Recipe(Base, IdMixin):
+class Recipe(Base, NameMixin):
     __tablename__ = "recipe"
 
-    product_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
+    product_id: Mapped[str] = mapped_column(ForeignKey("item.id"))
     product: Mapped[Item] = relationship(back_populates="source_recipe", foreign_keys=[product_id])
 
-    source_item_id: Mapped[int | None] = mapped_column(ForeignKey("item.id"))
+    source_item_id: Mapped[str | None] = mapped_column(ForeignKey("item.id"))
     source_item: Mapped[Item] = relationship(back_populates="product_recipe", foreign_keys=[source_item_id])
 
     source_aspect_id: Mapped[str | None] = mapped_column(ForeignKey("aspect.id"))
     source_aspect: Mapped[Aspect] = relationship()
 
-    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))  # TODO:  make nullable
+    principle_id: Mapped[str] = mapped_column(ForeignKey("principle.id"))
     principle: Mapped[Principle] = relationship()
     principle_amount: Mapped[int]
 

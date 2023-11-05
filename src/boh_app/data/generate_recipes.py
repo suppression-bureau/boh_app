@@ -62,16 +62,21 @@ class RecipeHandler:
 
     def mk_model_data(self, recipe: dict[str, Any]) -> None:
         principle, amount = self._get_principle(recipe)
+        product = self._get_product(recipe)
+        compound_id = f"{product['id']}_{principle['id']}"
         model = Recipe(
-            product=self._get_product(recipe),
+            id=compound_id,
+            product=product,
             principle=principle,
             principle_amount=amount,
             known=False,
         )
         if source_aspect := self._get_source_aspect(recipe):
             model["source_aspect"] = source_aspect
+            model["id"] = f"{compound_id}_{source_aspect['id']}"
         if source_item := self._get_source_item(recipe):
             model["source_item"] = source_item
+            model["id"] = f"{compound_id}_{source_item['id']}"
         source_key = source_item["id"] if source_item else None
         recipe_key = (model["product"]["id"], source_key, model["principle"]["id"], model["principle_amount"])
         internal_id = RecipeInternal(id=recipe["id"])

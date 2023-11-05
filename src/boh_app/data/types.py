@@ -77,6 +77,7 @@ class RecipeInternal(TypedDict):
 
 
 class Recipe(TypedDict):
+    id: str
     product: ItemRef
     source_aspect: NotRequired[Aspect]
     source_item: NotRequired[ItemRef]
