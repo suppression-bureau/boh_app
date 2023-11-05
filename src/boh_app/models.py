@@ -190,6 +190,13 @@ class Item(Base, NameMixin):
     product_recipe: Mapped[list[Recipe]] = relationship(back_populates="source_item", primaryjoin="Item.id==Recipe.source_item_id")
 
 
+class RecipeInternal(Base, NameMixin):
+    __tablename__ = "recipe_internal"
+
+    recipe_id: Mapped[int] = mapped_column(ForeignKey("recipe.id"))
+    recipe: Mapped[Recipe] = relationship(back_populates="recipe_internals")
+
+
 class Recipe(Base, IdMixin):
     __tablename__ = "recipe"
 
@@ -208,6 +215,7 @@ class Recipe(Base, IdMixin):
 
     known: Mapped[bool] = mapped_column(default=False)
 
+    recipe_internals: Mapped[list[RecipeInternal]] = relationship(back_populates="recipe")
     skills: Mapped[list[Skill]] = relationship(back_populates="recipes", secondary=recipe_skill_association)
 
 

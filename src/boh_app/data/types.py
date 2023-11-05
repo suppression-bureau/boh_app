@@ -72,6 +72,10 @@ class SkillRef(TypedDict):
     id: str
 
 
+class RecipeInternal(TypedDict):
+    id: str
+
+
 class Recipe(TypedDict):
     product: ItemRef
     source_aspect: NotRequired[Aspect]
@@ -80,3 +84,4 @@ class Recipe(TypedDict):
     principle_amount: int
     known: bool
     skills: NotRequired[list[SkillRef]]
+    recipe_internals: NotRequired[list[RecipeInternal]]

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from .types import Aspect, ItemRef, Principle, Recipe, SkillRef
+from .types import Aspect, ItemRef, Principle, Recipe, RecipeInternal, SkillRef
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
@@ -74,8 +74,11 @@ class RecipeHandler:
             model["source_item"] = source_item
         source_key = source_item["id"] if source_item else None
         recipe_key = (model["product"]["id"], source_key, model["principle"]["id"], model["principle_amount"])
+        internal_id = RecipeInternal(id=recipe["id"])
         if recipe_key in self.recipe_map:
             self.recipe_map[recipe_key]["skills"].append(self._get_skill(recipe))
+            self.recipe_map[recipe_key]["recipe_internals"].append(internal_id)
         else:
             model["skills"] = [self._get_skill(recipe)]
+            model["recipe_internals"] = [internal_id]
             self.recipe_map[recipe_key] = model
