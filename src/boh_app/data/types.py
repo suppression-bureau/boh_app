@@ -86,3 +86,21 @@ class Recipe(TypedDict):
     known: bool
     skills: NotRequired[list[SkillRef]]
     recipe_internals: NotRequired[list[RecipeInternal]]
+
+
+class KnownSkill(TypedDict):
+    id: str
+    level: int
+    committed_wisdom: NotRequired[Wisdom]
+    evolvable_soul: NotRequired[ItemRef]
+
+
+class KnownRecipe(TypedDict):
+    id: str
+    skills: list[SkillRef]
+
+
+class Autosave(TypedDict):
+    items: list[Item]
+    skills: list[KnownSkill]
+    recipes: list[KnownRecipe]
