@@ -59,9 +59,9 @@ class Skill(TypedDict):
     name: str
     level: NotRequired[int]
     committed: NotRequired[bool]
-    primary_principle: NotRequired[Principle]
-    secondary_principle: NotRequired[Principle]
-    wisdoms: NotRequired[list[Wisdom]]
+    primary_principle: Principle
+    secondary_principle: Principle
+    wisdoms: list[Wisdom]
 
 
 class ItemRef(TypedDict):
@@ -101,6 +101,6 @@ class KnownRecipe(TypedDict):
 
 
 class Autosave(TypedDict):
-    items: list[Item]
+    items: list[ItemRef]
     skills: list[KnownSkill]
     recipes: list[KnownRecipe]
