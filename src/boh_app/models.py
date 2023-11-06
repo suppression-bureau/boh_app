@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, cast
 
+from marshmallow.fields import Boolean
 from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -162,6 +163,12 @@ class Skill(Base, NameMixin):
 
 class Item(Base, NameMixin):
     __tablename__ = "item"
+
+    @classmethod
+    def _additional_fields(cls):
+        return {
+            "is_craftable": Boolean(),
+        }
 
     name: Mapped[str]
     aspects: Mapped[list[Aspect]] = relationship(back_populates="items", secondary=item_aspect_association)
