@@ -100,7 +100,7 @@ class KnownRecipe(TypedDict):
     skills: list[SkillRef]
 
 
-class Autosave(TypedDict):
+class ProcessedAutosave(TypedDict):
     items: list[ItemRef]
     skills: list[KnownSkill]
     recipes: list[KnownRecipe]

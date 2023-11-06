@@ -1,9 +1,10 @@
 import json
+from functools import cached_property
 from pathlib import Path
 from typing import Any
 
 from .load_data import get_data
-from .types import ItemRef, KnownRecipe, KnownSkill, Skill, SkillRef
+from .types import ItemRef, KnownRecipe, KnownSkill, ProcessedAutosave, Skill, SkillRef
 from .utils import get_valid_refs
 
 AUTOSAVE = Path("/Users/ded/Library/Application Support/Weather Factory/Book of Hours/AUTOSAVE.json")
@@ -15,7 +16,7 @@ def load_autosave() -> dict[str, Any]:
     return data
 
 
-def get_knowns() -> dict[str, Any]:
+def get_knowns() -> ProcessedAutosave:
     data = load_autosave()
     return AutosaveHandler().return_knowns(data)
 
@@ -24,31 +25,59 @@ class AutosaveHandler:
     def __init__(self):
         self.valid_items = get_valid_refs("item")
         self.valid_skills = get_valid_refs("skill")
-        self.skill_names_id_mapping = {s[2:]: s for s in list(self.valid_skills)}
+        self.skill_names_id_mapping = {s[2:]: s for s in list(self.valid_skills)}  # slice to remove "s."
         self.skill_data = get_data("skill")
         self.recipes = get_data("recipe")
-        self.internal_name_mapping = {}
+        self.seen_souls = set()
+
+    @cached_property
+    def internal_name_mapping(self) -> dict[str, tuple[str, str]]:
+        mapping = {}
         for recipe in self.recipes:
             for internal_name in recipe["recipe_internals"]:
                 skill_id = next(v for k, v in self.skill_names_id_mapping.items() if k in internal_name["id"])
-                self.internal_name_mapping[internal_name["id"]] = (recipe["id"], skill_id)
+                mapping[internal_name["id"]] = (recipe["id"], skill_id)
+        return mapping
 
-    def return_knowns(self, data: dict[str, Any]):
-        processed_data = {
-            "items": self.get_items(data),
-            "skills": self.get_skills(data),
-            "recipes": self.get_recipes(data),
-        }
+    def return_knowns(self, data: dict[str, Any]) -> ProcessedAutosave:
+        items = self.get_items(data) + self.get_souls(data)
+        recipes = self.get_recipes(data)
+        items.extend(self.get_items_from_recipes(recipes))
+        processed_data = ProcessedAutosave(
+            items=items,
+            skills=self.get_skills(data),
+            recipes=recipes,
+        )
         return processed_data
 
     def get_items(self, data: dict[str, Any]) -> list[ItemRef]:
         known_elements = data["CharacterCreationCommands"][0]["UniqueElementsManifested"]
         return [(ItemRef(id=ke)) for ke in known_elements if ke in self.valid_items]
 
-    def get_skill_data(self, skill_id: str) -> Skill:
-        assert skill_id in self.valid_skills
-        skill = next(s for s in self.skill_data if s["id"] == skill_id)
-        return Skill(**skill)
+    def get_souls(self, data: dict[str, Any]) -> list[ItemRef]:
+        root_data = data["RootPopulationCommand"]["Spheres"][19]
+        assert root_data["GoverningSphereSpec"]["Id"] == "hand.abilities"
+        souls = [self._get_soul(s) for s in root_data["Tokens"]]
+        return [s for s in souls if s is not None]
+
+    def _get_soul(self, soul_datum: dict[str, Any]) -> ItemRef | None:
+        soul_item = soul_datum["Payload"]["EntityId"]
+        if soul_item.startswith("z"):
+            soul_item = f"x{soul_item[1:]}"
+        if soul_item in self.valid_items:
+            if soul_item not in self.seen_souls:
+                self.seen_souls.add(soul_item)
+                return ItemRef(id=soul_item)
+        return None
+
+    def get_items_from_recipes(self, recipes: list[KnownRecipe]) -> list[ItemRef]:
+        recipe_product_mapping = {r["id"]: r["product"]["id"] for r in self.recipes}
+        return [ItemRef(id=recipe_product_mapping[recipe["id"]]) for recipe in recipes]
+
+    def get_skills(self, data: dict[str, Any]) -> list[KnownSkill]:
+        root_data = data["RootPopulationCommand"]["Spheres"][20]
+        assert root_data["GoverningSphereSpec"]["Id"] == "hand.skills"
+        return [self._get_skill(skill_data) for skill_data in root_data["Tokens"]]
 
     def _get_skill(self, skill_datum: dict[str, Any]) -> KnownSkill:
         skill_payload = skill_datum["Payload"]
@@ -68,10 +97,10 @@ class AutosaveHandler:
             known_skill["level"] += level_ups
         return known_skill
 
-    def get_skills(self, data: dict[str, Any]) -> list[KnownSkill]:
-        root_data = data["RootPopulationCommand"]["Spheres"][20]
-        assert root_data["GoverningSphereSpec"]["Id"] == "hand.skills"
-        return [self._get_skill(skill_data) for skill_data in root_data["Tokens"]]
+    def get_skill_data(self, skill_id: str) -> Skill:
+        assert skill_id in self.valid_skills
+        skill = next(s for s in self.skill_data if s["id"] == skill_id)
+        return Skill(**skill)
 
     def get_recipes(self, data: dict[str, Any]) -> list[KnownRecipe]:
         known_elements = data["CharacterCreationCommands"][0]["AmbittableRecipesUnlocked"]
