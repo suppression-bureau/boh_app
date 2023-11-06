@@ -183,11 +183,12 @@ class Item(Base, NameMixin):
     sky: Mapped[int] = mapped_column(default=0)
     winter: Mapped[int] = mapped_column(default=0)
 
-    # TODO: derived from has(product_recipe)
-    is_craftable: Mapped[bool] = mapped_column(default=False)
-
     source_recipe: Mapped[list[Recipe]] = relationship(back_populates="product", primaryjoin="Item.id==Recipe.product_id")
     product_recipe: Mapped[list[Recipe]] = relationship(back_populates="source_item", primaryjoin="Item.id==Recipe.source_item_id")
+
+    @hybrid_property
+    def is_craftable(self) -> bool:
+        return len(self.product_recipe) > 0
 
 
 class RecipeInternal(Base, NameMixin):
