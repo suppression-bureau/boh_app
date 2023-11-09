@@ -22,6 +22,7 @@ import {
     PrincipleString,
     VisibleItem,
 } from "../types"
+import { useUserDataContext } from "../userContext"
 
 type AspectFromQuery = ItemFromQuery["aspects"][number]
 
@@ -144,7 +145,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
                 onClick={handleToggleSelect}
                 sx={sx}
             >
-                <ListItemText primary={item.id} />
+                <ListItemText primary={item.name} />
                 <ItemValues {...item} />
             </ListItemButton>
         </ListItem>
@@ -180,12 +181,19 @@ const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
 
 export const ItemsView = ({ filters }: ItemsProps) => {
     const { items, itemRefs } = useItemsDrawer()
+    const { knownItems } = useUserDataContext()
+    const knownItemsSet = new Set(knownItems.map(({ id }) => id))
+    const userKnownItems: ItemFromQuery[] = items.map((item) => {
+        if (knownItemsSet.has(item.id)) return { ...item, known: true }
+        return { ...item }
+        // use baseline known value, as items that are not crafted cannot be "known" in this way
+    })
     const filteredItems = useMemo(
         () =>
-            filterItems(items, { known: true, ...filters }).filter(
+            filterItems(userKnownItems, { known: true, ...filters }).filter(
                 ({ isVisible }) => isVisible,
             ),
-        [items, filters],
+        [userKnownItems, filters],
     )
     return <ItemsList items={filteredItems} itemRefs={itemRefs} />
 }
