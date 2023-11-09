@@ -22,7 +22,8 @@ import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { PrincipleCard } from "../routes/Principles"
-import { Principle } from "../types"
+import { KnownSkill, Principle } from "../types"
+import { useUserDataContext } from "../userContext"
 
 const API_URL = "http://localhost:8000"
 
@@ -30,6 +31,7 @@ export const skillQueryDocument = graphql(`
     query Skills {
         skill {
             id
+            name
             level
             primary_principle {
                 id
@@ -50,6 +52,7 @@ type SkillAction = SkillActionInner | SkillActionOuter
 type SkillActionInner =
     | { type: "update"; skill: SkillFromQuery }
     | { type: "sort"; principle: Principle | undefined }
+    | { type: "setKnown"; skills: KnownSkill[] }
 /** Synchronously handleable actions that we dispatch manually */
 type SkillActionOuter = never
 
@@ -68,6 +71,20 @@ function skillReducer(
             if (!action.principle)
                 return state.toSorted((a, b) => a.id.localeCompare(b.id))
             return state.toSorted((a, b) => b.level - a.level)
+        }
+        case "setKnown": {
+            return state
+                .map((skill) => {
+                    const knownSkill = action.skills.find(
+                        (s) => s.id === skill.id,
+                    )
+                    if (!knownSkill) return skill
+                    return {
+                        ...skill,
+                        level: knownSkill.level,
+                    }
+                })
+                .toSorted((a, b) => a.id.localeCompare(b.id))
         }
     }
 }
@@ -103,7 +120,7 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
     }, [skill, onIncrement])
     return (
         <Card>
-            <CardHeader title={skill.id} />
+            <CardHeader title={skill.name} />
             <CardActions sx={{ gap: 2 }}>
                 <PrincipleCard
                     id={skill.primary_principle.id}
@@ -250,7 +267,11 @@ const SkillsView = () => {
         data!.skill,
         skillHandlers,
     )
-
+    const { knownSkills } = useUserDataContext()
+    useMemo(
+        () => dispatch({ type: "setKnown", skills: knownSkills }),
+        [dispatch, knownSkills],
+    )
     const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>()
 
     const handleSelectedPrinciple = useCallback(
