@@ -1,8 +1,9 @@
 import json
+import sys
 from functools import cached_property
 from typing import Any
 
-from platformdirs import user_data_path
+from platformdirs import user_config_path, user_data_path
 
 from .load_data import get_data
 from .types import ItemRef, KnownRecipe, KnownSkill, ProcessedAutosave, Skill, SkillRef
@@ -10,11 +11,12 @@ from .utils import get_valid_refs
 
 
 def load_autosave() -> dict[str, Any]:
-    data_dir = user_data_path("Book of Hours", "Weather Factory")
-    if not data_dir.is_dir():
-        # a bit hacky, but for some reason the macOS default is  {...}/{appname}
-        # and does not use appauthor
-        data_dir = user_data_path("Weather Factory", version="Book of Hours")
+    if sys.platform.startswith("darwin"):
+        data_dir = user_data_path() / "Weather Factory/Book of Hours"
+    elif sys.platform.startswith("linux"):
+        data_dir = user_config_path("unity3d") / "Weather Factory/Book of Hours"
+    else:
+        raise NotImplementedError(f"Unsupported platform: {sys.platform}")
     autosave_file = data_dir / "AUTOSAVE.json"
     with autosave_file.open() as a:
         data = json.load(a)
