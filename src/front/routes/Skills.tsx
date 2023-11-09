@@ -43,6 +43,22 @@ export const skillQueryDocument = graphql(`
     }
 `)
 
+function updateSkills(
+    state: SkillFromQuery[],
+    skills: KnownSkill[],
+): SkillFromQuery[] {
+    return state
+        .map((skill) => {
+            const knownSkill = skills.find((s) => s.id === skill.id)
+            if (!knownSkill) return skill
+            return {
+                ...skill,
+                level: knownSkill.level,
+            }
+        })
+        .toSorted((a, b) => a.id.localeCompare(b.id))
+}
+
 type SkillFromQuery = types.SkillsQuery["skill"][number]
 
 /** Actions that can be handled synchronously in the reducer */
@@ -73,18 +89,7 @@ function skillReducer(
             return state.toSorted((a, b) => b.level - a.level)
         }
         case "setKnown": {
-            return state
-                .map((skill) => {
-                    const knownSkill = action.skills.find(
-                        (s) => s.id === skill.id,
-                    )
-                    if (!knownSkill) return skill
-                    return {
-                        ...skill,
-                        level: knownSkill.level,
-                    }
-                })
-                .toSorted((a, b) => a.id.localeCompare(b.id))
+            return updateSkills(state, action.skills)
         }
     }
 }
@@ -226,9 +231,11 @@ export const SkillsStack = ({
     onSkillIncrement,
 }: SkillStackProps) => {
     const [{ data }] = useQuery({ query: skillQueryDocument })
+    const { knownSkills } = useUserDataContext()
+
     const allSkills = useMemo(
-        () => skills ?? data!.skill.toSorted((a, b) => b.level - a.level),
-        [data, skills],
+        () => skills ?? updateSkills(data!.skill, knownSkills),
+        [data, skills, knownSkills],
     )
     const selectedPrincipleSet = useMemo(
         () => new Set(selectedPrinciples?.map(({ id }) => id)),
