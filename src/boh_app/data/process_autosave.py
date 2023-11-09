@@ -3,15 +3,21 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any
 
+from platformdirs import user_data_dir
+
 from .load_data import get_data
 from .types import ItemRef, KnownRecipe, KnownSkill, ProcessedAutosave, Skill, SkillRef
 from .utils import get_valid_refs
 
-AUTOSAVE = Path("/Users/ded/Library/Application Support/Weather Factory/Book of Hours/AUTOSAVE.json")
-
 
 def load_autosave() -> dict[str, Any]:
-    with AUTOSAVE.open() as a:
+    data_dir = Path(user_data_dir("Book of Hours", "Weather Factory"))
+    if not data_dir.is_dir():
+        # a bit hacky, but for some reason the macOS default is  {...}/{appname}
+        # and does not use appauthor
+        data_dir = Path(user_data_dir("Weather Factory", version="Book of Hours"))
+    autosave_file = data_dir / "AUTOSAVE.json"
+    with autosave_file.open() as a:
         data = json.load(a)
     return data
 
