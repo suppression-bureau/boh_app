@@ -57,7 +57,7 @@ function filterItems(
             .map(({ id }) => id as PrincipleString)
             .flatMap((principle) =>
                 filteredState
-                    .filter((item) => item[principle] !== null)
+                    .filter((item) => item[principle] > 0)
                     // NB: this doesn't work with principles.length > 1
                     .toSorted(
                         (a, b) => (b[principle] ?? 0) - (a[principle] ?? 0),
@@ -182,12 +182,19 @@ const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
 export const ItemsView = ({ filters }: ItemsProps) => {
     const { items, itemRefs } = useItemsDrawer()
     const { knownItems } = useUserDataContext()
-    const knownItemsSet = new Set(knownItems.map(({ id }) => id))
-    const userKnownItems: ItemFromQuery[] = items.map((item) => {
-        if (knownItemsSet.has(item.id)) return { ...item, known: true }
-        return { ...item }
-        // use baseline known value, as items that are not crafted cannot be "known" in this way
-    })
+    const knownItemsSet = useMemo(
+        () => new Set(knownItems.map(({ id }) => id)),
+        [knownItems],
+    )
+    const userKnownItems: ItemFromQuery[] = useMemo(
+        () =>
+            items.map((item) => {
+                if (knownItemsSet.has(item.id)) return { ...item, known: true }
+                return { ...item }
+                // use baseline known value, as items that are not crafted cannot be "known" in this way
+            }),
+        [items, knownItemsSet],
+    )
     const filteredItems = useMemo(
         () =>
             filterItems(userKnownItems, { known: true, ...filters }).filter(
