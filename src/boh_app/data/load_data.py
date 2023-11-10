@@ -9,13 +9,17 @@ from sqlalchemy.orm import Session
 
 from boh_app.data.types import PrincipleID
 
-from ..models import Base, Principle, get_tablename_model_mapping
+from ..models import Base, get_tablename_model_mapping
 from ..settings import CACHE_DIR
 
 HERE = Path(__file__).parent
+SPECIAL = {"principle"}
+"""Data not loaded from JSON"""
 
 
 def get_data(name: str) -> list[dict[str, Any]]:
+    if name == "principle":
+        return [{"id": p} for p in get_args(PrincipleID)]
     data_file_paths = find_files()
     path = data_file_paths[name]
     with path.open() as a:
@@ -44,12 +48,11 @@ def find_files():
 
 def load_all(session: Session) -> None:
     """Load sorted data into database."""
-    data_file_paths = find_files()
+    data_sources = find_files() | dict.fromkeys(SPECIAL)
     tablename2model = get_tablename_model_mapping()
-    add_data([{"id": p} for p in get_args(PrincipleID)], Principle, session=session)
     # add recipe dependency on skill to ensure skill sorted before recipe
     Base.metadata.tables["recipe"].add_is_dependent_on(Base.metadata.tables["skill"])
     for name in [t.fullname for t in Base.metadata.sorted_tables]:
-        if name in data_file_paths:
-            logging.info(f"Loading {name} data from {data_file_paths[name]}")
+        if name in data_sources:
+            logging.info(f"Loading {name} data from {data_sources[name] or 'special source'}")
             add_data(get_data(name), tablename2model[name], session=session)
