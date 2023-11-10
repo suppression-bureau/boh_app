@@ -38,7 +38,7 @@ class AutosaveHandler:
         self.seen_souls = set()
 
     @cached_property
-    def internal_name_mapping(self) -> dict[str, tuple[str, str]]:
+    def internal_recipe_name_mapping(self) -> dict[str, tuple[str, str]]:
         mapping = {}
         for recipe in self.recipes:
             for internal_name in recipe["recipe_internals"]:
@@ -47,11 +47,9 @@ class AutosaveHandler:
         return mapping
 
     def return_knowns(self, data: dict[str, Any]) -> ProcessedAutosave:
-        items = self.get_items(data) + self.get_souls(data)
         recipes = self.get_recipes(data)
-        items.extend(self.get_items_from_recipes(recipes))
         processed_data = ProcessedAutosave(
-            items=items,
+            items=self.get_items(data) + self.get_souls(data) + self.get_items_from_recipes(recipes),
             skills=self.get_skills(data),
             recipes=recipes,
         )
@@ -97,6 +95,7 @@ class AutosaveHandler:
             not_wisdom = next(k.split("w.")[1].capitalize() for k, _ in mutations.items() if k.startswith("w."))
             wisdom = next(w for w in skill["wisdoms"] if w["id"] != not_wisdom)
             known_skill["committed_wisdom"] = wisdom
+            # some discrepancy in the data; they changed how this was handled at some point.
             evolvable_soul = next((k.split("a.")[1] for k, _ in mutations.items() if k.startswith("a.")), None)
             if evolvable_soul and evolvable_soul in self.valid_items:
                 known_skill["evolvable_soul"] = ItemRef(id=evolvable_soul)
@@ -113,8 +112,8 @@ class AutosaveHandler:
         known_elements = data["CharacterCreationCommands"][0]["AmbittableRecipesUnlocked"]
         known_recipe_skills_mapping: dict[str, list[SkillRef]] = {}
         for element in known_elements:
-            if element in self.internal_name_mapping:
-                recipe_id, skill_id = self.internal_name_mapping[element]
+            if element in self.internal_recipe_name_mapping:
+                recipe_id, skill_id = self.internal_recipe_name_mapping[element]
                 if recipe_id not in known_recipe_skills_mapping:
                     known_recipe_skills_mapping[recipe_id] = [SkillRef(id=skill_id)]
                 else:
