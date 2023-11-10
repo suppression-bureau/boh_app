@@ -159,6 +159,8 @@ interface ItemsListProps {
 
 // This list is long, use memo to prevent rerendering
 const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
+    if (items.length === 0)
+        return <Typography>no items match search criteria</Typography>
     return (
         <List
             sx={{
