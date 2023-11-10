@@ -34,14 +34,14 @@ export default function Home() {
                     <SixthHistoryAvatar sx={{ mr: 3 }} />
                     <Typography component="p">
                         Book of Hours companion is unofficial content based on
-                        Book of Hours by Weather Factory Ltd.
+                        BOOK OF HOURS by Weather Factory Ltd.
                         <br />
-                        You can find out more and support Book of Hours at{" "}
+                        You can find out more and support BOOK OF HOURS at{" "}
                         <Link
-                            href="https://www.weatherfactory.biz"
+                            href="https://www.weatherfactory.biz/book-of-hours"
                             color={theme.palette.secondary.contrastText}
                         >
-                            www.weatherfactory.biz
+                            www.weatherfactory.biz/book-of-hours
                         </Link>
                         .
                     </Typography>
