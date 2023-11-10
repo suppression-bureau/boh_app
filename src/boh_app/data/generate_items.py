@@ -73,6 +73,8 @@ class ItemHandler:
         label = "Label" if inherits else "label"
         id = "ID" if inherits else "id"
         name = item[label].split(" (")[0]  # e.g. "{drink} (Bottle)" | "{drink} (Half-Full)"
+        if name == "Wire":
+            name = f'{item[id].split(".")[1].capitalize()} {name}'
         model = Item(id=item[id], name=name)
         model_aspects = []
 
@@ -93,4 +95,4 @@ class ItemHandler:
 
 def dedup(items: list[Item]) -> list[Item]:
     seen = set()
-    return [item for item in items if item["id"] not in seen and not seen.add(item["id"])]
+    return [item for item in items if item["name"] not in seen and not seen.add(item["name"])]
