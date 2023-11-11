@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, cast, get_args
+from typing import TYPE_CHECKING, ClassVar, cast
 
 from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
-from sqlalchemy.types import Enum as SqlaEnum
 
-from .data.types import PrincipleID
+# Needs to be available at runtime
+from .data.types import PrincipleID  # noqa: TCH001
 
 if TYPE_CHECKING:
     from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -108,7 +108,7 @@ class Principle(Base):
     __tablename__ = "principle"
 
     # use special enum instead of NameMixin
-    id: Mapped[PrincipleID] = mapped_column(SqlaEnum(*get_args(PrincipleID), name="principle_id"), primary_key=True)
+    id: Mapped[PrincipleID] = mapped_column(primary_key=True)
 
     primary_skills: Mapped[list[Skill]] = relationship(
         back_populates="primary_principle", primaryjoin="Skill.primary_principle_id==Principle.id"
@@ -124,7 +124,7 @@ class PrincipleCount(Base, IdMixin):
     __tablename__ = "principle_count"
     # __table_args__ = (UniqueConstraint("principle_id", "count"),) Doesn't work with data loader, IntegrityError
 
-    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
+    principle_id: Mapped[PrincipleID] = mapped_column(ForeignKey("principle.id"))
     principle: Mapped[Principle] = relationship()
 
     count: Mapped[int]
@@ -151,10 +151,10 @@ class Skill(Base, NameMixin):
 
     level: Mapped[int] = mapped_column(default=0)
     committed: Mapped[bool] = mapped_column(default=False)
-    primary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
+    primary_principle_id: Mapped[PrincipleID] = mapped_column(ForeignKey("principle.id"))
     primary_principle: Mapped[Principle] = relationship(back_populates="primary_skills", foreign_keys=[primary_principle_id])
 
-    secondary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
+    secondary_principle_id: Mapped[PrincipleID] = mapped_column(ForeignKey("principle.id"))
     secondary_principle: Mapped[Principle] = relationship(back_populates="secondary_skills", foreign_keys=[secondary_principle_id])
 
     wisdoms: Mapped[list[Wisdom]] = relationship(back_populates="skills", secondary=skill_wisdom_association)
@@ -208,7 +208,7 @@ class Recipe(Base, IdMixin):
     source_aspect_id: Mapped[str | None] = mapped_column(ForeignKey("aspect.id"))
     source_aspect: Mapped[Aspect] = relationship()
 
-    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))  # TODO:  make nullable
+    principle_id: Mapped[PrincipleID] = mapped_column(ForeignKey("principle.id"))  # TODO:  make nullable
     principle: Mapped[Principle] = relationship()
     principle_amount: Mapped[int]
 

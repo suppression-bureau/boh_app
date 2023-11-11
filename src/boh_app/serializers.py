@@ -4,6 +4,7 @@ sqlalchemy_to_marshmallow is modified from https://marshmallow-sqlalchemy.readth
 import sys
 import warnings
 from collections.abc import Container, Generator
+from enum import Enum
 from functools import reduce
 from inspect import get_annotations, signature
 from operator import or_
@@ -165,8 +166,12 @@ def get_python_type(sqla_type: type | UnionType | None):
         return get_python_type_inner(sqla_type), is_nullable
 
 
-def get_python_type_inner(sqla_type: type | None) -> ForwardRef | None:
-    if sqla_type in (None, type(None)) or issubclass(sqla_type, str | int):
+def get_python_type_inner(sqla_type: type | None) -> ForwardRef | type[Enum] | None:
+    if sqla_type in (None, type(None)):
+        return None
+    if issubclass(sqla_type, Enum):
+        return sqla_type  # can be StrEnum, so check first
+    if issubclass(sqla_type, str | int):
         return None
     return ForwardRef(f"{sqla_type.__name__}FlatModel", module=SYNTH_MODULE)
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Literal, NotRequired, TypedDict
+from enum import StrEnum, auto
+from typing import NotRequired, TypedDict
 
 
 class Workstation(TypedDict):
@@ -18,7 +19,20 @@ class Slot(TypedDict):
     accepts: NotRequired[list[Aspect]]
 
 
-PrincipleID = Literal["edge", "forge", "grail", "heart", "knock", "lantern", "moon", "moth", "nectar", "rose", "scale", "sky", "winter"]
+class PrincipleID(StrEnum):
+    edge = auto()
+    forge = auto()
+    grail = auto()
+    heart = auto()
+    knock = auto()
+    lantern = auto()
+    moon = auto()
+    moth = auto()
+    nectar = auto()
+    rose = auto()
+    scale = auto()
+    sky = auto()
+    winter = auto()
 
 
 class Principle(TypedDict):
