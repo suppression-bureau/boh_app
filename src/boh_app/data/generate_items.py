@@ -18,7 +18,7 @@ def gen_model_data():
 
     model_data = [item_handler.mk_model_data(item) for item in data]
     model_data += [item_handler.mk_model_data(item, inherits=False) for item in get_soul_data()]
-    return dedup(model_data)
+    return descrumpify(model_data)
 
 
 def get_soul_data():
@@ -96,6 +96,7 @@ class ItemHandler:
         return model
 
 
-def dedup(items: list[Item]) -> list[Item]:
+def descrumpify(items: list[Item]) -> list[Item]:
+    # Scrumpy is only item that does not match conventions, i.e. distributable
     seen = set()
     return [item for item in items if item["name"] not in seen and not seen.add(item["name"])]
