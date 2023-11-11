@@ -8,17 +8,13 @@ HERE = Path(__file__).parent
 
 
 def gen_items_json():
-    model_data = gen_model_data()
-    write_gen_file("item", model_data)
-
-
-def gen_model_data():
     data = prune_data(get_steam_data(SteamFiles.ITEM))
     item_handler = ItemHandler()
 
     model_data = [item_handler.mk_model_data(item) for item in data]
     model_data += [item_handler.mk_model_data(item, inherits=False) for item in get_soul_data()]
-    return descrumpify(model_data)
+    model_data = descrumpify(model_data)
+    write_gen_file("item", model_data)
 
 
 def get_soul_data():
