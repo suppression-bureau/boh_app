@@ -57,8 +57,6 @@ class Item(TypedDict):
 class Skill(TypedDict):
     id: str
     name: str
-    level: NotRequired[int]
-    committed: NotRequired[bool]
     primary_principle: Principle
     secondary_principle: Principle
     wisdoms: list[Wisdom]

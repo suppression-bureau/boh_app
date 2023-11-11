@@ -21,7 +21,7 @@ class SkillHandler:
         self.wisdoms = get_valid_refs("wisdom")
 
     def mk_model_data(self, skill: dict[str, Any]) -> Skill:
-        wisdoms = []
+        wisdoms, primary_principle, secondary_principle = [], None, None
         for key, value in skill["aspects"].items():
             if key in self.principles:
                 if value == 1:
@@ -37,8 +37,6 @@ class SkillHandler:
         return Skill(
             id=skill["ID"],
             name=skill["Label"],
-            level=0,
-            committed=False,
             primary_principle=primary_principle,
             secondary_principle=secondary_principle,
             wisdoms=wisdoms,
