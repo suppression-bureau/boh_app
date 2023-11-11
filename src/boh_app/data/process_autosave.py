@@ -25,7 +25,7 @@ def load_autosave() -> dict[str, Any]:
 
 def get_knowns() -> ProcessedAutosave:
     data = load_autosave()
-    return AutosaveHandler().return_knowns(data)
+    return AutosaveHandler().process_autosave(data)
 
 
 class AutosaveHandler:
@@ -46,14 +46,13 @@ class AutosaveHandler:
                 mapping[internal_name["id"]] = (recipe["id"], skill_id)
         return mapping
 
-    def return_knowns(self, data: dict[str, Any]) -> ProcessedAutosave:
+    def process_autosave(self, data: dict[str, Any]) -> ProcessedAutosave:
         recipes = self.get_recipes(data)
-        processed_data = ProcessedAutosave(
+        return ProcessedAutosave(
             items=self.get_items(data) + self.get_souls(data) + self.get_items_from_recipes(recipes),
             skills=self.get_skills(data),
             recipes=recipes,
         )
-        return processed_data
 
     def get_items(self, data: dict[str, Any]) -> list[ItemRef]:
         known_elements = data["CharacterCreationCommands"][0]["UniqueElementsManifested"]
