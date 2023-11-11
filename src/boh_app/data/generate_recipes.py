@@ -69,7 +69,6 @@ class RecipeHandler:
             product=product,
             principle=principle,
             principle_amount=amount,
-            known=False,
         )
         if source_aspect := self._get_source_aspect(recipe):
             model["source_aspect"] = source_aspect

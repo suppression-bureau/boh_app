@@ -81,7 +81,6 @@ class Recipe(TypedDict):
     source_item: NotRequired[ItemRef]
     principle: Principle
     principle_amount: int
-    known: bool
     skills: NotRequired[list[SkillRef]]
     recipe_internals: NotRequired[list[RecipeInternal]]
 
