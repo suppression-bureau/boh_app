@@ -22,6 +22,7 @@ import {
     PrincipleString,
     VisibleItem,
 } from "../types"
+import { useUserDataContext } from "../userContext"
 
 type AspectFromQuery = ItemFromQuery["aspects"][number]
 
@@ -56,7 +57,7 @@ function filterItems(
             .map(({ id }) => id as PrincipleString)
             .flatMap((principle) =>
                 filteredState
-                    .filter((item) => item[principle] !== null)
+                    .filter((item) => item[principle] > 0)
                     // NB: this doesn't work with principles.length > 1
                     .toSorted(
                         (a, b) => (b[principle] ?? 0) - (a[principle] ?? 0),
@@ -144,7 +145,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
                 onClick={handleToggleSelect}
                 sx={sx}
             >
-                <ListItemText primary={item.id} />
+                <ListItemText primary={item.name} />
                 <ItemValues {...item} />
             </ListItemButton>
         </ListItem>
@@ -158,6 +159,8 @@ interface ItemsListProps {
 
 // This list is long, use memo to prevent rerendering
 const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
+    if (items.length === 0)
+        return <Typography>no items match search criteria</Typography>
     return (
         <List
             sx={{
@@ -180,12 +183,26 @@ const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
 
 export const ItemsView = ({ filters }: ItemsProps) => {
     const { items, itemRefs } = useItemsDrawer()
+    const { knownItems } = useUserDataContext()
+    const knownItemsSet = useMemo(
+        () => new Set(knownItems.map(({ id }) => id)),
+        [knownItems],
+    )
+    const userKnownItems: ItemFromQuery[] = useMemo(
+        () =>
+            items.map((item) => {
+                if (knownItemsSet.has(item.id)) return { ...item, known: true }
+                return { ...item }
+                // use baseline known value, as items that are not crafted cannot be "known" in this way
+            }),
+        [items, knownItemsSet],
+    )
     const filteredItems = useMemo(
         () =>
-            filterItems(items, { known: true, ...filters }).filter(
+            filterItems(userKnownItems, { known: true, ...filters }).filter(
                 ({ isVisible }) => isVisible,
             ),
-        [items, filters],
+        [userKnownItems, filters],
     )
     return <ItemsList items={filteredItems} itemRefs={itemRefs} />
 }
