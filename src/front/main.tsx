@@ -5,6 +5,7 @@ import * as urql from "urql"
 
 import App from "./App.tsx"
 import { DrawerContextProvider } from "./components/Drawer/index.tsx"
+import { UserDataContextProvider } from "./userContext.tsx"
 
 const client = urql.createClient({
     url: "http://localhost:8000/graphql",
@@ -16,9 +17,11 @@ ReactDOM.createRoot(document.querySelector("#root")!).render(
     <React.StrictMode>
         <urql.Provider value={client}>
             <Router>
-                <DrawerContextProvider>
-                    <App />
-                </DrawerContextProvider>
+                <UserDataContextProvider>
+                    <DrawerContextProvider>
+                        <App />
+                    </DrawerContextProvider>
+                </UserDataContextProvider>
             </Router>
         </urql.Provider>
     </React.StrictMode>,

@@ -110,7 +110,7 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
                                     })
                             }
                         >
-                            <ListItemText>{item.id}</ListItemText>
+                            <ListItemText>{item.name}</ListItemText>
                         </ListItemButton>
                     </ListItem>
                 ))}
