@@ -21,22 +21,23 @@ class SkillHandler:
         self.wisdoms = get_valid_refs("wisdom")
 
     def mk_model_data(self, skill: dict[str, Any]) -> Skill:
-        model = Skill(
-            id=skill["ID"],
-            name=skill["Label"],
-            level=0,
-            committed=False,
-            wisdoms=[],
-        )
-        details = skill["aspects"]
-        for key, value in details.items():
+        wisdoms, primary_principle, secondary_principle = [], None, None
+        for key, value in skill["aspects"].items():
             if key in self.principles:
                 if value == 1:
-                    model["secondary_principle"] = Principle(id=key)
+                    secondary_principle = Principle(id=key)
                 elif value == 2:
-                    model["primary_principle"] = Principle(id=key)
+                    primary_principle = Principle(id=key)
             if key.startswith("w."):
                 wisdom = key.split("w.")[1].capitalize()
                 assert wisdom in self.wisdoms
-                model["wisdoms"].append(Wisdom(id=wisdom))
-        return model
+                wisdoms.append(Wisdom(id=wisdom))
+        assert primary_principle, f"Could not find primary principle for {skill['Label']}"
+        assert secondary_principle, f"Could not find secondary principle for {skill['Label']}"
+        return Skill(
+            id=skill["ID"],
+            name=skill["Label"],
+            primary_principle=primary_principle,
+            secondary_principle=secondary_principle,
+            wisdoms=wisdoms,
+        )

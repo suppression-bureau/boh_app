@@ -19,6 +19,7 @@ export const itemsQueryDocument = graphql(`
     query Items {
         item {
             id
+            name
             known
             edge
             forge
