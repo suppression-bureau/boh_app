@@ -32,6 +32,13 @@ async def root():
     return {"message": "Hello World"}
 
 
+@app.get("/user_data")
+def get_user_data():
+    from boh_app.data.process_autosave import get_knowns
+
+    return get_knowns()
+
+
 # See: https://ariadnegraphql.org/docs/fastapi-integration#graphql-routes
 @app.get("/graphql")
 @app.options("/graphql")

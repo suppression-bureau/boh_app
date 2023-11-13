@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, cast
 
+from marshmallow.fields import Boolean
 from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -169,6 +170,12 @@ class Skill(Base, NameMixin):
 class Item(Base, NameMixin):
     __tablename__ = "item"
 
+    @classmethod
+    def _additional_fields(cls):
+        return {
+            "is_craftable": Boolean(),
+        }
+
     name: Mapped[str]
     aspects: Mapped[list[Aspect]] = relationship(back_populates="items", secondary=item_aspect_association)
 
@@ -189,31 +196,40 @@ class Item(Base, NameMixin):
     sky: Mapped[int] = mapped_column(default=0)
     winter: Mapped[int] = mapped_column(default=0)
 
-    # TODO: derived from has(product_recipe)
-    is_craftable: Mapped[bool] = mapped_column(default=False)
-
     source_recipe: Mapped[list[Recipe]] = relationship(back_populates="product", primaryjoin="Item.id==Recipe.product_id")
     product_recipe: Mapped[list[Recipe]] = relationship(back_populates="source_item", primaryjoin="Item.id==Recipe.source_item_id")
 
+    @hybrid_property
+    def is_craftable(self) -> bool:
+        return len(self.product_recipe) > 0
 
-class Recipe(Base, IdMixin):
+
+class RecipeInternal(Base, NameMixin):
+    __tablename__ = "recipe_internal"
+
+    recipe_id: Mapped[int] = mapped_column(ForeignKey("recipe.id"))
+    recipe: Mapped[Recipe] = relationship(back_populates="recipe_internals")
+
+
+class Recipe(Base, NameMixin):
     __tablename__ = "recipe"
 
-    product_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
+    product_id: Mapped[str] = mapped_column(ForeignKey("item.id"))
     product: Mapped[Item] = relationship(back_populates="source_recipe", foreign_keys=[product_id])
 
-    source_item_id: Mapped[int | None] = mapped_column(ForeignKey("item.id"))
+    source_item_id: Mapped[str | None] = mapped_column(ForeignKey("item.id"))
     source_item: Mapped[Item] = relationship(back_populates="product_recipe", foreign_keys=[source_item_id])
 
     source_aspect_id: Mapped[str | None] = mapped_column(ForeignKey("aspect.id"))
     source_aspect: Mapped[Aspect] = relationship()
 
-    principle_id: Mapped[PrincipleID] = mapped_column(ForeignKey("principle.id"))  # TODO:  make nullable
+    principle_id: Mapped[PrincipleID] = mapped_column(ForeignKey("principle.id"))
     principle: Mapped[Principle] = relationship()
     principle_amount: Mapped[int]
 
     known: Mapped[bool] = mapped_column(default=False)
 
+    recipe_internals: Mapped[list[RecipeInternal]] = relationship(back_populates="recipe")
     skills: Mapped[list[Skill]] = relationship(back_populates="recipes", secondary=recipe_skill_association)
 
 

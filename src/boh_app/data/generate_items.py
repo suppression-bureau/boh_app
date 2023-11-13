@@ -13,8 +13,7 @@ def gen_items_json():
 
     model_data = [item_handler.mk_model_data(item) for item in data]
     model_data += [item_handler.mk_model_data(item, inherits=False) for item in get_soul_data()]
-    model_data = dedup(model_data)
-
+    model_data = descrumpify(model_data)
     write_gen_file("item", model_data)
 
 
@@ -73,6 +72,8 @@ class ItemHandler:
         label = "Label" if inherits else "label"
         id = "ID" if inherits else "id"
         name = item[label].split(" (")[0]  # e.g. "{drink} (Bottle)" | "{drink} (Half-Full)"
+        if name == "Wire":
+            name = f'{item[id].split(".")[1].capitalize()} {name}'
         model = Item(id=item[id], name=name)
         model_aspects = []
 
@@ -91,6 +92,7 @@ class ItemHandler:
         return model
 
 
-def dedup(items: list[Item]) -> list[Item]:
+def descrumpify(items: list[Item]) -> list[Item]:
+    # Scrumpy is only item that does not match conventions, i.e. distributable
     seen = set()
-    return [item for item in items if item["id"] not in seen and not seen.add(item["id"])]
+    return [item for item in items if item["name"] not in seen and not seen.add(item["name"])]

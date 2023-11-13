@@ -147,6 +147,8 @@ def convert_hybrid_properties(
             continue
         sqla_type: type | UnionType = signature(field.fget, eval_str=True).return_annotation
         python_type, is_nullable = get_python_type(sqla_type)
+        if sqla_type and not python_type:  # e.g. sqla_type == bool
+            python_type = sqla_type
         yield name, (python_type, get_default(python_type, nullable=is_nullable))
 
 

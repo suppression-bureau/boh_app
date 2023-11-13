@@ -74,11 +74,9 @@ class Item(TypedDict):
 class Skill(TypedDict):
     id: str
     name: str
-    level: NotRequired[int]
-    committed: NotRequired[bool]
-    primary_principle: NotRequired[Principle]
-    secondary_principle: NotRequired[Principle]
-    wisdoms: NotRequired[list[Wisdom]]
+    primary_principle: Principle
+    secondary_principle: Principle
+    wisdoms: list[Wisdom]
 
 
 class ItemRef(TypedDict):
@@ -89,11 +87,34 @@ class SkillRef(TypedDict):
     id: str
 
 
+class RecipeInternal(TypedDict):
+    id: str
+
+
 class Recipe(TypedDict):
+    id: str
     product: ItemRef
     source_aspect: NotRequired[Aspect]
     source_item: NotRequired[ItemRef]
     principle: Principle
     principle_amount: int
-    known: bool
     skills: NotRequired[list[SkillRef]]
+    recipe_internals: NotRequired[list[RecipeInternal]]
+
+
+class KnownSkill(TypedDict):
+    id: str
+    level: int
+    committed_wisdom: NotRequired[Wisdom]
+    evolvable_soul: NotRequired[ItemRef]
+
+
+class KnownRecipe(TypedDict):
+    id: str
+    skills: list[SkillRef]
+
+
+class ProcessedAutosave(TypedDict):
+    items: list[ItemRef]
+    skills: list[KnownSkill]
+    recipes: list[KnownRecipe]
