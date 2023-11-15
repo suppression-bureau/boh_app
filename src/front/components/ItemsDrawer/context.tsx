@@ -62,7 +62,6 @@ function reduceStringSet(
         case "toggle": {
             let nextSelected = [...state]
             const nextGroups = new Set(nextSelected.map(([, group]) => group))
-            console.log(nextGroups)
             if (action.selected) {
                 if (nextGroups.has(undefined) && action.group === undefined) {
                     // default group in pure ItemView is ""
