@@ -5,6 +5,7 @@ import {
     createContext,
     useCallback,
     useContext,
+    useMemo,
     useReducer,
     useRef,
 } from "react"
@@ -43,21 +44,36 @@ export const itemsQueryDocument = graphql(`
 
 type StringSetAction =
     | { type: "clear" }
-    | { type: "toggle"; id: string; selected: boolean }
+    | { type: "toggle"; id: string; selected: boolean; group: string }
 
 function reduceStringSet(
-    state: Set<string>,
+    state: string[][],
     action: StringSetAction,
-): Set<string> {
+): string[][] {
     switch (action.type) {
         case "clear": {
-            return new Set()
+            return []
         }
         case "toggle": {
-            const nextState = new Set(state)
-            if (action.selected) nextState.add(action.id)
-            else nextState.delete(action.id)
-            return nextState
+            let nextSelected = [...state]
+            const nextGroups = new Set(nextSelected.map(([, group]) => group))
+            if (action.selected) {
+                if (nextGroups.has("") && action.group === "") {
+                    // default group in pure ItemView is ""
+                    // ignore group in this case
+                    nextSelected.push([action.id, action.group])
+                    return nextSelected
+                }
+                if (nextGroups.has(action.group))
+                    nextSelected = nextSelected.filter(
+                        ([, group]) => group !== action.group,
+                    )
+
+                nextSelected.push([action.id, action.group])
+            } else
+                nextSelected = nextSelected.filter(([id]) => id !== action.id)
+
+            return nextSelected
         }
     }
 }
@@ -91,7 +107,12 @@ export const ItemsDrawerContextProvider = ({
 }: ItemsDrawerContextProviderProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
     const items = data!.item.map((item) => setItemVisible(item, true))
-    const [selected, dispatch] = useReducer(reduceStringSet, new Set<string>())
+    const [selectionState, dispatch] = useReducer(reduceStringSet, [])
+
+    const selected: Set<string> = useMemo(
+        () => new Set(selectionState.map(([id]) => id)),
+        [selectionState],
+    )
 
     // all possible item refs have a key, even if they’re filtered out
     const itemRefs = useRef(
