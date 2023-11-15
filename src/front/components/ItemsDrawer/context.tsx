@@ -44,12 +44,17 @@ export const itemsQueryDocument = graphql(`
 
 type StringSetAction =
     | { type: "clear" }
-    | { type: "toggle"; id: string; selected: boolean; group: string }
+    | {
+          type: "toggle"
+          id: string
+          selected: boolean
+          group: string | undefined
+      }
 
 function reduceStringSet(
-    state: string[][],
+    state: (string | undefined)[][],
     action: StringSetAction,
-): string[][] {
+): (string | undefined)[][] {
     switch (action.type) {
         case "clear": {
             return []
@@ -58,7 +63,7 @@ function reduceStringSet(
             let nextSelected = [...state]
             const nextGroups = new Set(nextSelected.map(([, group]) => group))
             if (action.selected) {
-                if (nextGroups.has("") && action.group === "") {
+                if (!nextGroups && action.group === undefined) {
                     // default group in pure ItemView is ""
                     // ignore group in this case
                     nextSelected.push([action.id, action.group])

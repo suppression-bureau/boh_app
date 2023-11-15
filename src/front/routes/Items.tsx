@@ -123,7 +123,7 @@ const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
 export interface ItemProps extends ItemFromQuery {
     onToggleSelect?(id: string, selected: boolean): void
     sx?: ListItemButtonProps["sx"] | undefined
-    group: string
+    group?: string
 }
 
 const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
@@ -136,7 +136,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
             type: "toggle",
             id: item.id,
             selected: !selected.has(item.id),
-            group: group,
+            group,
         })
         onToggleSelect?.(item.id, !selected)
     }, [dispatch, item.id, onToggleSelect, selected, group])
@@ -158,7 +158,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 interface ItemsListProps {
     items: VisibleItem[]
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
-    group: string
+    group?: string
 }
 
 // This list is long, use memo to prevent rerendering
@@ -190,7 +190,7 @@ const ItemsList = memo(function ItemsList({
     )
 })
 
-export const ItemsView = ({ filters, group = "" }: ItemsProps) => {
+export const ItemsView = ({ filters, group }: ItemsProps) => {
     const { items, itemRefs } = useItemsDrawer()
     const { knownItems } = useUserDataContext()
     const knownItemsSet = useMemo(
