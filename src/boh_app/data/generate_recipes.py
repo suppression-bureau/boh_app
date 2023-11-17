@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from .types import Aspect, ItemRef, Principle, PrincipleID, Recipe, RecipeInternal, SkillRef
+from .types import Aspect, ItemRef, Principle, Recipe, RecipeInternal, SkillRef
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
@@ -34,8 +34,8 @@ class RecipeHandler:
     def _get_principle(self, recipe: dict[str, Any]) -> tuple[Principle, int]:
         reqs = recipe["reqs"]
         for k, v in reqs.items():
-            if k in dir(PrincipleID):
-                return Principle(id=k), v
+            if k in dir(Principle):
+                return Principle(k), v
         raise AssertionError(f"Recipe {recipe['id']} has no principle")
 
     def _get_skill(self, recipe: dict[str, Any]) -> SkillRef:
@@ -62,7 +62,7 @@ class RecipeHandler:
     def mk_model_data(self, recipe: dict[str, Any]) -> None:
         principle, amount = self._get_principle(recipe)
         product = self._get_product(recipe)
-        compound_id = f"{product['id']}_{principle['id']}"
+        compound_id = f"{product['id']}_{principle}"
         model = Recipe(
             id=compound_id,
             product=product,
@@ -76,7 +76,7 @@ class RecipeHandler:
             model["source_item"] = source_item
             model["id"] = f"{compound_id}_{source_item['id']}"
         source_key = source_item["id"] if source_item else None
-        recipe_key = (model["product"]["id"], source_key, model["principle"]["id"], model["principle_amount"])
+        recipe_key = (model["product"]["id"], source_key, model["principle"], model["principle_amount"])
         internal_id = RecipeInternal(id=recipe["id"])
         if recipe_key in self.recipe_map:
             self.recipe_map[recipe_key]["skills"].append(self._get_skill(recipe))

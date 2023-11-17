@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from .types import Principle, PrincipleID, Skill, Wisdom
+from .types import Principle, Skill, Wisdom
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
@@ -22,11 +22,11 @@ class SkillHandler:
     def mk_model_data(self, skill: dict[str, Any]) -> Skill:
         wisdoms, primary_principle, secondary_principle = [], None, None
         for key, value in skill["aspects"].items():
-            if key in dir(PrincipleID):
+            if key in dir(Principle):
                 if value == 1:
-                    secondary_principle = Principle(id=key)
+                    secondary_principle = Principle(key)
                 elif value == 2:
-                    primary_principle = Principle(id=key)
+                    primary_principle = Principle(key)
             if key.startswith("w."):
                 wisdom = key.removeprefix("w.").capitalize()
                 assert wisdom in self.wisdoms

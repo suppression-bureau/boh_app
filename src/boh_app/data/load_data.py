@@ -1,11 +1,11 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, get_args
+from typing import Any
 
 from sqlalchemy.orm import Session
 
-from boh_app.data.types import PrincipleID
+from boh_app.data.types import Principle
 
 from ..models import Base, get_tablename_model_mapping
 from ..settings import CACHE_DIR
@@ -15,9 +15,9 @@ SPECIAL = {"principle"}
 """Data not loaded from JSON"""
 
 
-def get_data(name: str) -> list[dict[str, Any]]:
+def get_data(name: str) -> list[dict[str, Any]] | list[str]:
     if name == "principle":
-        return [{"id": p} for p in get_args(PrincipleID)]
+        return dir(Principle)
     data_file_paths = find_files()
     path = data_file_paths[name]
     with path.open() as a:

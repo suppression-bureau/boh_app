@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from enum import StrEnum, auto
-from typing import NotRequired, TypedDict
+from typing import Any, NotRequired, TypedDict
+
+from sqlalchemy_utils import ScalarListType
 
 
 class Workstation(TypedDict):
@@ -19,7 +21,7 @@ class Slot(TypedDict):
     accepts: NotRequired[list[Aspect]]
 
 
-class PrincipleID(StrEnum):
+class Principle(StrEnum):
     edge = auto()
     forge = auto()
     grail = auto()
@@ -33,10 +35,6 @@ class PrincipleID(StrEnum):
     scale = auto()
     sky = auto()
     winter = auto()
-
-
-class Principle(TypedDict):
-    id: PrincipleID
 
 
 class Wisdom(TypedDict):
@@ -118,3 +116,11 @@ class ProcessedAutosave(TypedDict):
     items: list[ItemRef]
     skills: list[KnownSkill]
     recipes: list[KnownRecipe]
+
+
+class TypedList(ScalarListType):
+    coerce_func: type
+
+    @property
+    def python_type(self) -> Any:
+        return list[self.coerce_func]

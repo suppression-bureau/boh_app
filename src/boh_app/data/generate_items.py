@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from .types import Aspect, Item, PrincipleID
+from .types import Aspect, Item, Principle
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
@@ -77,7 +77,7 @@ class ItemHandler:
         model_aspects = []
 
         for aspect, value in item["aspects"].items():
-            if aspect in dir(PrincipleID):
+            if aspect in dir(Principle):
                 model[aspect] = value
             else:
                 model_aspects.append(aspect)

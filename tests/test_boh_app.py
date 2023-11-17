@@ -19,8 +19,8 @@ def skill_test_data(client: TestClient) -> dict[str, Any]:
     data = {
         "id": "Anbary & Lapidary",
         "name": "Anbary & Lapidary",
-        "primary_principle": {"id": "sky"},
-        "secondary_principle": {"id": "forge"},
+        "primary_principle": "sky",
+        "secondary_principle": "forge",
         "wisdoms": [{"id": "Horomachistry"}, {"id": "Ithastry"}],
         "level": 3,
         "committed": True,
@@ -72,7 +72,7 @@ def test_put_new_entry(client: TestClient):
 
 def test_put_replace_fk(client: TestClient, skill_test_data: dict[str, Any]):
     og_skill_data = skill_test_data
-    new_data = {"primary_principle": {"id": "test_value"}}
+    new_data = {"primary_principle": "test_value"}
     updated_data = {**og_skill_data, **new_data}
     assert og_skill_data != updated_data
 
@@ -102,7 +102,7 @@ def test_patch_field(client: TestClient, skill_test_data: dict[str, Any]):
 @pytest.mark.xfail(reason="Never actually worked, as serializers req most fields, except when they have db defaults")
 def test_patch_fk(client: TestClient, skill_test_data: dict[str, Any]):
     og_skill_data = skill_test_data
-    new_data = {"primary_principle": {"id": "test_value"}}
+    new_data = {"primary_principle": "test_value"}
     updated_data = {**og_skill_data, **new_data}
     assert og_skill_data != updated_data
 

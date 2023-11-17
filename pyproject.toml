@@ -40,6 +40,7 @@ dependencies = [
     "graphql-sqlalchemy @ git+https://github.com/flying-sheep/graphql-sqlalchemy.git@main",  # sqlchemy schema to graphql
     "ariadne",  # graphql API endpoint
     "marshmallow-sqlalchemy",
+    "sqlalchemy-utils",
     "platformdirs",
 ]
 

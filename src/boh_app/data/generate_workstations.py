@@ -1,6 +1,6 @@
 from typing import Any
 
-from .types import Aspect, Principle, PrincipleID, Slot, Wisdom, Workstation, WorkstationType
+from .types import Aspect, Principle, Slot, Wisdom, Workstation, WorkstationType
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 
@@ -55,8 +55,8 @@ class WorkstationHandler:
 
     def get_principles(self, item: dict[str, Any]) -> list[Principle]:
         principles = item["hints"]
-        assert all(p in dir(PrincipleID) for p in principles)
-        return [Principle(id=p) for p in principles]
+        assert all(p in dir(Principle) for p in principles)
+        return [Principle(p) for p in principles]
 
     def get_wisdom(self, item: dict[str, Any]) -> Wisdom | None:
         aspects = {a.split(".")[1].capitalize(): v for a, v in item["aspects"].items() if "." in a}
