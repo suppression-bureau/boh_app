@@ -18,6 +18,15 @@
       },
     },
     {
+      "name": "Python: Generate all",
+      "type": "python",
+      "request": "launch",
+      "module": "boh_app",
+      "args": ["gen-all"],
+      "console": "internalConsole",
+      "justMyCode": false,
+    },
+    {
       "name": "Python: Test",
       "type": "python",
       "purpose": ["debug-test"],

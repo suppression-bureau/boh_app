@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from .types import Aspect, ItemRef, Principle, Recipe, RecipeInternal, SkillRef
+from .types import Aspect, ItemRef, Principle, PrincipleID, Recipe, RecipeInternal, SkillRef
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
@@ -19,7 +19,6 @@ def gen_recipes_json():
 
 class RecipeHandler:
     def __init__(self):
-        self.principles = get_valid_refs("principle")
         self.skills = get_valid_refs("skill")
         self.items = get_valid_refs("item")
         self.aspects = get_valid_refs("aspect")
@@ -35,7 +34,7 @@ class RecipeHandler:
     def _get_principle(self, recipe: dict[str, Any]) -> tuple[Principle, int]:
         reqs = recipe["reqs"]
         for k, v in reqs.items():
-            if k in self.principles:
+            if k in dir(PrincipleID):
                 return Principle(id=k), v
         raise AssertionError(f"Recipe {recipe['id']} has no principle")
 

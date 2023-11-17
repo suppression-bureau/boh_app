@@ -1,10 +1,8 @@
 import json
 import logging
-import warnings
 from pathlib import Path
 from typing import Any, get_args
 
-from sqlalchemy.exc import SAWarning
 from sqlalchemy.orm import Session
 
 from boh_app.data.types import PrincipleID
@@ -32,12 +30,9 @@ def add_data(data: Any, _class: type[Base], *, session: Session):
     # i.e. with priniciple_count when UQ exists
     serializer = _class.__marshmallow__(many=True, transient=False)
     with session.begin():
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=SAWarning)
-            items = serializer.load(data, session=session)
+        items = serializer.load(data, session=session)
         for item in items:
             session.add(item)
-        session.commit()
 
 
 def find_files():

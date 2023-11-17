@@ -1,6 +1,7 @@
 import json
 import logging
 from enum import StrEnum
+from functools import cache
 from typing import Any
 
 from ..settings import CACHE_DIR
@@ -32,7 +33,9 @@ def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
     return data[inner]
 
 
+@cache
 def get_valid_refs(name: str) -> set[str]:
+    assert name != "principle"
     from boh_app.data.load_data import get_data
 
     return {d["id"] for d in get_data(name)}

@@ -11,14 +11,16 @@ from operator import or_
 from types import EllipsisType, ModuleType, UnionType
 from typing import ForwardRef, TypeAlias, get_args, get_origin
 
-from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema
+from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema, fields
+from marshmallow_sqlalchemy import ModelConverter as BaseModelConverter
 from pydantic import BaseModel, ConfigDict, Field, create_model
 from pydantic.fields import FieldInfo
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session
 from sqlalchemy.orm.clsregistry import ClsRegistryToken, _ModuleMarker
 
-from .models import IdMixin
+from .models import Base, IdMixin
 
 PydanticFieldDecl: TypeAlias = tuple[type | UnionType | ForwardRef | None, EllipsisType | None]
 
@@ -28,13 +30,13 @@ SYNTH_MODULE = "_boh_app_synth"
 def setup_schema(decl_base: type[DeclarativeBase], *, session: Session) -> None:
     mod = sys.modules[SYNTH_MODULE] = ModuleType(SYNTH_MODULE)
 
-    classes = []
+    classes: list[type[Base]] = []
     for class_ in decl_base.registry._class_registry.values():
         if isinstance(class_, ClsRegistryToken):
             if not isinstance(class_, _ModuleMarker):
                 warnings.warn(f"setup_schema does not work with ClsRegistryToken {class_}", stacklevel=2)
             continue
-        assert issubclass(class_, DeclarativeBase), class_.mro()
+        assert issubclass(class_, Base), class_.mro()
         classes.append(class_)
 
     for class_ in classes:
@@ -52,12 +54,28 @@ def setup_schema(decl_base: type[DeclarativeBase], *, session: Session) -> None:
         setattr(mod, class_.__pydantic__.__name__, class_.__pydantic__)
 
 
+class ModelConverter(BaseModelConverter):
+    def _get_field_class_for_property(self, prop):
+        if hasattr(prop, "direction"):
+            return Related
+        return super()._get_field_class_for_property(prop)
+
+
+class Related(fields.Related):
+    def _get_existing_instance(self, related_model, value):
+        lookup_values = [value.get(prop.key) for prop in self.related_keys]
+        if None in lookup_values:
+            raise NoResultFound
+        return super()._get_existing_instance(related_model, value)
+
+
 def sqlalchemy_to_marshmallow(class_: type[DeclarativeBase], *, session: Session) -> type[SQLAlchemyAutoSchema]:
     if class_.__name__.endswith("Schema"):
         raise ModelConversionError("For safety, setup_schema can not be used when a Model class ends with 'Schema'")
 
     class Meta:
         model = class_
+        model_converter = ModelConverter
         sqla_session = session
         include_relationships = True
         load_instance = True

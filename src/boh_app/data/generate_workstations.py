@@ -1,6 +1,6 @@
 from typing import Any
 
-from .types import Aspect, Principle, Slot, Wisdom, Workstation, WorkstationType
+from .types import Aspect, Principle, PrincipleID, Slot, Wisdom, Workstation, WorkstationType
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 
@@ -49,14 +49,13 @@ class SlotHandler:
 
 class WorkstationHandler:
     def __init__(self):
-        self.principles = get_valid_refs("principle")
         self.wisdoms = get_valid_refs("wisdom")
         self.valid_types = get_valid_refs("workstation_type")
         self.slot_handler = SlotHandler()
 
     def get_principles(self, item: dict[str, Any]) -> list[Principle]:
         principles = item["hints"]
-        assert all(p in self.principles for p in principles)
+        assert all(p in dir(PrincipleID) for p in principles)
         return [Principle(id=p) for p in principles]
 
     def get_wisdom(self, item: dict[str, Any]) -> Wisdom | None:
