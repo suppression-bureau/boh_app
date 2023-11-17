@@ -1,14 +1,38 @@
+from typing import Any, cast
+
 from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema, fields
 from marshmallow_sqlalchemy import ModelConverter as BaseModelConverter
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import DeclarativeBase, Session
+from sqlalchemy.orm import ColumnProperty, DeclarativeBase, Mapper, Session
+from sqlalchemy_utils import get_mapper
+
+from ..data.types_sqla import TypedList
 
 
 class ModelConverter(BaseModelConverter):
-    def _get_field_class_for_property(self, prop):
+    # TODO: replace all this with a custom Field
+    def _get_typed_list(self, prop: ColumnProperty) -> TypedList | None:
+        if not hasattr(prop, "columns") or len(prop.columns) != 1:
+            return None
+        [col] = prop.columns
+        if isinstance(col.type, TypedList):
+            return col.type
+        return None
+
+    def _get_field_class_for_property(self, prop: ColumnProperty):
         if hasattr(prop, "direction"):
             return Related
         return super()._get_field_class_for_property(prop)
+
+    def _get_field_kwargs_for_property(self, prop: ColumnProperty) -> dict[str, Any]:
+        # TODO: replace with prop.info = {"marshmallow": { ... }}
+        if tl := self._get_typed_list(prop):
+            [col] = prop.columns
+            mapper = cast(Mapper, get_mapper(col))
+            sqla_type = mapper.registry._resolve_type(tl.coerce_func)
+            inner_field_type = self._get_field_class_for_data_type(sqla_type)
+            return {"class_or_instance": inner_field_type}
+        return super()._get_field_kwargs_for_property(prop)
 
 
 class Related(fields.Related):

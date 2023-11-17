@@ -52,7 +52,8 @@ def convert_simple_fields(
             continue
         if not include_fk and column.foreign_keys:
             continue  # skip foreign_id fields
-        python_type = column.type.python_type
+        # TODO: TypedList support
+        python_type = getattr(db_model, name).type.python_type
         if column.nullable:
             python_type = python_type | None
         yield name, (python_type, get_default(python_type, nullable=column.nullable))
