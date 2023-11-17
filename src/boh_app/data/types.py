@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 from enum import StrEnum, auto
-from typing import Any, NotRequired, TypedDict
-
-from sqlalchemy_utils import ScalarListType
+from typing import NotRequired, TypedDict
 
 
 class Workstation(TypedDict):
@@ -116,11 +114,3 @@ class ProcessedAutosave(TypedDict):
     items: list[ItemRef]
     skills: list[KnownSkill]
     recipes: list[KnownRecipe]
-
-
-class TypedList(ScalarListType):
-    coerce_func: type
-
-    @property
-    def python_type(self) -> Any:
-        return list[self.coerce_func]

@@ -8,7 +8,8 @@ from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
-from .data.types import Principle, TypedList
+from .data.types import Principle
+from .data.types_marshmallow import TypedList
 
 if TYPE_CHECKING:
     from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
