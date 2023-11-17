@@ -8,7 +8,6 @@ from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
-# Needs to be available at runtime
 from .data.types import Principle, TypedList
 
 if TYPE_CHECKING:

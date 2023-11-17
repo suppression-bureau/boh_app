@@ -49,4 +49,4 @@ def write_gen_file(name: str, data: GenData):
     logging.info(f"Writing {len(data)} items to {outpath}")
 
     with outpath.open("w") as a:
-        json.dump(data, a)
+        json.dump(data, a, indent=2)

@@ -37,11 +37,12 @@ def find_files():
 
 def load_all(session: Session) -> None:
     """Load sorted data into database."""
-    data_sources = find_files()
+    data_file_paths = find_files()
     tablename2model = get_tablename_model_mapping()
-    # add recipe dependency on skill to ensure skill sorted before recipe
+    # add dependencies to ensure data are loaded in correct order
     Base.metadata.tables["recipe"].add_is_dependent_on(Base.metadata.tables["skill"])
+    Base.metadata.tables["skill"].add_is_dependent_on(Base.metadata.tables["wisdom"])
     for name in [t.fullname for t in Base.metadata.sorted_tables]:
-        if name in data_sources:
-            logging.info(f"Loading {name} data from {data_sources[name] or 'special source'}")
+        if name in data_file_paths:
+            logging.info(f"Loading {name} data from {data_file_paths[name]}")
             add_data(get_data(name), tablename2model[name], session=session)
