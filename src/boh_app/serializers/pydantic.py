@@ -1,96 +1,19 @@
-"""
-sqlalchemy_to_marshmallow is modified from https://marshmallow-sqlalchemy.readthedocs.io/en/latest/recipes.html#automatically-generating-schemas-for-sqlalchemy-models
-"""
-import sys
-import warnings
 from collections.abc import Container, Generator
 from enum import Enum
 from functools import reduce
 from inspect import get_annotations, signature
 from operator import or_
-from types import EllipsisType, ModuleType, UnionType
+from types import EllipsisType, UnionType
 from typing import ForwardRef, TypeAlias, get_args, get_origin
 
-from marshmallow_sqlalchemy import ModelConversionError, SQLAlchemyAutoSchema, fields
-from marshmallow_sqlalchemy import ModelConverter as BaseModelConverter
 from pydantic import BaseModel, ConfigDict, Field, create_model
 from pydantic.fields import FieldInfo
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import DeclarativeBase, Mapped, Session
-from sqlalchemy.orm.clsregistry import ClsRegistryToken, _ModuleMarker
-
-from .models import Base, IdMixin
+from sqlalchemy.orm import DeclarativeBase, Mapped
 
 PydanticFieldDecl: TypeAlias = tuple[type | UnionType | ForwardRef | None, EllipsisType | None]
 
 SYNTH_MODULE = "_boh_app_synth"
-
-
-def setup_schema(decl_base: type[DeclarativeBase], *, session: Session) -> None:
-    mod = sys.modules[SYNTH_MODULE] = ModuleType(SYNTH_MODULE)
-
-    classes: list[type[Base]] = []
-    for class_ in decl_base.registry._class_registry.values():
-        if isinstance(class_, ClsRegistryToken):
-            if not isinstance(class_, _ModuleMarker):
-                warnings.warn(f"setup_schema does not work with ClsRegistryToken {class_}", stacklevel=2)
-            continue
-        assert issubclass(class_, Base), class_.mro()
-        classes.append(class_)
-
-    for class_ in classes:
-        pydantic_model = sqlalchemy_to_pydantic(class_, flat=True)
-        setattr(mod, pydantic_model.__name__, pydantic_model)
-
-    for class_ in classes:
-        class_.__marshmallow__ = sqlalchemy_to_marshmallow(class_, session=session)
-        class_.__pydantic__ = sqlalchemy_to_pydantic(class_)
-
-        exclude = ("id",) if issubclass(class_, IdMixin) else ()
-        class_.__pydantic_put__ = sqlalchemy_to_pydantic(
-            class_, flat=False, include_relationships=True, include_hybrid=False, exclude=exclude
-        )
-        setattr(mod, class_.__pydantic__.__name__, class_.__pydantic__)
-
-
-class ModelConverter(BaseModelConverter):
-    def _get_field_class_for_property(self, prop):
-        if hasattr(prop, "direction"):
-            return Related
-        return super()._get_field_class_for_property(prop)
-
-
-class Related(fields.Related):
-    def _get_existing_instance(self, related_model, value):
-        lookup_values = [value.get(prop.key) for prop in self.related_keys]
-        if None in lookup_values:
-            raise NoResultFound
-        return super()._get_existing_instance(related_model, value)
-
-
-def sqlalchemy_to_marshmallow(class_: type[DeclarativeBase], *, session: Session) -> type[SQLAlchemyAutoSchema]:
-    if class_.__name__.endswith("Schema"):
-        raise ModelConversionError("For safety, setup_schema can not be used when a Model class ends with 'Schema'")
-
-    class Meta:
-        model = class_
-        model_converter = ModelConverter
-        sqla_session = session
-        include_relationships = True
-        load_instance = True
-        # include_fk = True # seems to override include_relationships
-
-    schema_class_name = f"{class_.__name__}Schema"
-
-    # default fields defined by model.mapper.attrs:
-    # https://docs.sqlalchemy.org/en/20/orm/mapping_api.html#sqlalchemy.orm.Mapper.attrs
-    # TODO: make it work loop order independent
-    additional_fields = getattr(class_, "_additional_fields", lambda: {})()
-    schema_class = type(schema_class_name, (SQLAlchemyAutoSchema,), {"Meta": Meta, **additional_fields})
-
-    return schema_class
-
 
 orm_config = ConfigDict(from_attributes=True)
 
