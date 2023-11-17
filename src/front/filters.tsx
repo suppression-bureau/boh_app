@@ -1,5 +1,4 @@
 import * as types from "./gql/graphql"
-import { PRINCIPLES, Principle } from "./types"
 
 type HasAspect = types.Workstation_Slot | types.Item
 
@@ -18,22 +17,24 @@ type HasPrinciple =
     | types.ItemsQuery["item"][number]
     | types.WorkstationQuery["workstation"][number]
 
-export function getPrinciples<T extends HasPrinciple>(datum: T): Principle[] {
+export function getPrinciples<T extends HasPrinciple>(
+    datum: T,
+): types.Principle[] {
     if ("primary_principle" in datum) {
         return [datum.primary_principle, datum.secondary_principle]
     }
     if ("principles" in datum) {
         return datum.principles
     }
-    return PRINCIPLES.filter((principle) => datum[principle]).map((id) => ({
-        id,
-    }))
+    return Object.values(types.Principle).filter(
+        (principle) => datum[principle],
+    )
 }
 
 export function withPrinciples<
     D extends HasPrinciple,
     T extends { d: D } = { d: D },
->(data: T[]): (T & { principles: Principle[] })[] {
+>(data: T[]): (T & { principles: types.Principle[] })[] {
     return data.map((data) => ({ ...data, principles: getPrinciples(data.d) }))
 }
 
@@ -41,9 +42,9 @@ export function filterPrinciples<T extends HasPrinciple>(
     data: { d: T }[],
     principles: types.Principle[],
 ) {
-    const principleIds = new Set(principles.map((principle) => principle.id))
+    const principleIds = new Set(principles)
     return withPrinciples(data).filter((item) =>
-        item.principles.some(({ id }) => principleIds.has(id)),
+        item.principles.some((principle) => principleIds.has(principle)),
     )
 }
 

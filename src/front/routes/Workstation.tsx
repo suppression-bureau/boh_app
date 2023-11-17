@@ -21,7 +21,6 @@ import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
-import { Principle } from "../types"
 import { AspectIconGroup } from "./Aspects"
 import { ItemsView } from "./Items"
 import { PrincipleIconGroup } from "./Principles"
@@ -31,9 +30,7 @@ const workstationQueryDocument = graphql(`
     query Workstation {
         workstation {
             id
-            principles {
-                id
-            }
+            principles
             workstation_type {
                 id
             }
@@ -61,7 +58,10 @@ interface VisibleWorkstation extends WorkstationFromQuery {
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type WorkstationAction = { type: "filter"; principle: Principle | undefined }
+type WorkstationAction = {
+    type: "filter"
+    principle: types.Principle | undefined
+}
 
 function workstationReducer(
     state: VisibleWorkstation[],
@@ -78,11 +78,11 @@ function workstationReducer(
             if (!action.principle) return workstationData
             return workstationData.map((workstation) => {
                 const workstationPrinciples = new Set(
-                    getPrinciples(workstation).map(({ id }) => id),
+                    getPrinciples(workstation),
                 )
                 if (
                     action.principle &&
-                    !workstationPrinciples.has(action.principle.id)
+                    !workstationPrinciples.has(action.principle)
                 ) {
                     return { ...workstation, isVisible: false }
                 }
@@ -94,7 +94,7 @@ function workstationReducer(
 
 interface WorkstationSlotProps {
     workstationSlot: WorkstationSlotFromQuery
-    principles: Principle[]
+    principles: types.Principle[]
 }
 
 const WorkstationSlotInfoCard = ({
@@ -166,7 +166,9 @@ const Workstation = ({ workstation }: WorkstationProps) => (
         <CardHeader
             title={workstation.id}
             titleTypographyProps={{ variant: "h5" }}
-            avatar={<PrincipleIconGroup principles={workstation.principles} />}
+            avatar={
+                <PrincipleIconGroup principles={getPrinciples(workstation)} />
+            }
         />
         <Stack spacing={2}>
             {workstation.workstation_slots
@@ -175,7 +177,7 @@ const Workstation = ({ workstation }: WorkstationProps) => (
                     <WorkstationSlot
                         key={slot.id}
                         workstationSlot={slot}
-                        principles={workstation.principles}
+                        principles={getPrinciples(workstation)}
                     />
                 ))}
         </Stack>
@@ -197,9 +199,11 @@ export default function WorkstationView() {
         [data],
     )
     const [state, dispatch] = useReducer(workstationReducer, initialState)
-    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>()
+    const [selectedPrinciple, setPrinciple] = useState<
+        types.Principle | undefined
+    >()
     const handleSelectedPrinciple = useCallback(
-        (principle: Principle | undefined) => {
+        (principle: types.Principle | undefined) => {
             dispatch({ type: "filter", principle })
             setPrinciple(principle)
         },

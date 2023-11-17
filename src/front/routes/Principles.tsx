@@ -1,40 +1,27 @@
-import { useQuery } from "urql"
-
 import Box from "@mui/material/Box"
 import Card, { CardProps } from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 
 import AvatarStack from "../components/AvatarStack"
 import { PrincipleIcon } from "../components/Icon"
-import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 
-const principleQueryDocument = graphql(`
-    query Principle {
-        principle {
-            id
-        }
-    }
-`)
-
-type PrincipleFromQuery = types.PrincipleQuery["principle"][number]
-
 interface PrincipleIconGroupProps {
-    principles: PrincipleFromQuery[]
+    principles: types.Principle[]
 }
 
 function PrincipleIconGroup({ principles }: PrincipleIconGroupProps) {
     return (
         <AvatarStack>
-            {principles.map(({ id }) => (
-                <PrincipleIcon key={id} principle={id} />
+            {principles.map((principle) => (
+                <PrincipleIcon key={principle} principle={principle} />
             ))}
         </AvatarStack>
     )
 }
 
 interface PrincipleCardProps extends Omit<CardProps, "title"> {
-    id: string
+    id: types.Principle
     title?: object | string | number
     disablePadding?: boolean
 }
@@ -57,24 +44,21 @@ function PrincipleCard({
     )
 }
 
-const Principles = () => {
-    const [{ data }] = useQuery({ query: principleQueryDocument })
-    return (
-        <Box
-            sx={{
-                maxWidth: "350px",
-                marginBlock: 1,
-                marginInline: "auto",
-                display: "flex",
-                flexDirection: "column",
-                rowGap: 1,
-            }}
-        >
-            {data!.principle.map(({ id }) => (
-                <PrincipleCard key={id} id={id} />
-            ))}
-        </Box>
-    )
-}
+const Principles = () => (
+    <Box
+        sx={{
+            maxWidth: "350px",
+            marginBlock: 1,
+            marginInline: "auto",
+            display: "flex",
+            flexDirection: "column",
+            rowGap: 1,
+        }}
+    >
+        {Object.values(types.Principle).map((principle) => (
+            <PrincipleCard key={principle} id={principle} />
+        ))}
+    </Box>
+)
 
 export { PrincipleIconGroup, PrincipleCard, Principles as default }

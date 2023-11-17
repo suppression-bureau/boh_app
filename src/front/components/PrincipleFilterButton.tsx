@@ -2,13 +2,13 @@ import { useCallback } from "react"
 
 import IconButton from "@mui/material/IconButton"
 
-import { Principle } from "../types"
+import * as types from "../gql/graphql"
 import { PrincipleIcon } from "./Icon"
 
 interface PrincipleFilterButtonProps {
-    principle: Principle
-    selectedPrinciple?: Principle | undefined
-    onPrincipleFilter(principle: Principle): void
+    principle: types.Principle
+    selectedPrinciple?: types.Principle | undefined
+    onPrincipleFilter(principle: types.Principle): void
 }
 
 const PrincipleFilterButton = ({
@@ -20,11 +20,11 @@ const PrincipleFilterButton = ({
         () => onPrincipleFilter?.(principle),
         [onPrincipleFilter, principle],
     )
-    const principleMatch = principle.id === selectedPrinciple?.id
+    const principleMatch = principle === selectedPrinciple
     const style = {
         backgroundColor: principleMatch ? "primary.main" : undefined,
     }
-    const icon = <PrincipleIcon principle={principle.id} />
+    const icon = <PrincipleIcon principle={principle} />
     return (
         <IconButton
             onClick={handlePrincipleFilter}

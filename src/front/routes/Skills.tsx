@@ -22,7 +22,7 @@ import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
 import * as types from "../gql/graphql"
 import { PrincipleCard } from "../routes/Principles"
-import { KnownSkill, Principle } from "../types"
+import { KnownSkill } from "../types"
 import { useUserDataContext } from "../userContext"
 
 const API_URL = "http://localhost:8000"
@@ -33,12 +33,8 @@ export const skillQueryDocument = graphql(`
             id
             name
             level
-            primary_principle {
-                id
-            }
-            secondary_principle {
-                id
-            }
+            primary_principle
+            secondary_principle
         }
     }
 `)
@@ -67,7 +63,7 @@ type SkillAction = SkillActionInner | SkillActionOuter
 /** Synchronously handleable actions that are dispatched by the async action handler */
 type SkillActionInner =
     | { type: "update"; skill: SkillFromQuery }
-    | { type: "sort"; principle: Principle | undefined }
+    | { type: "sort"; principle: types.Principle | undefined }
     | { type: "setKnown"; skills: KnownSkill[] }
 /** Synchronously handleable actions that we dispatch manually */
 type SkillActionOuter = never
@@ -128,14 +124,14 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
             <CardHeader title={skill.name} />
             <CardActions sx={{ gap: 2 }}>
                 <PrincipleCard
-                    id={skill.primary_principle.id}
+                    id={skill.primary_principle}
                     title={skill.level + 1}
                     sx={{ boxShadow: "none" }}
                     disablePadding
                 />
                 <Divider orientation="vertical" variant="middle" flexItem />
                 <PrincipleCard
-                    id={skill.secondary_principle.id}
+                    id={skill.secondary_principle}
                     title={skill.level}
                     sx={{ boxShadow: "none" }}
                     disablePadding
@@ -222,7 +218,7 @@ const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
 
 interface SkillStackProps {
     skills?: SkillFromQuery[]
-    selectedPrinciples?: Principle[] | undefined
+    selectedPrinciples?: types.Principle[] | undefined
     onSkillIncrement?(skill: SkillFromQuery): void
 }
 export const SkillsStack = ({
@@ -238,7 +234,7 @@ export const SkillsStack = ({
         [data, skills, knownSkills],
     )
     const selectedPrincipleSet = useMemo(
-        () => new Set(selectedPrinciples?.map(({ id }) => id)),
+        () => new Set(selectedPrinciples ?? []),
         [selectedPrinciples],
     )
     const filteredSkills = useMemo(
@@ -247,8 +243,8 @@ export const SkillsStack = ({
                 (skill) =>
                     skill.level > 0 &&
                     (!selectedPrinciples ||
-                        getPrinciples(skill).some(({ id }) =>
-                            selectedPrincipleSet.has(id),
+                        getPrinciples(skill).some((principle) =>
+                            selectedPrincipleSet.has(principle),
                         )),
             ),
         [selectedPrincipleSet, selectedPrinciples, allSkills],
@@ -279,10 +275,12 @@ const SkillsView = () => {
         () => dispatch({ type: "setKnown", skills: knownSkills }),
         [dispatch, knownSkills],
     )
-    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>()
+    const [selectedPrinciple, setPrinciple] = useState<
+        types.Principle | undefined
+    >()
 
     const handleSelectedPrinciple = useCallback(
-        (principle: Principle | undefined) => {
+        (principle: types.Principle | undefined) => {
             dispatch({ type: "sort", principle })
             setPrinciple(principle)
         },

@@ -12,12 +12,13 @@ import Typography from "@mui/material/Typography"
 
 import Delete from "@mui/icons-material/Delete"
 
-import { PRINCIPLES, PrincipleString, VisibleItem } from "../../types"
+import * as types from "../../gql/graphql"
+import { VisibleItem } from "../../types"
 import { useDrawerContext } from "../Drawer"
 import { PrincipleIcon, PrincipleIconProps } from "../Icon"
 
 interface PrincipleCounterProps extends PrincipleIconProps {
-    principle: PrincipleString
+    principle: types.Principle
     items: VisibleItem[]
 }
 
@@ -56,7 +57,7 @@ const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
                 flexWrap="wrap"
                 sx={{ margin: 2 }}
             >
-                {PRINCIPLES.map((principle) => (
+                {Object.values(types.Principle).map((principle) => (
                     <PrincipleCounter
                         key={principle}
                         principle={principle}

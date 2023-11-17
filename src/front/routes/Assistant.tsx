@@ -34,9 +34,7 @@ const assistantQueryDocument = graphql(`
             id
             season
             base_principles {
-                principle {
-                    id
-                }
+                principle
                 count
             }
             aspects {
@@ -134,12 +132,9 @@ const AssistantPrincipleSelector = ({
                     >
                         {selectedAssistant?.base_principles.map(
                             ({ principle, count }) => (
-                                <ToggleButton
-                                    key={principle.id}
-                                    value={principle}
-                                >
+                                <ToggleButton key={principle} value={principle}>
                                     <PrincipleIcon
-                                        principle={principle.id}
+                                        principle={principle}
                                         sx={{ marginInlineEnd: 1 }}
                                     />
                                     {count}

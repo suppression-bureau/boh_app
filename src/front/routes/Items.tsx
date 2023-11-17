@@ -14,14 +14,9 @@ import {
     ItemsDrawerContextProvider,
     useItemsDrawer,
 } from "../components/ItemsDrawer/context"
+import * as types from "../gql/graphql"
 import { AspectIconGroup } from "../routes/Aspects"
-import {
-    ItemFromQuery,
-    PRINCIPLES,
-    Principle,
-    PrincipleString,
-    VisibleItem,
-} from "../types"
+import { ItemFromQuery, VisibleItem } from "../types"
 import { useUserDataContext } from "../userContext"
 
 type AspectFromQuery = ItemFromQuery["aspects"][number]
@@ -30,7 +25,7 @@ interface ItemsProps {
     filters?: {
         known?: boolean
         aspects?: AspectFromQuery[]
-        principles?: Principle[]
+        principles?: types.Principle[]
     }
 }
 
@@ -53,16 +48,12 @@ function filterItems(
     }
     // now, if we filtered by known, the unknown items are no longer visible
     if (filters.principles) {
-        filteredState = filters.principles
-            .map(({ id }) => id as PrincipleString)
-            .flatMap((principle) =>
-                filteredState
-                    .filter((item) => item[principle] > 0)
-                    // NB: this doesn't work with principles.length > 1
-                    .toSorted(
-                        (a, b) => (b[principle] ?? 0) - (a[principle] ?? 0),
-                    ),
-            )
+        filteredState = filters.principles.flatMap((principle) =>
+            filteredState
+                .filter((item) => item[principle] > 0)
+                // NB: this doesn't work with principles.length > 1
+                .toSorted((a, b) => (b[principle] ?? 0) - (a[principle] ?? 0)),
+        )
     }
     // now, if we filtered by principles, the items lacking one or more of the principles are no longer visible
     if (filters.aspects) {
@@ -84,13 +75,12 @@ function filterItems(
     )
 }
 
-const ItemPrincipleValue = ({
-    principle,
-    value,
-}: {
-    principle: PrincipleString
+interface ItemPrincipleValueProps {
+    principle: types.Principle
     value: number
-}) => {
+}
+
+const ItemPrincipleValue = ({ principle, value }: ItemPrincipleValueProps) => {
     return (
         <>
             <PrincipleIcon principle={principle} />
@@ -108,13 +98,15 @@ const ItemPrincipleValue = ({
 
 const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
     <Stack direction="row" alignItems="center">
-        {PRINCIPLES.filter((principle) => item[principle]).map((principle) => (
-            <ItemPrincipleValue
-                key={principle}
-                principle={principle}
-                value={item[principle]!}
-            />
-        ))}
+        {Object.values(types.Principle)
+            .filter((principle) => item[principle])
+            .map((principle) => (
+                <ItemPrincipleValue
+                    key={principle}
+                    principle={principle}
+                    value={item[principle]!}
+                />
+            ))}
         <AspectIconGroup aspects={aspects} />
     </Stack>
 )
