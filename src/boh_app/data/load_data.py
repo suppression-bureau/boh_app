@@ -5,19 +5,13 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from boh_app.data.types import Principle
-
 from ..models import Base, get_tablename_model_mapping
 from ..settings import CACHE_DIR
 
 HERE = Path(__file__).parent
-SPECIAL = {"principle"}
-"""Data not loaded from JSON"""
 
 
-def get_data(name: str) -> list[dict[str, Any]] | list[str]:
-    if name == "principle":
-        return dir(Principle)
+def get_data(name: str) -> list[dict[str, Any]]:
     data_file_paths = find_files()
     path = data_file_paths[name]
     with path.open() as a:
@@ -43,7 +37,7 @@ def find_files():
 
 def load_all(session: Session) -> None:
     """Load sorted data into database."""
-    data_sources = find_files() | dict.fromkeys(SPECIAL)
+    data_sources = find_files()
     tablename2model = get_tablename_model_mapping()
     # add recipe dependency on skill to ensure skill sorted before recipe
     Base.metadata.tables["recipe"].add_is_dependent_on(Base.metadata.tables["skill"])

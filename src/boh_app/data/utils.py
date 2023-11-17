@@ -34,11 +34,11 @@ def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
 
 
 @cache
-def get_valid_refs(name: str) -> set[str]:
+def get_valid_refs(name: str) -> frozenset[str]:
     assert name != "principle"
     from boh_app.data.load_data import get_data
 
-    return {d["id"] for d in get_data(name)}
+    return frozenset(d["id"] for d in get_data(name))
 
 
 GenData = list[Slot] | list[Workstation] | list[Item] | list[Skill] | list[Recipe]
