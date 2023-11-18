@@ -14,7 +14,7 @@ import {
     ItemsDrawerContextProvider,
     useItemsDrawer,
 } from "../components/ItemsDrawer/context"
-import * as types from "../gql/graphql"
+import { Principle } from "../gql/graphql"
 import { AspectIconGroup } from "../routes/Aspects"
 import { ItemFromQuery, VisibleItem } from "../types"
 import { useUserDataContext } from "../userContext"
@@ -25,7 +25,7 @@ interface ItemsProps {
     filters?: {
         known?: boolean
         aspects?: AspectFromQuery[]
-        principles?: types.Principle[]
+        principles?: Principle[]
     }
 }
 
@@ -76,7 +76,7 @@ function filterItems(
 }
 
 interface ItemPrincipleValueProps {
-    principle: types.Principle
+    principle: Principle
     value: number
 }
 
@@ -98,7 +98,7 @@ const ItemPrincipleValue = ({ principle, value }: ItemPrincipleValueProps) => {
 
 const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
     <Stack direction="row" alignItems="center">
-        {Object.values(types.Principle)
+        {Object.values(Principle)
             .filter((principle) => item[principle])
             .map((principle) => (
                 <ItemPrincipleValue

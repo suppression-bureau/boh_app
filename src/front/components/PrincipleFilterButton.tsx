@@ -2,13 +2,13 @@ import { useCallback } from "react"
 
 import IconButton from "@mui/material/IconButton"
 
-import * as types from "../gql/graphql"
+import { Principle } from "../gql/graphql"
 import { PrincipleIcon } from "./Icon"
 
 interface PrincipleFilterButtonProps {
-    principle: types.Principle
-    selectedPrinciple?: types.Principle | undefined
-    onPrincipleFilter(principle: types.Principle): void
+    principle: Principle
+    selectedPrinciple?: Principle | undefined
+    onPrincipleFilter(principle: Principle): void
 }
 
 const PrincipleFilterButton = ({

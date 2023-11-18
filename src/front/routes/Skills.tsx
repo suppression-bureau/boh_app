@@ -20,7 +20,7 @@ import UpgradeIcon from "@mui/icons-material/Upgrade"
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
-import * as types from "../gql/graphql"
+import { Principle, SkillsQuery } from "../gql/graphql"
 import { PrincipleCard } from "../routes/Principles"
 import { KnownSkill } from "../types"
 import { useUserDataContext } from "../userContext"
@@ -55,7 +55,7 @@ function updateSkills(
         .toSorted((a, b) => a.id.localeCompare(b.id))
 }
 
-type SkillFromQuery = types.SkillsQuery["skill"][number]
+type SkillFromQuery = SkillsQuery["skill"][number]
 
 /** Actions that can be handled synchronously in the reducer */
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
@@ -63,7 +63,7 @@ type SkillAction = SkillActionInner | SkillActionOuter
 /** Synchronously handleable actions that are dispatched by the async action handler */
 type SkillActionInner =
     | { type: "update"; skill: SkillFromQuery }
-    | { type: "sort"; principle: types.Principle | undefined }
+    | { type: "sort"; principle: Principle | undefined }
     | { type: "setKnown"; skills: KnownSkill[] }
 /** Synchronously handleable actions that we dispatch manually */
 type SkillActionOuter = never
@@ -218,7 +218,7 @@ const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
 
 interface SkillStackProps {
     skills?: SkillFromQuery[]
-    selectedPrinciples?: types.Principle[] | undefined
+    selectedPrinciples?: Principle[] | undefined
     onSkillIncrement?(skill: SkillFromQuery): void
 }
 export const SkillsStack = ({
@@ -275,12 +275,10 @@ const SkillsView = () => {
         () => dispatch({ type: "setKnown", skills: knownSkills }),
         [dispatch, knownSkills],
     )
-    const [selectedPrinciple, setPrinciple] = useState<
-        types.Principle | undefined
-    >()
+    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>()
 
     const handleSelectedPrinciple = useCallback(
-        (principle: types.Principle | undefined) => {
+        (principle: Principle | undefined) => {
             dispatch({ type: "sort", principle })
             setPrinciple(principle)
         },

@@ -4,10 +4,10 @@ import CardHeader from "@mui/material/CardHeader"
 
 import AvatarStack from "../components/AvatarStack"
 import { PrincipleIcon } from "../components/Icon"
-import * as types from "../gql/graphql"
+import { Principle } from "../gql/graphql"
 
 interface PrincipleIconGroupProps {
-    principles: types.Principle[]
+    principles: Principle[]
 }
 
 function PrincipleIconGroup({ principles }: PrincipleIconGroupProps) {
@@ -21,7 +21,7 @@ function PrincipleIconGroup({ principles }: PrincipleIconGroupProps) {
 }
 
 interface PrincipleCardProps extends Omit<CardProps, "title"> {
-    id: types.Principle
+    id: Principle
     title?: object | string | number
     disablePadding?: boolean
 }
@@ -55,7 +55,7 @@ const Principles = () => (
             rowGap: 1,
         }}
     >
-        {Object.values(types.Principle).map((principle) => (
+        {Object.values(Principle).map((principle) => (
             <PrincipleCard key={principle} id={principle} />
         ))}
     </Box>

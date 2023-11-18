@@ -3,12 +3,12 @@ import Stack from "@mui/material/Stack"
 
 import ClearIcon from "@mui/icons-material/Clear"
 
-import * as types from "../gql/graphql"
+import { Principle } from "../gql/graphql"
 import PrincipleFilterButton from "./PrincipleFilterButton"
 
 interface PrincipleFilterProps {
-    selectedPrinciple: types.Principle | undefined
-    onSelectPrinciple(principle?: types.Principle | undefined): void
+    selectedPrinciple: Principle | undefined
+    onSelectPrinciple(principle?: Principle | undefined): void
 }
 
 const PrincipleFilterBar = ({
@@ -16,7 +16,7 @@ const PrincipleFilterBar = ({
     onSelectPrinciple,
 }: PrincipleFilterProps) => (
     <Stack direction="row" spacing={2} flexWrap="wrap">
-        {Object.values(types.Principle).map((principle) => (
+        {Object.values(Principle).map((principle) => (
             <PrincipleFilterButton
                 key={principle}
                 principle={principle}

@@ -20,7 +20,7 @@ import {
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
-import * as types from "../gql/graphql"
+import { Principle, WorkstationQuery } from "../gql/graphql"
 import { AspectIconGroup } from "./Aspects"
 import { ItemsView } from "./Items"
 import { PrincipleIconGroup } from "./Principles"
@@ -49,7 +49,7 @@ const workstationQueryDocument = graphql(`
     }
 `)
 
-type WorkstationFromQuery = types.WorkstationQuery["workstation"][number]
+type WorkstationFromQuery = WorkstationQuery["workstation"][number]
 type WorkstationSlotFromQuery =
     WorkstationFromQuery["workstation_slots"][number]
 
@@ -60,7 +60,7 @@ interface VisibleWorkstation extends WorkstationFromQuery {
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type WorkstationAction = {
     type: "filter"
-    principle: types.Principle | undefined
+    principle: Principle | undefined
 }
 
 function workstationReducer(
@@ -94,7 +94,7 @@ function workstationReducer(
 
 interface WorkstationSlotProps {
     workstationSlot: WorkstationSlotFromQuery
-    principles: types.Principle[]
+    principles: Principle[]
 }
 
 const WorkstationSlotInfoCard = ({
@@ -199,11 +199,9 @@ export default function WorkstationView() {
         [data],
     )
     const [state, dispatch] = useReducer(workstationReducer, initialState)
-    const [selectedPrinciple, setPrinciple] = useState<
-        types.Principle | undefined
-    >()
+    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>()
     const handleSelectedPrinciple = useCallback(
-        (principle: types.Principle | undefined) => {
+        (principle: Principle | undefined) => {
             dispatch({ type: "filter", principle })
             setPrinciple(principle)
         },

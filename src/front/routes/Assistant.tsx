@@ -25,7 +25,7 @@ import {
 import { ItemsDrawerContextProvider } from "../components/ItemsDrawer/context"
 import LoadingIndicator from "../components/LoadingIndicator"
 import { graphql } from "../gql"
-import * as types from "../gql/graphql"
+import { AssistantQuery } from "../gql/graphql"
 import { ItemsView } from "./Items"
 
 const assistantQueryDocument = graphql(`
@@ -44,9 +44,9 @@ const assistantQueryDocument = graphql(`
     }
 `)
 
-type AssistantFromQuery = types.AssistantQuery["assistant"][number]
+type AssistantFromQuery = AssistantQuery["assistant"][number]
 type PrincipleFromQuery =
-    types.AssistantQuery["assistant"][number]["base_principles"][number]["principle"]
+    AssistantQuery["assistant"][number]["base_principles"][number]["principle"]
 
 interface AssistantItemProps {
     principle: PrincipleFromQuery

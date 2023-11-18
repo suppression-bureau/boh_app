@@ -1,6 +1,6 @@
 import Avatar, { AvatarProps } from "@mui/material/Avatar"
 
-import * as types from "../gql/graphql"
+import { Principle } from "../gql/graphql"
 
 export type IconType = "principle" | "aspect" | "exaltation" | "assistant"
 
@@ -43,7 +43,7 @@ export const AspectIcon = (props: AspectIconProps) => (
 )
 
 export type PrincipleIconProps = Omit<
-    BaseIconProps<"principle", types.Principle>,
+    BaseIconProps<"principle", Principle>,
     "idKey"
 >
 export const PrincipleIcon = (props: PrincipleIconProps) => (
