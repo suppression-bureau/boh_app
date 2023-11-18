@@ -24,15 +24,16 @@ class JsonArray(TypeDecorator[Sequence[T]]):
             return None if self.nullable else []
         if not isinstance(value, Sequence):
             raise TypeError(f"value must be a sequence, not a {type(value)}")
-        if not all(isinstance(v, self.item_type.python_type) for v in value):
-            raise ValueError(f"all values must be of type {self.item_type.python_type}")
-        return value
+        processor = self.item_type.bind_processor(dialect)
+        assert processor
+        return [processor(item) for item in value]
 
     def process_result_value(self, value: Any | None, dialect: Dialect) -> list[T] | None:
         if value is None:
             return None if self.nullable else []
         if not isinstance(value, list):
             raise TypeError(f"value must be a list, not a {type(value)}")
+        # TODO: processor = self.item_type.result_processor(dialect, ???)
         return value
 
     @property
