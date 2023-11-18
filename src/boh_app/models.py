@@ -5,11 +5,12 @@ from typing import TYPE_CHECKING, ClassVar, cast
 from marshmallow.fields import Boolean, List
 from marshmallow.fields import Enum as EnumField
 from sqlalchemy import Column, ForeignKey, Table
+from sqlalchemy import Enum as SqlaEnum
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
 from .data.types import Principle
-from .data.types_sqla import TypedList
+from .data.types_sqla import JsonArray
 
 if TYPE_CHECKING:
     from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -237,7 +238,7 @@ class Workstation(Base, NameMixin):
     wisdom_id: Mapped[str | None] = mapped_column(ForeignKey("wisdom.id"))
     evolves: Mapped[Wisdom | None] = relationship()
 
-    principles: Mapped[list[Principle]] = mapped_column(TypedList(Principle))
+    principles: Mapped[list[Principle]] = mapped_column(JsonArray(SqlaEnum(Principle), nullable=False))
 
 
 class Assistant(Base, NameMixin):
