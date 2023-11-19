@@ -19,29 +19,32 @@ def find_table_mapper(tbl: Table) -> Mapper:
 
 
 class ModelConverter(BaseModelConverter):
-    # TODO: replace all this with a custom Field
-    def _get_typed_list(self, prop: ColumnProperty) -> JsonArray | None:
-        if not hasattr(prop, "columns") or len(prop.columns) != 1:
-            return None
-        [col] = prop.columns
-        if isinstance(col.type, JsonArray):
-            return col.type
-        return None
-
     def _get_field_class_for_property(self, prop: ColumnProperty):
         if hasattr(prop, "direction"):
-            return Related
+            return Related  # use our custom Related field
         return super()._get_field_class_for_property(prop)
 
     def _get_field_kwargs_for_property(self, prop: ColumnProperty) -> dict[str, Any]:
         # TODO: replace with prop.info = {"marshmallow": { ... }}
-        if tl := self._get_typed_list(prop):
+        if tl := _get_typed_list(prop):
             inner_field_type = self._get_field_class_for_data_type(tl)
-            return {"class_or_instance": inner_field_type}
+            return {"metadata": {"class_or_instance": inner_field_type}}
         return super()._get_field_kwargs_for_property(prop)
 
 
+# TODO: replace all this with a custom Field
+def _get_typed_list(prop: ColumnProperty) -> JsonArray | None:
+    if not hasattr(prop, "columns") or len(prop.columns) != 1:
+        return None
+    [col] = prop.columns
+    if isinstance(col.type, JsonArray):
+        return col.type
+    return None
+
+
 class Related(fields.Related):
+    """Patched `Related` field that doesn’t trigger an SQLAlchemy warning."""
+
     def _get_existing_instance(self, related_model, value):
         lookup_values = [value.get(prop.key) for prop in self.related_keys]
         if None in lookup_values:
