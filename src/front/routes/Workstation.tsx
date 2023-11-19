@@ -20,8 +20,7 @@ import {
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
-import * as types from "../gql/graphql"
-import { Principle } from "../types"
+import { Principle, WorkstationQuery } from "../gql/graphql"
 import { AspectIconGroup } from "./Aspects"
 import { ItemsView } from "./Items"
 import { PrincipleIconGroup } from "./Principles"
@@ -31,9 +30,7 @@ const workstationQueryDocument = graphql(`
     query Workstation {
         workstation {
             id
-            principles {
-                id
-            }
+            principles
             workstation_type {
                 id
             }
@@ -52,7 +49,7 @@ const workstationQueryDocument = graphql(`
     }
 `)
 
-type WorkstationFromQuery = types.WorkstationQuery["workstation"][number]
+type WorkstationFromQuery = WorkstationQuery["workstation"][number]
 type WorkstationSlotFromQuery =
     WorkstationFromQuery["workstation_slots"][number]
 
@@ -61,7 +58,10 @@ interface VisibleWorkstation extends WorkstationFromQuery {
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type WorkstationAction = { type: "filter"; principle: Principle | undefined }
+type WorkstationAction = {
+    type: "filter"
+    principle: Principle | undefined
+}
 
 function workstationReducer(
     state: VisibleWorkstation[],
@@ -78,11 +78,11 @@ function workstationReducer(
             if (!action.principle) return workstationData
             return workstationData.map((workstation) => {
                 const workstationPrinciples = new Set(
-                    getPrinciples(workstation).map(({ id }) => id),
+                    getPrinciples(workstation),
                 )
                 if (
                     action.principle &&
-                    !workstationPrinciples.has(action.principle.id)
+                    !workstationPrinciples.has(action.principle)
                 ) {
                     return { ...workstation, isVisible: false }
                 }
@@ -149,6 +149,7 @@ const WorkstationSlot = ({
                                 aspects: workstationSlot.accepts,
                                 principles,
                             }}
+                            group={workstationSlot.id}
                         />
                     )}
                 </Collapse>
@@ -166,7 +167,9 @@ const Workstation = ({ workstation }: WorkstationProps) => (
         <CardHeader
             title={workstation.id}
             titleTypographyProps={{ variant: "h5" }}
-            avatar={<PrincipleIconGroup principles={workstation.principles} />}
+            avatar={
+                <PrincipleIconGroup principles={getPrinciples(workstation)} />
+            }
         />
         <Stack spacing={2}>
             {workstation.workstation_slots
@@ -175,7 +178,7 @@ const Workstation = ({ workstation }: WorkstationProps) => (
                     <WorkstationSlot
                         key={slot.id}
                         workstationSlot={slot}
-                        principles={workstation.principles}
+                        principles={getPrinciples(workstation)}
                     />
                 ))}
         </Stack>

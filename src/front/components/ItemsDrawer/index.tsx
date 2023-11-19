@@ -12,12 +12,13 @@ import Typography from "@mui/material/Typography"
 
 import Delete from "@mui/icons-material/Delete"
 
-import { PRINCIPLES, PrincipleString, VisibleItem } from "../../types"
+import { Principle } from "../../gql/graphql"
+import { VisibleItem } from "../../types"
 import { useDrawerContext } from "../Drawer"
 import { PrincipleIcon, PrincipleIconProps } from "../Icon"
 
 interface PrincipleCounterProps extends PrincipleIconProps {
-    principle: PrincipleString
+    principle: Principle
     items: VisibleItem[]
 }
 
@@ -56,7 +57,7 @@ const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
                 flexWrap="wrap"
                 sx={{ margin: 2 }}
             >
-                {PRINCIPLES.map((principle) => (
+                {Object.values(Principle).map((principle) => (
                     <PrincipleCounter
                         key={principle}
                         principle={principle}
@@ -67,6 +68,21 @@ const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
             </Stack>
         </>
     ) : undefined
+
+interface ClearButtonProps {
+    onClear(): void
+}
+
+const ClearButton = ({ onClear }: ClearButtonProps) => (
+    <ListItem disablePadding>
+        <ListItemButton onClick={onClear}>
+            <ListItemIcon>
+                <Delete />
+            </ListItemIcon>
+            <ListItemText>Clear</ListItemText>
+        </ListItemButton>
+    </ListItem>
+)
 
 interface ItemsDrawerProps {
     items: VisibleItem[]
@@ -107,14 +123,7 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
                 {onClear && (
                     <>
                         <Divider />
-                        <ListItem disablePadding>
-                            <ListItemButton onClick={onClear}>
-                                <ListItemIcon>
-                                    <Delete />
-                                </ListItemIcon>
-                                <ListItemText>Clear</ListItemText>
-                            </ListItemButton>
-                        </ListItem>
+                        <ClearButton onClear={onClear} />
                     </>
                 )}
             </List>

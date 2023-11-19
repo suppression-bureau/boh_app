@@ -10,6 +10,8 @@ import typer
 from graphql import IntrospectionQuery, build_client_schema, get_introspection_query, print_schema
 from rich.logging import RichHandler
 
+from .settings import CACHE_DIR
+
 HERE = Path(__file__).parent
 
 app = typer.Typer(no_args_is_help=True)
@@ -136,6 +138,15 @@ def gen_all() -> None:
     gen_skills_json()
     gen_workstation_json()
     gen_recipes_json()
+
+
+@app.command()
+def reset() -> None:
+    """Delete *all* files in CACHE_DIR, including database file, and run `gen-all`."""
+    for path in CACHE_DIR.glob("*"):
+        logging.info(f"Deleting file at: {path}")
+        path.unlink()
+    gen_all()
 
 
 if __name__ == "__main__":

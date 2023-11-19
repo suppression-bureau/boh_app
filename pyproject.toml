@@ -93,6 +93,7 @@ select = [
 ]
 unfixable = ["F401", "F841"]
 src = ["src", "tests"]
+allowed-confusables = ["’", "×"]
 
 [tool.ruff.per-file-ignores]
 "src/boh_app/__main__.py" = ["UP007"] # typer

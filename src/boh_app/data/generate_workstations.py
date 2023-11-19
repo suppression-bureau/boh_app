@@ -49,15 +49,14 @@ class SlotHandler:
 
 class WorkstationHandler:
     def __init__(self):
-        self.principles = get_valid_refs("principle")
         self.wisdoms = get_valid_refs("wisdom")
         self.valid_types = get_valid_refs("workstation_type")
         self.slot_handler = SlotHandler()
 
     def get_principles(self, item: dict[str, Any]) -> list[Principle]:
         principles = item["hints"]
-        assert all(p in self.principles for p in principles)
-        return [Principle(id=p) for p in principles]
+        assert all(p in dir(Principle) for p in principles)
+        return [Principle(p) for p in principles]
 
     def get_wisdom(self, item: dict[str, Any]) -> Wisdom | None:
         aspects = {a.split(".")[1].capitalize(): v for a, v in item["aspects"].items() if "." in a}

@@ -1,39 +1,19 @@
-import * as types from "./gql/graphql"
+import { Item, ItemsQuery, Skill, Wisdom } from "./gql/graphql"
 
-export type Principle = Pick<types.Principle, "id">
-
-export const PRINCIPLES = [
-    "edge",
-    "forge",
-    "grail",
-    "heart",
-    "knock",
-    "lantern",
-    "moon",
-    "moth",
-    "nectar",
-    "rose",
-    "scale",
-    "sky",
-    "winter",
-] as const
-
-export type PrincipleString = (typeof PRINCIPLES)[number]
-
-export type ItemFromQuery = types.ItemsQuery["item"][number]
+export type ItemFromQuery = ItemsQuery["item"][number]
 
 export interface VisibleItem extends ItemFromQuery {
     isVisible: boolean
     index: number
 }
 
-export type ItemRef = Pick<types.Item, "id">
-type SkillRef = Pick<types.Skill, "id">
+export type ItemRef = Pick<Item, "id">
+type SkillRef = Pick<Skill, "id">
 
 export interface KnownSkill {
     id: string
     level: number
-    committed_wisdom?: types.Wisdom
+    committed_wisdom?: Wisdom
     evolvable_soul?: ItemRef
 }
 

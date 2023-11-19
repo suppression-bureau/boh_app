@@ -11,11 +11,11 @@
     ],
     "base_principles": [
       {
-        "principle_id": "sky",
+        "principle": "sky",
         "count": 1
       },
       {
-        "principle_id": "winter",
+        "principle": "winter",
         "count": 2
       }
     ]
@@ -32,11 +32,11 @@
     ],
     "base_principles": [
       {
-        "principle_id": "grail",
+        "principle": "grail",
         "count": 2
       },
       {
-        "principle_id": "heart",
+        "principle": "heart",
         "count": 1
       }
     ]
@@ -53,11 +53,11 @@
     ],
     "base_principles": [
       {
-        "principle_id": "edge",
+        "principle": "edge",
         "count": 2
       },
       {
-        "principle_id": "forge",
+        "principle": "forge",
         "count": 2
       }
     ]
@@ -74,11 +74,11 @@
     ],
     "base_principles": [
       {
-        "principle_id": "knock",
+        "principle": "knock",
         "count": 1
       },
       {
-        "principle_id": "lantern",
+        "principle": "lantern",
         "count": 2
       }
     ]
@@ -95,15 +95,15 @@
     "season": "spring",
     "base_principles": [
       {
-        "principle_id": "scale",
+        "principle": "scale",
         "count": 2
       },
       {
-        "principle_id": "forge",
+        "principle": "forge",
         "count": 2
       },
       {
-        "principle_id": "moon",
+        "principle": "moon",
         "count": 1
       }
     ]
@@ -120,11 +120,11 @@
     "season": "summer",
     "base_principles": [
       {
-        "principle_id": "moth",
+        "principle": "moth",
         "count": 2
       },
       {
-        "principle_id": "rose",
+        "principle": "rose",
         "count": 1
       }
     ]
@@ -141,11 +141,11 @@
     "season": "fall",
     "base_principles": [
       {
-        "principle_id": "nectar",
+        "principle": "nectar",
         "count": 2
       },
       {
-        "principle_id": "heart",
+        "principle": "heart",
         "count": 1
       }
     ]
@@ -162,11 +162,11 @@
     "season": "winter",
     "base_principles": [
       {
-        "principle_id": "moon",
+        "principle": "moon",
         "count": 2
       },
       {
-        "principle_id": "sky",
+        "principle": "sky",
         "count": 1
       }
     ]
@@ -183,15 +183,15 @@
     ],
     "base_principles": [
       {
-        "principle_id": "forge",
+        "principle": "forge",
         "count": 4
       },
       {
-        "principle_id": "sky",
+        "principle": "sky",
         "count": 4
       },
       {
-        "principle_id": "lantern",
+        "principle": "lantern",
         "count": 4
       }
     ]
@@ -207,15 +207,15 @@
     ],
     "base_principles": [
       {
-        "principle_id": "edge",
+        "principle": "edge",
         "count": 4
       },
       {
-        "principle_id": "scale",
+        "principle": "scale",
         "count": 4
       },
       {
-        "principle_id": "heart",
+        "principle": "heart",
         "count": 4
       }
     ]
@@ -232,15 +232,15 @@
     ],
     "base_principles": [
       {
-        "principle_id": "winter",
+        "principle": "winter",
         "count": 4
       },
       {
-        "principle_id": "sky",
+        "principle": "sky",
         "count": 4
       },
       {
-        "principle_id": "moth",
+        "principle": "moth",
         "count": 4
       }
     ]
@@ -256,15 +256,15 @@
     ],
     "base_principles": [
       {
-        "principle_id": "rose",
+        "principle": "rose",
         "count": 4
       },
       {
-        "principle_id": "sky",
+        "principle": "sky",
         "count": 4
       },
       {
-        "principle_id": "nectar",
+        "principle": "nectar",
         "count": 4
       }
     ]
@@ -281,15 +281,15 @@
     ],
     "base_principles": [
       {
-        "principle_id": "knock",
+        "principle": "knock",
         "count": 4
       },
       {
-        "principle_id": "moon",
+        "principle": "moon",
         "count": 4
       },
       {
-        "principle_id": "grail",
+        "principle": "grail",
         "count": 4
       }
     ]
@@ -306,15 +306,15 @@
     ],
     "base_principles": [
       {
-        "principle_id": "grail",
+        "principle": "grail",
         "count": 4
       },
       {
-        "principle_id": "moth",
+        "principle": "moth",
         "count": 4
       },
       {
-        "principle_id": "rose",
+        "principle": "rose",
         "count": 4
       }
     ]

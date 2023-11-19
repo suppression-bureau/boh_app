@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from .types import Aspect, Item
+from .types import Aspect, Item, Principle
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
@@ -63,7 +63,6 @@ class InheritanceHandler:
 
 class ItemHandler:
     def __init__(self):
-        self.principles = get_valid_refs("principle")
         self.valid_aspects = get_valid_refs("aspect")
         self.inheritance_handler = InheritanceHandler()
         self.known_items = get_our_items()
@@ -78,7 +77,7 @@ class ItemHandler:
         model_aspects = []
 
         for aspect, value in item["aspects"].items():
-            if aspect in self.principles:
+            if aspect in dir(Principle):
                 model[aspect] = value
             else:
                 model_aspects.append(aspect)

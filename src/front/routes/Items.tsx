@@ -14,14 +14,9 @@ import {
     ItemsDrawerContextProvider,
     useItemsDrawer,
 } from "../components/ItemsDrawer/context"
+import { Principle } from "../gql/graphql"
 import { AspectIconGroup } from "../routes/Aspects"
-import {
-    ItemFromQuery,
-    PRINCIPLES,
-    Principle,
-    PrincipleString,
-    VisibleItem,
-} from "../types"
+import { ItemFromQuery, VisibleItem } from "../types"
 import { useUserDataContext } from "../userContext"
 
 type AspectFromQuery = ItemFromQuery["aspects"][number]
@@ -32,6 +27,7 @@ interface ItemsProps {
         aspects?: AspectFromQuery[]
         principles?: Principle[]
     }
+    group?: string
 }
 
 export function setItemVisible(
@@ -53,16 +49,12 @@ function filterItems(
     }
     // now, if we filtered by known, the unknown items are no longer visible
     if (filters.principles) {
-        filteredState = filters.principles
-            .map(({ id }) => id as PrincipleString)
-            .flatMap((principle) =>
-                filteredState
-                    .filter((item) => item[principle] > 0)
-                    // NB: this doesn't work with principles.length > 1
-                    .toSorted(
-                        (a, b) => (b[principle] ?? 0) - (a[principle] ?? 0),
-                    ),
-            )
+        filteredState = filters.principles.flatMap((principle) =>
+            filteredState
+                .filter((item) => item[principle] > 0)
+                // NB: this doesn't work with principles.length > 1
+                .toSorted((a, b) => (b[principle] ?? 0) - (a[principle] ?? 0)),
+        )
     }
     // now, if we filtered by principles, the items lacking one or more of the principles are no longer visible
     if (filters.aspects) {
@@ -84,13 +76,12 @@ function filterItems(
     )
 }
 
-const ItemPrincipleValue = ({
-    principle,
-    value,
-}: {
-    principle: PrincipleString
+interface ItemPrincipleValueProps {
+    principle: Principle
     value: number
-}) => {
+}
+
+const ItemPrincipleValue = ({ principle, value }: ItemPrincipleValueProps) => {
     return (
         <>
             <PrincipleIcon principle={principle} />
@@ -108,13 +99,15 @@ const ItemPrincipleValue = ({
 
 const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
     <Stack direction="row" alignItems="center">
-        {PRINCIPLES.filter((principle) => item[principle]).map((principle) => (
-            <ItemPrincipleValue
-                key={principle}
-                principle={principle}
-                value={item[principle]!}
-            />
-        ))}
+        {Object.values(Principle)
+            .filter((principle) => item[principle])
+            .map((principle) => (
+                <ItemPrincipleValue
+                    key={principle}
+                    principle={principle}
+                    value={item[principle]!}
+                />
+            ))}
         <AspectIconGroup aspects={aspects} />
     </Stack>
 )
@@ -122,10 +115,11 @@ const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
 export interface ItemProps extends ItemFromQuery {
     onToggleSelect?(id: string, selected: boolean): void
     sx?: ListItemButtonProps["sx"] | undefined
+    group?: string
 }
 
 const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
-    { onToggleSelect, sx, ...item },
+    { onToggleSelect, sx, group, ...item },
     ref,
 ) {
     const { selected, dispatch } = useItemsDrawer()
@@ -134,9 +128,10 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
             type: "toggle",
             id: item.id,
             selected: !selected.has(item.id),
+            group,
         })
         onToggleSelect?.(item.id, !selected)
-    }, [dispatch, item.id, onToggleSelect, selected])
+    }, [dispatch, item.id, onToggleSelect, selected, group])
     return (
         <ListItem disablePadding>
             <ListItemButton
@@ -155,10 +150,15 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 interface ItemsListProps {
     items: VisibleItem[]
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    group?: string
 }
 
 // This list is long, use memo to prevent rerendering
-const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
+const ItemsList = memo(function ItemsList({
+    items,
+    itemRefs,
+    group,
+}: ItemsListProps) {
     if (items.length === 0)
         return <Typography>no items match search criteria</Typography>
     return (
@@ -174,6 +174,7 @@ const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
                     <Item
                         key={item.id}
                         ref={itemRefs.current?.get(item.id)}
+                        group={group}
                         {...item}
                     />
                 ))}
@@ -181,7 +182,7 @@ const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
     )
 })
 
-export const ItemsView = ({ filters }: ItemsProps) => {
+export const ItemsView = ({ filters, group }: ItemsProps) => {
     const { items, itemRefs } = useItemsDrawer()
     const { knownItems } = useUserDataContext()
     const knownItemsSet = useMemo(
@@ -204,7 +205,7 @@ export const ItemsView = ({ filters }: ItemsProps) => {
             ),
         [userKnownItems, filters],
     )
-    return <ItemsList items={filteredItems} itemRefs={itemRefs} />
+    return <ItemsList items={filteredItems} itemRefs={itemRefs} group={group} />
 }
 
 function AllItemsView({ filters }: ItemsProps) {
