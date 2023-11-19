@@ -51,32 +51,37 @@ type StringSetAction =
           group: string | undefined
       }
 
+interface ItemSelect {
+    id: string
+    group: string | undefined
+}
+
 function reduceStringSet(
-    state: [string, string | undefined][],
+    state: ItemSelect[],
     action: StringSetAction,
-): [string, string | undefined][] {
+): ItemSelect[] {
     switch (action.type) {
         case "clear": {
             return []
         }
         case "toggle": {
             let nextSelected = [...state]
-            const nextGroups = new Set(nextSelected.map(([, group]) => group))
+            const nextGroups = new Set(nextSelected.map(({ group }) => group))
             if (action.selected) {
                 if (nextGroups.has(undefined) && action.group === undefined) {
-                    // default group in pure ItemView is ""
+                    // default group in pure ItemView is undefined
                     // ignore group in this case
-                    nextSelected.push([action.id, action.group])
+                    nextSelected.push(action)
                     return nextSelected
                 }
                 if (nextGroups.has(action.group))
                     nextSelected = nextSelected.filter(
-                        ([, group]) => group !== action.group,
+                        ({ group }) => group !== action.group,
                     )
 
-                nextSelected.push([action.id, action.group])
+                nextSelected.push(action)
             } else
-                nextSelected = nextSelected.filter(([id]) => id !== action.id)
+                nextSelected = nextSelected.filter(({ id }) => id !== action.id)
 
             return nextSelected
         }
@@ -115,7 +120,7 @@ export const ItemsDrawerContextProvider = ({
     const [selectionState, dispatch] = useReducer(reduceStringSet, [])
 
     const selected: Set<string> = useMemo(
-        () => new Set(selectionState.map(([id]) => id)),
+        () => new Set(selectionState.map(({ id }) => id)),
         [selectionState],
     )
 
