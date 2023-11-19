@@ -69,18 +69,19 @@ const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
         </>
     ) : undefined
 
-const ClearButton = ({ onClear }: { onClear(): void }) => (
-    <>
-        <Divider />
-        <ListItem disablePadding>
-            <ListItemButton onClick={onClear}>
-                <ListItemIcon>
-                    <Delete />
-                </ListItemIcon>
-                <ListItemText>Clear</ListItemText>
-            </ListItemButton>
-        </ListItem>
-    </>
+interface ClearButtonProps {
+    onClear(): void
+}
+
+const ClearButton = ({ onClear }: ClearButtonProps) => (
+    <ListItem disablePadding>
+        <ListItemButton onClick={onClear}>
+            <ListItemIcon>
+                <Delete />
+            </ListItemIcon>
+            <ListItemText>Clear</ListItemText>
+        </ListItemButton>
+    </ListItem>
 )
 
 interface ItemsDrawerProps {
@@ -119,7 +120,12 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
             <List sx={{ flexGrow: 0 }}>
                 <Divider />
                 <PrincipleCounterStack items={selectedItems} />
-                {onClear && <ClearButton onClear={onClear} />}
+                {onClear && (
+                    <>
+                        <Divider />
+                        <ClearButton onClear={onClear} />
+                    </>
+                )}
             </List>
         </Portal>
     )
