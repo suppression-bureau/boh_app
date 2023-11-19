@@ -52,9 +52,9 @@ type StringSetAction =
       }
 
 function reduceStringSet(
-    state: (string | undefined)[][],
+    state: [string, string | undefined][],
     action: StringSetAction,
-): (string | undefined)[][] {
+): [string, string | undefined][] {
     switch (action.type) {
         case "clear": {
             return []
