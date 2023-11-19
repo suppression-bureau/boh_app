@@ -29,7 +29,11 @@ interface BasicAspect extends Omit<AspectFromQuery, "assistants"> {
     assistants?: AspectFromQuery["assistants"]
 }
 
-const AspectIconGroup = ({ aspects }: { aspects: BasicAspect[] }) => (
+interface AspectIconGroupProps {
+    aspects: BasicAspect[]
+}
+
+const AspectIconGroup = ({ aspects }: AspectIconGroupProps) => (
     <AvatarStack>
         {aspects.map(({ id }) => (
             <AspectIcon key={id} aspect={id} />

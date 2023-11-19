@@ -67,6 +67,7 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) =>
                         principles: [principle],
                         aspects: [aspect],
                     }}
+                    group={aspect.id}
                 />
             </CardContent>
         </Card>

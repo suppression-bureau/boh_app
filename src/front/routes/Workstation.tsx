@@ -149,6 +149,7 @@ const WorkstationSlot = ({
                                 aspects: workstationSlot.accepts,
                                 principles,
                             }}
+                            group={workstationSlot.id}
                         />
                     )}
                 </Collapse>

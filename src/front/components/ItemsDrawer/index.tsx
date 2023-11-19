@@ -69,6 +69,21 @@ const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
         </>
     ) : undefined
 
+interface ClearButtonProps {
+    onClear(): void
+}
+
+const ClearButton = ({ onClear }: ClearButtonProps) => (
+    <ListItem disablePadding>
+        <ListItemButton onClick={onClear}>
+            <ListItemIcon>
+                <Delete />
+            </ListItemIcon>
+            <ListItemText>Clear</ListItemText>
+        </ListItemButton>
+    </ListItem>
+)
+
 interface ItemsDrawerProps {
     items: VisibleItem[]
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
@@ -108,14 +123,7 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
                 {onClear && (
                     <>
                         <Divider />
-                        <ListItem disablePadding>
-                            <ListItemButton onClick={onClear}>
-                                <ListItemIcon>
-                                    <Delete />
-                                </ListItemIcon>
-                                <ListItemText>Clear</ListItemText>
-                            </ListItemButton>
-                        </ListItem>
+                        <ClearButton onClear={onClear} />
                     </>
                 )}
             </List>

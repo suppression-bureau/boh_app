@@ -27,6 +27,7 @@ interface ItemsProps {
         aspects?: AspectFromQuery[]
         principles?: Principle[]
     }
+    group?: string
 }
 
 export function setItemVisible(
@@ -114,10 +115,11 @@ const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
 export interface ItemProps extends ItemFromQuery {
     onToggleSelect?(id: string, selected: boolean): void
     sx?: ListItemButtonProps["sx"] | undefined
+    group?: string
 }
 
 const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
-    { onToggleSelect, sx, ...item },
+    { onToggleSelect, sx, group, ...item },
     ref,
 ) {
     const { selected, dispatch } = useItemsDrawer()
@@ -126,9 +128,10 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
             type: "toggle",
             id: item.id,
             selected: !selected.has(item.id),
+            group,
         })
         onToggleSelect?.(item.id, !selected)
-    }, [dispatch, item.id, onToggleSelect, selected])
+    }, [dispatch, item.id, onToggleSelect, selected, group])
     return (
         <ListItem disablePadding>
             <ListItemButton
@@ -147,10 +150,15 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 interface ItemsListProps {
     items: VisibleItem[]
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    group?: string
 }
 
 // This list is long, use memo to prevent rerendering
-const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
+const ItemsList = memo(function ItemsList({
+    items,
+    itemRefs,
+    group,
+}: ItemsListProps) {
     if (items.length === 0)
         return <Typography>no items match search criteria</Typography>
     return (
@@ -166,6 +174,7 @@ const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
                     <Item
                         key={item.id}
                         ref={itemRefs.current?.get(item.id)}
+                        group={group}
                         {...item}
                     />
                 ))}
@@ -173,7 +182,7 @@ const ItemsList = memo(function ItemsList({ items, itemRefs }: ItemsListProps) {
     )
 })
 
-export const ItemsView = ({ filters }: ItemsProps) => {
+export const ItemsView = ({ filters, group }: ItemsProps) => {
     const { items, itemRefs } = useItemsDrawer()
     const { knownItems } = useUserDataContext()
     const knownItemsSet = useMemo(
@@ -196,7 +205,7 @@ export const ItemsView = ({ filters }: ItemsProps) => {
             ),
         [userKnownItems, filters],
     )
-    return <ItemsList items={filteredItems} itemRefs={itemRefs} />
+    return <ItemsList items={filteredItems} itemRefs={itemRefs} group={group} />
 }
 
 function AllItemsView({ filters }: ItemsProps) {
