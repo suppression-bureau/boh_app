@@ -12,7 +12,7 @@ from .database import SessionLocal, get_sess, init_db
 from .graphql import gql_schema
 from .models import Base
 
-rich.traceback.install()
+rich.traceback.install(width=None)  # , show_locals=True)
 
 app = FastAPI()
 

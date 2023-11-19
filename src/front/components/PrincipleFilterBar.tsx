@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack"
 
 import ClearIcon from "@mui/icons-material/Clear"
 
-import { PRINCIPLES, Principle } from "../types"
+import { Principle } from "../gql/graphql"
 import PrincipleFilterButton from "./PrincipleFilterButton"
 
 interface PrincipleFilterProps {
@@ -14,24 +14,19 @@ interface PrincipleFilterProps {
 const PrincipleFilterBar = ({
     selectedPrinciple,
     onSelectPrinciple,
-}: PrincipleFilterProps) => {
-    const principles = PRINCIPLES.map((principle) => ({
-        id: principle,
-    }))
-    return (
-        <Stack direction="row" spacing={2} flexWrap="wrap">
-            {principles.map((principle) => (
-                <PrincipleFilterButton
-                    key={principle.id}
-                    principle={principle}
-                    selectedPrinciple={selectedPrinciple}
-                    onPrincipleFilter={onSelectPrinciple}
-                />
-            ))}
-            <IconButton size="large" onClick={() => onSelectPrinciple()}>
-                <ClearIcon />
-            </IconButton>
-        </Stack>
-    )
-}
+}: PrincipleFilterProps) => (
+    <Stack direction="row" spacing={2} flexWrap="wrap">
+        {Object.values(Principle).map((principle) => (
+            <PrincipleFilterButton
+                key={principle}
+                principle={principle}
+                selectedPrinciple={selectedPrinciple}
+                onPrincipleFilter={onSelectPrinciple}
+            />
+        ))}
+        <IconButton size="large" onClick={() => onSelectPrinciple()}>
+            <ClearIcon />
+        </IconButton>
+    </Stack>
+)
 export default PrincipleFilterBar

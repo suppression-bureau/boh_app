@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import StrEnum, auto
 from typing import NotRequired, TypedDict
 
 
@@ -18,8 +19,20 @@ class Slot(TypedDict):
     accepts: NotRequired[list[Aspect]]
 
 
-class Principle(TypedDict):
-    id: str
+class Principle(StrEnum):
+    edge = auto()
+    forge = auto()
+    grail = auto()
+    heart = auto()
+    knock = auto()
+    lantern = auto()
+    moon = auto()
+    moth = auto()
+    nectar = auto()
+    rose = auto()
+    scale = auto()
+    sky = auto()
+    winter = auto()
 
 
 class Wisdom(TypedDict):

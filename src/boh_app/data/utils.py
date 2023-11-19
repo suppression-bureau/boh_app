@@ -1,6 +1,7 @@
 import json
 import logging
 from enum import StrEnum
+from functools import cache
 from typing import Any
 
 from ..settings import CACHE_DIR
@@ -32,10 +33,12 @@ def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
     return data[inner]
 
 
-def get_valid_refs(name: str) -> set[str]:
+@cache
+def get_valid_refs(name: str) -> frozenset[str]:
+    assert name != "principle"
     from boh_app.data.load_data import get_data
 
-    return {d["id"] for d in get_data(name)}
+    return frozenset(d["id"] for d in get_data(name))
 
 
 GenData = list[Slot] | list[Workstation] | list[Item] | list[Skill] | list[Recipe]
@@ -46,4 +49,4 @@ def write_gen_file(name: str, data: GenData):
     logging.info(f"Writing {len(data)} items to {outpath}")
 
     with outpath.open("w") as a:
-        json.dump(data, a)
+        json.dump(data, a, indent=2)

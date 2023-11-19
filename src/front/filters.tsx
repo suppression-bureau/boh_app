@@ -1,22 +1,29 @@
-import * as types from "./gql/graphql"
-import { PRINCIPLES, Principle } from "./types"
+import {
+    Aspect,
+    Item,
+    ItemsQuery,
+    Principle,
+    SkillsQuery,
+    WorkstationQuery,
+    Workstation_Slot,
+} from "./gql/graphql"
 
-type HasAspect = types.Workstation_Slot | types.Item
+type HasAspect = Workstation_Slot | Item
 
-function getAspects<T extends HasAspect>(datum: T): types.Aspect[] {
+function getAspects<T extends HasAspect>(datum: T): Aspect[] {
     return "accepts" in datum ? datum.accepts : datum.aspects
 }
 
 export function withAspects<D extends HasAspect, T extends { d: D } = { d: D }>(
     data: T[],
-): (T & { aspects: types.Aspect[] })[] {
+): (T & { aspects: Aspect[] })[] {
     return data.map((data) => ({ ...data, aspects: getAspects(data.d) }))
 }
 
 type HasPrinciple =
-    | types.SkillsQuery["skill"][number]
-    | types.ItemsQuery["item"][number]
-    | types.WorkstationQuery["workstation"][number]
+    | SkillsQuery["skill"][number]
+    | ItemsQuery["item"][number]
+    | WorkstationQuery["workstation"][number]
 
 export function getPrinciples<T extends HasPrinciple>(datum: T): Principle[] {
     if ("primary_principle" in datum) {
@@ -25,9 +32,7 @@ export function getPrinciples<T extends HasPrinciple>(datum: T): Principle[] {
     if ("principles" in datum) {
         return datum.principles
     }
-    return PRINCIPLES.filter((principle) => datum[principle]).map((id) => ({
-        id,
-    }))
+    return Object.values(Principle).filter((principle) => datum[principle])
 }
 
 export function withPrinciples<
@@ -39,18 +44,18 @@ export function withPrinciples<
 
 export function filterPrinciples<T extends HasPrinciple>(
     data: { d: T }[],
-    principles: types.Principle[],
+    principles: Principle[],
 ) {
-    const principleIds = new Set(principles.map((principle) => principle.id))
+    const principleIds = new Set(principles)
     return withPrinciples(data).filter((item) =>
-        item.principles.some(({ id }) => principleIds.has(id)),
+        item.principles.some((principle) => principleIds.has(principle)),
     )
 }
 
 export function filterAspects<
     D extends HasAspect,
     T extends { d: D } = { d: D },
->(data: T[], aspects: types.Aspect[]) {
+>(data: T[], aspects: Aspect[]) {
     const aspectIds = new Set(aspects.map((aspect) => aspect.id))
     return withAspects(data).filter((item) =>
         item.aspects.some(({ id }) => aspectIds.has(id)),

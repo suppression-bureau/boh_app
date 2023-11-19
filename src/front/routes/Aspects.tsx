@@ -11,7 +11,7 @@ import ListItemText from "@mui/material/ListItemText"
 import AvatarStack from "../components/AvatarStack"
 import { AspectIcon } from "../components/Icon"
 import { graphql } from "../gql"
-import * as types from "../gql/graphql"
+import { AspectsQuery } from "../gql/graphql"
 
 const aspectQueryDocument = graphql(`
     query Aspects {
@@ -24,7 +24,7 @@ const aspectQueryDocument = graphql(`
     }
 `)
 
-type AspectFromQuery = types.AspectsQuery["aspect"][number]
+type AspectFromQuery = AspectsQuery["aspect"][number]
 interface BasicAspect extends Omit<AspectFromQuery, "assistants"> {
     assistants?: AspectFromQuery["assistants"]
 }

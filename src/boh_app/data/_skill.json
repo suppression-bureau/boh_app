@@ -1,12 +1,8 @@
 [
   {
     "id": "Anbary & Lapidary",
-    "primary_principle": {
-      "id": "sky"
-    },
-    "secondary_principle": {
-      "id": "forge"
-    },
+    "primary_principle": "sky",
+    "secondary_principle": "forge",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -18,12 +14,8 @@
   },
   {
     "id": "Applebright Euphonies",
-    "primary_principle": {
-      "id": "sky"
-    },
-    "secondary_principle": {
-      "id": "grail"
-    },
+    "primary_principle": "sky",
+    "secondary_principle": "grail",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -35,12 +27,8 @@
   },
   {
     "id": "Auroral Contemplations",
-    "primary_principle": {
-      "id": "lantern"
-    },
-    "secondary_principle": {
-      "id": "edge"
-    },
+    "primary_principle": "lantern",
+    "secondary_principle": "edge",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -52,12 +40,8 @@
   },
   {
     "id": "Bells & Brazieries",
-    "primary_principle": {
-      "id": "forge"
-    },
-    "secondary_principle": {
-      "id": "sky"
-    },
+    "primary_principle": "forge",
+    "secondary_principle": "sky",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -67,12 +51,8 @@
   },
   {
     "id": "Coil & Chasm",
-    "primary_principle": {
-      "id": "scale"
-    },
-    "secondary_principle": {
-      "id": "nectar"
-    },
+    "primary_principle": "scale",
+    "secondary_principle": "nectar",
     "wisdom_1": {
       "id": "Nyctodromy"
     },
@@ -82,12 +62,8 @@
   },
   {
     "id": "Desires & Dissolutions",
-    "primary_principle": {
-      "id": "grail"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "grail",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -99,12 +75,8 @@
   },
   {
     "id": "Disciplines of the Hammer",
-    "primary_principle": {
-      "id": "edge"
-    },
-    "secondary_principle": {
-      "id": "forge"
-    },
+    "primary_principle": "edge",
+    "secondary_principle": "forge",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -116,12 +88,8 @@
   },
   {
     "id": "Disciplines of the Scar",
-    "primary_principle": {
-      "id": "edge"
-    },
-    "secondary_principle": {
-      "id": "lantern"
-    },
+    "primary_principle": "edge",
+    "secondary_principle": "lantern",
     "wisdom_1": {
       "id": "Hushery"
     },
@@ -131,12 +99,8 @@
   },
   {
     "id": "Door & Wall",
-    "primary_principle": {
-      "id": "knock"
-    },
-    "secondary_principle": {
-      "id": "forge"
-    },
+    "primary_principle": "knock",
+    "secondary_principle": "forge",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -148,12 +112,8 @@
   },
   {
     "id": "Drums & Dances",
-    "primary_principle": {
-      "id": "heart"
-    },
-    "secondary_principle": {
-      "id": "nectar"
-    },
+    "primary_principle": "heart",
+    "secondary_principle": "nectar",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -165,12 +125,8 @@
   },
   {
     "id": "Edicts Inviolable",
-    "primary_principle": {
-      "id": "heart"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "heart",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -180,12 +136,8 @@
   },
   {
     "id": "Edicts Liminal",
-    "primary_principle": {
-      "id": "moth"
-    },
-    "secondary_principle": {
-      "id": "knock"
-    },
+    "primary_principle": "moth",
+    "secondary_principle": "knock",
     "wisdom_1": {
       "id": "Nyctodromy"
     },
@@ -197,12 +149,8 @@
   },
   {
     "id": "Edicts Martial",
-    "primary_principle": {
-      "id": "moon"
-    },
-    "secondary_principle": {
-      "id": "edge"
-    },
+    "primary_principle": "moon",
+    "secondary_principle": "edge",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -214,12 +162,8 @@
   },
   {
     "id": "Furs & Feathers",
-    "primary_principle": {
-      "id": "sky"
-    },
-    "secondary_principle": {
-      "id": "scale"
-    },
+    "primary_principle": "sky",
+    "secondary_principle": "scale",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -229,12 +173,8 @@
   },
   {
     "id": "Glassblowing & Vesselcrafting",
-    "primary_principle": {
-      "id": "knock"
-    },
-    "secondary_principle": {
-      "id": "sky"
-    },
+    "primary_principle": "knock",
+    "secondary_principle": "sky",
     "wisdom_1": {
       "id": "Hushery"
     },
@@ -246,12 +186,8 @@
   },
   {
     "id": "Glaziery & Lightsmithing",
-    "primary_principle": {
-      "id": "lantern"
-    },
-    "secondary_principle": {
-      "id": "sky"
-    },
+    "primary_principle": "lantern",
+    "secondary_principle": "sky",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -263,12 +199,8 @@
   },
   {
     "id": "The Great Signs & the Great Scars",
-    "primary_principle": {
-      "id": "grail"
-    },
-    "secondary_principle": {
-      "id": "knock"
-    },
+    "primary_principle": "grail",
+    "secondary_principle": "knock",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -280,12 +212,8 @@
   },
   {
     "id": "Herbs & Infusions",
-    "primary_principle": {
-      "id": "heart"
-    },
-    "secondary_principle": {
-      "id": "nectar"
-    },
+    "primary_principle": "heart",
+    "secondary_principle": "nectar",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -295,12 +223,8 @@
   },
   {
     "id": "Hill & Hollow",
-    "primary_principle": {
-      "id": "moon"
-    },
-    "secondary_principle": {
-      "id": "scale"
-    },
+    "primary_principle": "moon",
+    "secondary_principle": "scale",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -310,12 +234,8 @@
   },
   {
     "id": "Horns & Ivories",
-    "primary_principle": {
-      "id": "scale"
-    },
-    "secondary_principle": {
-      "id": "knock"
-    },
+    "primary_principle": "scale",
+    "secondary_principle": "knock",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -325,12 +245,8 @@
   },
   {
     "id": "Inks of Containment",
-    "primary_principle": {
-      "id": "winter"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "winter",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -342,12 +258,8 @@
   },
   {
     "id": "Inks of Power",
-    "primary_principle": {
-      "id": "rose"
-    },
-    "secondary_principle": {
-      "id": "scale"
-    },
+    "primary_principle": "rose",
+    "secondary_principle": "scale",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -357,12 +269,8 @@
   },
   {
     "id": "Inks of Revelation",
-    "primary_principle": {
-      "id": "lantern"
-    },
-    "secondary_principle": {
-      "id": "moth"
-    },
+    "primary_principle": "lantern",
+    "secondary_principle": "moth",
     "wisdom_1": {
       "id": "Hushery"
     },
@@ -374,12 +282,8 @@
   },
   {
     "id": "Insects & Nectars",
-    "primary_principle": {
-      "id": "nectar"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "nectar",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -389,12 +293,8 @@
   },
   {
     "id": "Leaves & Thorns",
-    "primary_principle": {
-      "id": "nectar"
-    },
-    "secondary_principle": {
-      "id": "grail"
-    },
+    "primary_principle": "nectar",
+    "secondary_principle": "grail",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -404,12 +304,8 @@
   },
   {
     "id": "Lockworks & Clockworks",
-    "primary_principle": {
-      "id": "knock"
-    },
-    "secondary_principle": {
-      "id": "sky"
-    },
+    "primary_principle": "knock",
+    "secondary_principle": "sky",
     "wisdom_1": {
       "id": "Ithastry"
     },
@@ -421,12 +317,8 @@
   },
   {
     "id": "Maggephene Mysteries",
-    "primary_principle": {
-      "id": "moon"
-    },
-    "secondary_principle": {
-      "id": "heart"
-    },
+    "primary_principle": "moon",
+    "secondary_principle": "heart",
     "wisdom_1": {
       "id": "Hushery"
     },
@@ -436,12 +328,8 @@
   },
   {
     "id": "Meniscate Reflections",
-    "primary_principle": {
-      "id": "forge"
-    },
-    "secondary_principle": {
-      "id": "edge"
-    },
+    "primary_principle": "forge",
+    "secondary_principle": "edge",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -451,12 +339,8 @@
   },
   {
     "id": "Orchids & Narcotics",
-    "primary_principle": {
-      "id": "grail"
-    },
-    "secondary_principle": {
-      "id": "nectar"
-    },
+    "primary_principle": "grail",
+    "secondary_principle": "nectar",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -468,12 +352,8 @@
   },
   {
     "id": "Ouranoscopy",
-    "primary_principle": {
-      "id": "sky"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "sky",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -485,12 +365,8 @@
   },
   {
     "id": "Path & Pilgrim",
-    "primary_principle": {
-      "id": "rose"
-    },
-    "secondary_principle": {
-      "id": "scale"
-    },
+    "primary_principle": "rose",
+    "secondary_principle": "scale",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -502,12 +378,8 @@
   },
   {
     "id": "Pearl & Tide",
-    "primary_principle": {
-      "id": "rose"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "rose",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -519,12 +391,8 @@
   },
   {
     "id": "Pentiments & Precursors",
-    "primary_principle": {
-      "id": "scale"
-    },
-    "secondary_principle": {
-      "id": "grail"
-    },
+    "primary_principle": "scale",
+    "secondary_principle": "grail",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -536,12 +404,8 @@
   },
   {
     "id": "Preliminal Meter",
-    "primary_principle": {
-      "id": "knock"
-    },
-    "secondary_principle": {
-      "id": "rose"
-    },
+    "primary_principle": "knock",
+    "secondary_principle": "rose",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -553,12 +417,8 @@
   },
   {
     "id": "Purifications & Exaltations",
-    "primary_principle": {
-      "id": "sky"
-    },
-    "secondary_principle": {
-      "id": "lantern"
-    },
+    "primary_principle": "sky",
+    "secondary_principle": "lantern",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -568,12 +428,8 @@
   },
   {
     "id": "Putrefactions & Calcinations",
-    "primary_principle": {
-      "id": "winter"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "winter",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Ithastry"
     },
@@ -583,12 +439,8 @@
   },
   {
     "id": "Pyroglyphics",
-    "primary_principle": {
-      "id": "forge"
-    },
-    "secondary_principle": {
-      "id": "lantern"
-    },
+    "primary_principle": "forge",
+    "secondary_principle": "lantern",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -600,12 +452,8 @@
   },
   {
     "id": "Quenchings & Quellings",
-    "primary_principle": {
-      "id": "winter"
-    },
-    "secondary_principle": {
-      "id": "heart"
-    },
+    "primary_principle": "winter",
+    "secondary_principle": "heart",
     "wisdom_1": {
       "id": "Hushery"
     },
@@ -617,12 +465,8 @@
   },
   {
     "id": "Ragged Crossroads",
-    "primary_principle": {
-      "id": "edge"
-    },
-    "secondary_principle": {
-      "id": "winter"
-    },
+    "primary_principle": "edge",
+    "secondary_principle": "winter",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -634,12 +478,8 @@
   },
   {
     "id": "Resurgences & Emergences",
-    "primary_principle": {
-      "id": "moth"
-    },
-    "secondary_principle": {
-      "id": "grail"
-    },
+    "primary_principle": "moth",
+    "secondary_principle": "grail",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -651,12 +491,8 @@
   },
   {
     "id": "Rhyme & Remembrance",
-    "primary_principle": {
-      "id": "winter"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "winter",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -666,12 +502,8 @@
   },
   {
     "id": "Rites of the Roots",
-    "primary_principle": {
-      "id": "nectar"
-    },
-    "secondary_principle": {
-      "id": "moth"
-    },
+    "primary_principle": "nectar",
+    "secondary_principle": "moth",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -683,12 +515,8 @@
   },
   {
     "id": "Sacra Limiae",
-    "primary_principle": {
-      "id": "moth"
-    },
-    "secondary_principle": {
-      "id": "sky"
-    },
+    "primary_principle": "moth",
+    "secondary_principle": "sky",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -700,12 +528,8 @@
   },
   {
     "id": "Sacra Solis Invicti",
-    "primary_principle": {
-      "id": "lantern"
-    },
-    "secondary_principle": {
-      "id": "sky"
-    },
+    "primary_principle": "lantern",
+    "secondary_principle": "sky",
     "wisdom_1": {
       "id": "Horomachistry"
     },
@@ -716,12 +540,8 @@
   },
   {
     "id": "Sand Stories",
-    "primary_principle": {
-      "id": "rose"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "rose",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -733,12 +553,8 @@
   },
   {
     "id": "Sea Stories",
-    "primary_principle": {
-      "id": "moon"
-    },
-    "secondary_principle": {
-      "id": "grail"
-    },
+    "primary_principle": "moon",
+    "secondary_principle": "grail",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -748,12 +564,8 @@
   },
   {
     "id": "Serpents & Venoms",
-    "primary_principle": {
-      "id": "scale"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "scale",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Hushery"
     },
@@ -764,12 +576,8 @@
   },
   {
     "id": "Sharps",
-    "primary_principle": {
-      "id": "edge"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "edge",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Hushery"
     },
@@ -779,12 +587,8 @@
   },
   {
     "id": "Sickle & Eclipse",
-    "primary_principle": {
-      "id": "edge"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "edge",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Nyctodromy"
     },
@@ -796,12 +600,8 @@
   },
   {
     "id": "Sights & Sensations",
-    "primary_principle": {
-      "id": "sky"
-    },
-    "secondary_principle": {
-      "id": "winter"
-    },
+    "primary_principle": "sky",
+    "secondary_principle": "winter",
     "wisdom_1": {
       "id": "Hushery"
     },
@@ -813,12 +613,8 @@
   },
   {
     "id": "Sky Stories",
-    "primary_principle": {
-      "id": "sky"
-    },
-    "secondary_principle": {
-      "id": "rose"
-    },
+    "primary_principle": "sky",
+    "secondary_principle": "rose",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -830,12 +626,8 @@
   },
   {
     "id": "Snow Stories",
-    "primary_principle": {
-      "id": "winter"
-    },
-    "secondary_principle": {
-      "id": "moon"
-    },
+    "primary_principle": "winter",
+    "secondary_principle": "moon",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -847,12 +639,8 @@
   },
   {
     "id": "Solutions & Separations",
-    "primary_principle": {
-      "id": "moth"
-    },
-    "secondary_principle": {
-      "id": "knock"
-    },
+    "primary_principle": "moth",
+    "secondary_principle": "knock",
     "wisdom_1": {
       "id": "Ithastry"
     },
@@ -864,12 +652,8 @@
   },
   {
     "id": "Spices & Savours",
-    "primary_principle": {
-      "id": "nectar"
-    },
-    "secondary_principle": {
-      "id": "forge"
-    },
+    "primary_principle": "nectar",
+    "secondary_principle": "forge",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -881,12 +665,8 @@
   },
   {
     "id": "Stitching & Binding",
-    "primary_principle": {
-      "id": "sky"
-    },
-    "secondary_principle": {
-      "id": "heart"
-    },
+    "primary_principle": "sky",
+    "secondary_principle": "heart",
     "wisdom_1": {
       "id": "Ithastry"
     },
@@ -898,12 +678,8 @@
   },
   {
     "id": "Stone Stories",
-    "primary_principle": {
-      "id": "scale"
-    },
-    "secondary_principle": {
-      "id": "nectar"
-    },
+    "primary_principle": "scale",
+    "secondary_principle": "nectar",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -915,12 +691,8 @@
   },
   {
     "id": "Strings & Songs",
-    "primary_principle": {
-      "id": "sky"
-    },
-    "secondary_principle": {
-      "id": "heart"
-    },
+    "primary_principle": "sky",
+    "secondary_principle": "heart",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -932,12 +704,8 @@
   },
   {
     "id": "Surgeries & Exsanguinations",
-    "primary_principle": {
-      "id": "heart"
-    },
-    "secondary_principle": {
-      "id": "knock"
-    },
+    "primary_principle": "heart",
+    "secondary_principle": "knock",
     "wisdom_1": {
       "id": "Hushery"
     },
@@ -949,12 +717,8 @@
   },
   {
     "id": "Transformations & Liberations",
-    "primary_principle": {
-      "id": "forge"
-    },
-    "secondary_principle": {
-      "id": "moth"
-    },
+    "primary_principle": "forge",
+    "secondary_principle": "moth",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -965,12 +729,8 @@
   },
   {
     "id": "Tridesma Hiera",
-    "primary_principle": {
-      "id": "moon"
-    },
-    "secondary_principle": {
-      "id": "grail"
-    },
+    "primary_principle": "moon",
+    "secondary_principle": "grail",
     "wisdom_1": {
       "id": "Bosk"
     },
@@ -982,12 +742,8 @@
   },
   {
     "id": "Watchman's Paradoxes",
-    "primary_principle": {
-      "id": "lantern"
-    },
-    "secondary_principle": {
-      "id": "sky"
-    },
+    "primary_principle": "lantern",
+    "secondary_principle": "sky",
     "wisdom_1": {
       "id": "Illumination"
     },
@@ -997,12 +753,8 @@
   },
   {
     "id": "Weaving & Knotworking",
-    "primary_principle": {
-      "id": "heart"
-    },
-    "secondary_principle": {
-      "id": "moth"
-    },
+    "primary_principle": "heart",
+    "secondary_principle": "moth",
     "wisdom_1": {
       "id": "Birdsong"
     },
@@ -1012,12 +764,8 @@
   },
   {
     "id": "Wolf Stories",
-    "primary_principle": {
-      "id": "moon"
-    },
-    "secondary_principle": {
-      "id": "scale"
-    },
+    "primary_principle": "moon",
+    "secondary_principle": "scale",
     "wisdom_1": {
       "id": "Birdsong"
     },
