@@ -17,19 +17,18 @@ def gen_skills_json():
 
 class SkillHandler:
     def __init__(self):
-        self.principles = get_valid_refs("principle")
         self.wisdoms = get_valid_refs("wisdom")
 
     def mk_model_data(self, skill: dict[str, Any]) -> Skill:
         wisdoms, primary_principle, secondary_principle = [], None, None
         for key, value in skill["aspects"].items():
-            if key in self.principles:
+            if key in dir(Principle):
                 if value == 1:
-                    secondary_principle = Principle(id=key)
+                    secondary_principle = Principle(key)
                 elif value == 2:
-                    primary_principle = Principle(id=key)
+                    primary_principle = Principle(key)
             if key.startswith("w."):
-                wisdom = key.split("w.")[1].capitalize()
+                wisdom = key.removeprefix("w.").capitalize()
                 assert wisdom in self.wisdoms
                 wisdoms.append(Wisdom(id=wisdom))
         assert primary_principle, f"Could not find primary principle for {skill['Label']}"

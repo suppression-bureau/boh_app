@@ -1,10 +1,8 @@
 import json
 import logging
-import warnings
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy.exc import SAWarning
 from sqlalchemy.orm import Session
 
 from ..models import Base, get_tablename_model_mapping
@@ -26,12 +24,9 @@ def add_data(data: Any, _class: type[Base], *, session: Session):
     # i.e. with priniciple_count when UQ exists
     serializer = _class.__marshmallow__(many=True, transient=False)
     with session.begin():
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=SAWarning)
-            items = serializer.load(data, session=session)
+        items = serializer.load(data, session=session)
         for item in items:
             session.add(item)
-        session.commit()
 
 
 def find_files():
@@ -44,8 +39,9 @@ def load_all(session: Session) -> None:
     """Load sorted data into database."""
     data_file_paths = find_files()
     tablename2model = get_tablename_model_mapping()
-    # add recipe dependency on skill to ensure skill sorted before recipe
+    # add dependencies to ensure data are loaded in correct order
     Base.metadata.tables["recipe"].add_is_dependent_on(Base.metadata.tables["skill"])
+    Base.metadata.tables["skill"].add_is_dependent_on(Base.metadata.tables["wisdom"])
     for name in [t.fullname for t in Base.metadata.sorted_tables]:
         if name in data_file_paths:
             logging.info(f"Loading {name} data from {data_file_paths[name]}")

@@ -20,9 +20,9 @@ import UpgradeIcon from "@mui/icons-material/Upgrade"
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
-import * as types from "../gql/graphql"
+import { Principle, SkillsQuery } from "../gql/graphql"
 import { PrincipleCard } from "../routes/Principles"
-import { KnownSkill, Principle } from "../types"
+import { KnownSkill } from "../types"
 import { useUserDataContext } from "../userContext"
 
 const API_URL = "http://localhost:8000"
@@ -33,12 +33,8 @@ export const skillQueryDocument = graphql(`
             id
             name
             level
-            primary_principle {
-                id
-            }
-            secondary_principle {
-                id
-            }
+            primary_principle
+            secondary_principle
         }
     }
 `)
@@ -59,7 +55,7 @@ function updateSkills(
         .toSorted((a, b) => a.id.localeCompare(b.id))
 }
 
-type SkillFromQuery = types.SkillsQuery["skill"][number]
+type SkillFromQuery = SkillsQuery["skill"][number]
 
 /** Actions that can be handled synchronously in the reducer */
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
@@ -128,14 +124,14 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
             <CardHeader title={skill.name} />
             <CardActions sx={{ gap: 2 }}>
                 <PrincipleCard
-                    id={skill.primary_principle.id}
+                    id={skill.primary_principle}
                     title={skill.level + 1}
                     sx={{ boxShadow: "none" }}
                     disablePadding
                 />
                 <Divider orientation="vertical" variant="middle" flexItem />
                 <PrincipleCard
-                    id={skill.secondary_principle.id}
+                    id={skill.secondary_principle}
                     title={skill.level}
                     sx={{ boxShadow: "none" }}
                     disablePadding
@@ -238,7 +234,7 @@ export const SkillsStack = ({
         [data, skills, knownSkills],
     )
     const selectedPrincipleSet = useMemo(
-        () => new Set(selectedPrinciples?.map(({ id }) => id)),
+        () => new Set(selectedPrinciples ?? []),
         [selectedPrinciples],
     )
     const filteredSkills = useMemo(
@@ -247,8 +243,8 @@ export const SkillsStack = ({
                 (skill) =>
                     skill.level > 0 &&
                     (!selectedPrinciples ||
-                        getPrinciples(skill).some(({ id }) =>
-                            selectedPrincipleSet.has(id),
+                        getPrinciples(skill).some((principle) =>
+                            selectedPrincipleSet.has(principle),
                         )),
             ),
         [selectedPrincipleSet, selectedPrinciples, allSkills],

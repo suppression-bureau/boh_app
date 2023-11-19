@@ -2,11 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, cast
 
-from marshmallow.fields import Boolean
-from marshmallow_sqlalchemy.fields import Nested
+from marshmallow.fields import Boolean, List
+from marshmallow.fields import Enum as EnumField
 from sqlalchemy import Column, ForeignKey, Table
+from sqlalchemy import Enum as SqlaEnum
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
+
+from .data.types import Principle
+from .data.types_sqla import JsonArray
 
 if TYPE_CHECKING:
     from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -52,13 +56,6 @@ skill_wisdom_association = Table(
     Column("skill_id", ForeignKey("skill.id"), primary_key=True),
 )
 
-workstation_principle_association = Table(
-    "workstation_principle",
-    Base.metadata,
-    Column("workstation_id", ForeignKey("workstation.id"), primary_key=True),
-    Column("principle_id", ForeignKey("principle.id"), primary_key=True),
-)
-
 workstation_slot_aspect_association = Table(
     "workstation_slot_aspect",
     Base.metadata,
@@ -102,25 +99,11 @@ class Aspect(Base, NameMixin):
     assistants: Mapped[list[Assistant]] = relationship(back_populates="aspects", secondary=assistant_aspect_association)
 
 
-class Principle(Base, NameMixin):
-    __tablename__ = "principle"
-
-    primary_skills: Mapped[list[Skill]] = relationship(
-        back_populates="primary_principle", primaryjoin="Skill.primary_principle_id==Principle.id"
-    )
-    secondary_skills: Mapped[list[Skill]] = relationship(
-        back_populates="secondary_principle", primaryjoin="Skill.secondary_principle_id==Principle.id"
-    )
-
-    workstations: Mapped[list[Workstation]] = relationship(back_populates="principles", secondary=workstation_principle_association)
-
-
 class PrincipleCount(Base, IdMixin):
     __tablename__ = "principle_count"
-    # __table_args__ = (UniqueConstraint("principle_id", "count"),) Doesn't work with data loader, IntegrityError
+    # __table_args__ = (UniqueConstraint("principle", "count"),) Doesn't work with data loader, IntegrityError
 
-    principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
-    principle: Mapped[Principle] = relationship()
+    principle: Mapped[Principle]
 
     count: Mapped[int]
 
@@ -141,17 +124,13 @@ class Skill(Base, NameMixin):
     @classmethod
     def _additional_fields(cls):
         return {
-            "principles": Nested(Principle.__marshmallow__, many=True),
+            "principles": List(EnumField(Principle)),
         }
 
     level: Mapped[int] = mapped_column(default=0)
     committed: Mapped[bool] = mapped_column(default=False)
-    primary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
-    primary_principle: Mapped[Principle] = relationship(back_populates="primary_skills", foreign_keys=[primary_principle_id])
-
-    secondary_principle_id: Mapped[int] = mapped_column(ForeignKey("principle.id"))
-    secondary_principle: Mapped[Principle] = relationship(back_populates="secondary_skills", foreign_keys=[secondary_principle_id])
-
+    primary_principle: Mapped[Principle]
+    secondary_principle: Mapped[Principle]
     wisdoms: Mapped[list[Wisdom]] = relationship(back_populates="skills", secondary=skill_wisdom_association)
 
     @hybrid_property
@@ -217,8 +196,7 @@ class Recipe(Base, NameMixin):
     source_aspect_id: Mapped[str | None] = mapped_column(ForeignKey("aspect.id"))
     source_aspect: Mapped[Aspect] = relationship()
 
-    principle_id: Mapped[str] = mapped_column(ForeignKey("principle.id"))
-    principle: Mapped[Principle] = relationship()
+    principle: Mapped[Principle]
     principle_amount: Mapped[int]
 
     known: Mapped[bool] = mapped_column(default=False)
@@ -260,10 +238,7 @@ class Workstation(Base, NameMixin):
     wisdom_id: Mapped[str | None] = mapped_column(ForeignKey("wisdom.id"))
     evolves: Mapped[Wisdom | None] = relationship()
 
-    principles: Mapped[list[Principle]] = relationship(
-        back_populates="workstations",
-        secondary=workstation_principle_association,
-    )
+    principles: Mapped[list[Principle]] = mapped_column(JsonArray(SqlaEnum(Principle), nullable=False))
 
 
 class Assistant(Base, NameMixin):

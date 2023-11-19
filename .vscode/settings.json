@@ -19,7 +19,7 @@
   "editor.wordBasedSuggestions": false,
   "python.analysis.typeCheckingMode": "basic",
   "python.terminal.activateEnvironment": false,
-  "python.testing.pytestArgs": [],
+  "python.testing.pytestArgs": ["--color=yes"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
