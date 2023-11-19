@@ -56,7 +56,7 @@ interface ItemSelect {
     group: string | undefined
 }
 
-function reduceStringSet(
+function reduceItemSelection(
     state: ItemSelect[],
     action: StringSetAction,
 ): ItemSelect[] {
@@ -117,7 +117,7 @@ export const ItemsDrawerContextProvider = ({
 }: ItemsDrawerContextProviderProps) => {
     const [{ data }] = useQuery({ query: itemsQueryDocument })
     const items = data!.item.map((item) => setItemVisible(item, true))
-    const [selectionState, dispatch] = useReducer(reduceStringSet, [])
+    const [selectionState, dispatch] = useReducer(reduceItemSelection, [])
 
     const selected: Set<string> = useMemo(
         () => new Set(selectionState.map(({ id }) => id)),
