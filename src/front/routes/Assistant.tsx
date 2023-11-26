@@ -1,3 +1,4 @@
+import { PropsOf } from "@emotion/react"
 import { Suspense, useCallback, useState } from "react"
 import { useQuery } from "urql"
 
@@ -73,6 +74,39 @@ const AssistantItems = ({ principle, assistant }: AssistantItemProps) =>
         </Card>
     ))
 
+interface AssistantOptionProps {
+    props: PropsOf<typeof ListItem>
+    id: AssistantFromQuery["id"]
+    basePrinciples: AssistantFromQuery["base_principles"]
+}
+
+const AssistantOption = ({
+    props,
+    id,
+    basePrinciples,
+}: AssistantOptionProps) => {
+    return (
+        // Can’t use disablePadding here somehow
+        <ListItem {...props} sx={{ padding: "0!important" }}>
+            <ListItemButton>
+                <ListItemIcon>
+                    <AssistantIcon assistant={id} />
+                </ListItemIcon>
+                <ListItemText>{id}</ListItemText>
+                {basePrinciples.map(({ principle }) => (
+                    <ListItemIcon key={principle}>
+                        <PrincipleIcon
+                            key={principle}
+                            principle={principle}
+                            sx={{ marginInlineEnd: 1 }}
+                        />
+                    </ListItemIcon>
+                ))}
+            </ListItemButton>
+        </ListItem>
+    )
+}
+
 interface AssistantPrincipleSelectorProps {
     assistants: AssistantFromQuery[]
     selectedPrinciple?: PrincipleFromQuery | undefined
@@ -107,16 +141,13 @@ const AssistantPrincipleSelector = ({
                     options={assistants}
                     isOptionEqualToValue={(a, b) => a.id === b.id}
                     getOptionLabel={({ id }) => id}
-                    renderOption={(props, { id }) => (
-                        // Can’t use disablePadding here somehow
-                        <ListItem {...props} sx={{ padding: "0!important" }}>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <AssistantIcon assistant={id} />
-                                </ListItemIcon>
-                                <ListItemText>{id}</ListItemText>
-                            </ListItemButton>
-                        </ListItem>
+                    renderOption={(props, { id, base_principles }) => (
+                        <AssistantOption
+                            key={id}
+                            props={props}
+                            id={id}
+                            basePrinciples={base_principles}
+                        />
                     )}
                     renderInput={(params) => (
                         <TextField {...params} label="Select your Assistant" />
