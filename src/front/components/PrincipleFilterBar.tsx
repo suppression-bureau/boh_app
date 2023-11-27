@@ -9,21 +9,26 @@ import PrincipleFilterButton from "./PrincipleFilterButton"
 interface PrincipleFilterProps {
     selectedPrinciple: Principle | undefined
     onSelectPrinciple(principle?: Principle | undefined): void
+    exclude?: Principle[]
 }
 
 const PrincipleFilterBar = ({
     selectedPrinciple,
     onSelectPrinciple,
+    exclude = [],
 }: PrincipleFilterProps) => (
     <Stack direction="row" spacing={2} flexWrap="wrap">
-        {Object.values(Principle).map((principle) => (
-            <PrincipleFilterButton
-                key={principle}
-                principle={principle}
-                selectedPrinciple={selectedPrinciple}
-                onPrincipleFilter={onSelectPrinciple}
-            />
-        ))}
+        {Object.values(Principle).map((principle) => {
+            if (!exclude.includes(principle))
+                return (
+                    <PrincipleFilterButton
+                        key={principle}
+                        principle={principle}
+                        selectedPrinciple={selectedPrinciple}
+                        onPrincipleFilter={onSelectPrinciple}
+                    />
+                )
+        })}
         <IconButton size="large" onClick={() => onSelectPrinciple()}>
             <ClearIcon />
         </IconButton>
