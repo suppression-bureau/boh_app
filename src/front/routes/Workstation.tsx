@@ -1,18 +1,11 @@
 import { useCallback, useMemo, useReducer, useState } from "react"
-import { ErrorBoundary } from "react-error-boundary"
 import { useQuery } from "urql"
 
-import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
-import CardActions from "@mui/material/CardActions"
 import CardHeader from "@mui/material/CardHeader"
-import Collapse from "@mui/material/Collapse"
 import Stack from "@mui/material/Stack"
 
-import ExpandLess from "@mui/icons-material/ExpandLess"
-import ExpandMore from "@mui/icons-material/ExpandMore"
-
-import ErrorDisplay from "../components/ErrorDisplay"
+import { Collapsible } from "../components/Collapsible"
 import {
     ItemsDrawerContextProvider,
     itemsQueryDocument,
@@ -116,45 +109,21 @@ const WorkstationSlot = ({
     workstationSlot,
     principles,
 }: WorkstationSlotProps) => {
-    const [expanded, setExpanded] = useState(false)
-    const toggleExpanded = useCallback(
-        () => setExpanded(!expanded),
-        [expanded, setExpanded],
-    )
+    const header = <WorkstationSlotInfoCard {...workstationSlot} />
     return (
-        <Card>
-            <CardActions>
-                <WorkstationSlotInfoCard {...workstationSlot} />
-                <Button
-                    onClick={toggleExpanded}
-                    endIcon={expanded ? <ExpandLess /> : <ExpandMore />}
-                    sx={{ ml: "auto" }}
-                >
-                    Show Items
-                </Button>
-            </CardActions>
-            {/* without the prefetching, the Collapse transition and urql have a bad interaction */}
-            <ErrorBoundary FallbackComponent={ErrorDisplay}>
-                <Collapse
-                    in={expanded}
-                    timeout="auto"
-                    mountOnEnter
-                    unmountOnExit
-                >
-                    {workstationSlot.id === "Skill" ? (
-                        <SkillsStack selectedPrinciples={principles} />
-                    ) : (
-                        <ItemsView
-                            filters={{
-                                aspects: workstationSlot.accepts,
-                                principles,
-                            }}
-                            group={workstationSlot.id}
-                        />
-                    )}
-                </Collapse>
-            </ErrorBoundary>
-        </Card>
+        <Collapsible buttonShowHideText="Items" cardHeader={header}>
+            {workstationSlot.id === "Skill" ? (
+                <SkillsStack selectedPrinciples={principles} />
+            ) : (
+                <ItemsView
+                    filters={{
+                        aspects: workstationSlot.accepts,
+                        principles,
+                    }}
+                    group={workstationSlot.id}
+                />
+            )}
+        </Collapsible>
     )
 }
 
