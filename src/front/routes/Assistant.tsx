@@ -18,6 +18,7 @@ import ToggleButton from "@mui/material/ToggleButton"
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
 import { useTheme } from "@mui/material/styles"
 
+import { Collapsible } from "../components/Collapsible"
 import {
     AssistantIcon,
     ExaltationIcon,
@@ -25,8 +26,9 @@ import {
 } from "../components/Icon"
 import { ItemsDrawerContextProvider } from "../components/ItemsDrawer/context"
 import LoadingIndicator from "../components/LoadingIndicator"
+import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { graphql } from "../gql"
-import { AssistantQuery } from "../gql/graphql"
+import { AssistantQuery, Principle } from "../gql/graphql"
 import { ItemsView } from "./Items"
 
 const assistantQueryDocument = graphql(`
@@ -109,10 +111,10 @@ const AssistantOption = ({
 
 interface AssistantPrincipleSelectorProps {
     assistants: AssistantFromQuery[]
-    selectedPrinciple?: PrincipleFromQuery | undefined
+    selectedPrinciple?: Principle | undefined
     selectedAssistant?: AssistantFromQuery | undefined
     onSelectAssistant?(assistant?: AssistantFromQuery | undefined): void
-    onSelectPrinciple?(principle?: PrincipleFromQuery | undefined): void
+    onSelectPrinciple?(principle?: Principle | undefined): void
 }
 
 const AssistantPrincipleSelector = ({
@@ -133,6 +135,17 @@ const AssistantPrincipleSelector = ({
         (_: unknown, p: PrincipleFromQuery | undefined) =>
             onSelectPrinciple?.(p),
         [onSelectPrinciple],
+    )
+    const excludedPrinciples = selectedAssistant?.base_principles.map(
+        ({ principle }) => principle,
+    )
+    const collapsibleHeader = (
+        <Card sx={{ boxShadow: "none" }}>
+            <CardHeader
+                title="Boost another principle"
+                titleTypographyProps={{ variant: "body1" }}
+            />
+        </Card>
     )
     return (
         <Card sx={{ padding: 2 }}>
@@ -156,30 +169,45 @@ const AssistantPrincipleSelector = ({
                 />
             </CardContent>
             {selectedAssistant && (
-                <CardActions sx={{ justifyContent: "space-between" }}>
-                    <ToggleButtonGroup
-                        exclusive
-                        value={selectedPrinciple}
-                        onChange={handleSelectPrinciple}
+                <>
+                    <CardActions sx={{ justifyContent: "space-between" }}>
+                        <ToggleButtonGroup
+                            exclusive
+                            value={selectedPrinciple}
+                            onChange={handleSelectPrinciple}
+                        >
+                            {selectedAssistant?.base_principles.map(
+                                ({ principle, count }) => (
+                                    <ToggleButton
+                                        key={principle}
+                                        value={principle}
+                                    >
+                                        <PrincipleIcon
+                                            principle={principle}
+                                            sx={{ marginInlineEnd: 1 }}
+                                        />
+                                        {count}
+                                    </ToggleButton>
+                                ),
+                            )}
+                        </ToggleButtonGroup>
+                        <AssistantIcon
+                            assistant={selectedAssistant.id}
+                            sx={{ width: s, height: s }}
+                            variant="rounded"
+                        />
+                    </CardActions>
+                    <Collapsible
+                        cardHeader={collapsibleHeader}
+                        buttonShowHideText=""
                     >
-                        {selectedAssistant?.base_principles.map(
-                            ({ principle, count }) => (
-                                <ToggleButton key={principle} value={principle}>
-                                    <PrincipleIcon
-                                        principle={principle}
-                                        sx={{ marginInlineEnd: 1 }}
-                                    />
-                                    {count}
-                                </ToggleButton>
-                            ),
-                        )}
-                    </ToggleButtonGroup>
-                    <AssistantIcon
-                        assistant={selectedAssistant.id}
-                        sx={{ width: s, height: s }}
-                        variant="rounded"
-                    />
-                </CardActions>
+                        <PrincipleFilterBar
+                            selectedPrinciple={selectedPrinciple}
+                            onSelectPrinciple={onSelectPrinciple}
+                            exclude={excludedPrinciples}
+                        />
+                    </Collapsible>
+                </>
             )}
         </Card>
     )
