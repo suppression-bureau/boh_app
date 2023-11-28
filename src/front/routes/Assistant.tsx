@@ -112,7 +112,7 @@ const AssistantOption = ({
 interface BasePrincipleButtonGroupProps {
     selectedPrinciple?: Principle | undefined
     onSelectPrinciple: (_: unknown, principle?: Principle | undefined) => void
-    selectedAssistant?: AssistantFromQuery | undefined
+    selectedAssistant: AssistantFromQuery
 }
 
 const BasePrincipleButtonGroup = ({
@@ -125,7 +125,7 @@ const BasePrincipleButtonGroup = ({
         value={selectedPrinciple}
         onChange={onSelectPrinciple}
     >
-        {selectedAssistant?.base_principles.map(({ principle, count }) => (
+        {selectedAssistant.base_principles.map(({ principle, count }) => (
             <ToggleButton key={principle} value={principle}>
                 <PrincipleIcon
                     principle={principle}
