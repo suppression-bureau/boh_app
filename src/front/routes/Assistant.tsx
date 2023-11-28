@@ -1,5 +1,5 @@
 import { PropsOf } from "@emotion/react"
-import { Suspense, useCallback, useState } from "react"
+import { Suspense, useCallback, useMemo, useState } from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
@@ -109,6 +109,34 @@ const AssistantOption = ({
     )
 }
 
+interface BasePrincipleButtonGroupProps {
+    selectedPrinciple?: Principle | undefined
+    onSelectPrinciple: (_: unknown, principle?: Principle | undefined) => void
+    selectedAssistant?: AssistantFromQuery | undefined
+}
+
+const BasePrincipleButtonGroup = ({
+    selectedPrinciple,
+    onSelectPrinciple,
+    selectedAssistant,
+}: BasePrincipleButtonGroupProps) => (
+    <ToggleButtonGroup
+        exclusive
+        value={selectedPrinciple}
+        onChange={onSelectPrinciple}
+    >
+        {selectedAssistant?.base_principles.map(({ principle, count }) => (
+            <ToggleButton key={principle} value={principle}>
+                <PrincipleIcon
+                    principle={principle}
+                    sx={{ marginInlineEnd: 1 }}
+                />
+                {count}
+            </ToggleButton>
+        ))}
+    </ToggleButtonGroup>
+)
+
 interface AssistantPrincipleSelectorProps {
     assistants: AssistantFromQuery[]
     selectedPrinciple?: Principle | undefined
@@ -171,26 +199,11 @@ const AssistantPrincipleSelector = ({
             {selectedAssistant && (
                 <>
                     <CardActions sx={{ justifyContent: "space-between" }}>
-                        <ToggleButtonGroup
-                            exclusive
-                            value={selectedPrinciple}
-                            onChange={handleSelectPrinciple}
-                        >
-                            {selectedAssistant?.base_principles.map(
-                                ({ principle, count }) => (
-                                    <ToggleButton
-                                        key={principle}
-                                        value={principle}
-                                    >
-                                        <PrincipleIcon
-                                            principle={principle}
-                                            sx={{ marginInlineEnd: 1 }}
-                                        />
-                                        {count}
-                                    </ToggleButton>
-                                ),
-                            )}
-                        </ToggleButtonGroup>
+                        <BasePrincipleButtonGroup
+                            selectedAssistant={selectedAssistant}
+                            onSelectPrinciple={handleSelectPrinciple}
+                            selectedPrinciple={selectedPrinciple}
+                        />
                         <AssistantIcon
                             assistant={selectedAssistant.id}
                             sx={{ width: s, height: s }}
