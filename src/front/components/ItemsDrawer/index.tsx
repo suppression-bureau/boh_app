@@ -114,7 +114,10 @@ function ItemsDrawer({
         [items, selected],
     )
     const { setOpen, ref } = useDrawerContext()
-    useEffect(() => setOpen(selectedItems.length > 0), [selectedItems, setOpen])
+    useEffect(
+        () => setOpen(selectedItems.length > 0 || baseCounts.length > 0),
+        [selectedItems, baseCounts, setOpen],
+    )
     return (
         <Portal container={ref.current}>
             <List sx={{ overflow: "auto", flexGrow: 1 }}>
