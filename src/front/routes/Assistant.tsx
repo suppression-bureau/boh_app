@@ -216,7 +216,7 @@ const AssistantPrincipleSelector = ({
                     >
                         <PrincipleFilterBar
                             selectedPrinciple={selectedPrinciple}
-                            onSelectPrinciple={onSelectPrinciple}
+                            onSelectPrinciple={onSelectPrinciple!}
                             exclude={excludedPrinciples}
                         />
                     </Collapsible>
