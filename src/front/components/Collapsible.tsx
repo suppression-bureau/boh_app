@@ -28,7 +28,7 @@ export const Collapsible = ({
         [expanded, setExpanded],
     )
     return (
-        <Card>
+        <>
             <CardActions>
                 {cardHeader}
                 <Button
@@ -51,6 +51,6 @@ export const Collapsible = ({
                     {children}
                 </Collapse>
             </ErrorBoundary>
-        </Card>
+        </>
     )
 }

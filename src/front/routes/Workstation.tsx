@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useReducer, useState } from "react"
+import { Fragment, useCallback, useMemo, useReducer, useState } from "react"
 import { useQuery } from "urql"
 
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
+import Divider from "@mui/material/Divider"
 import Stack from "@mui/material/Stack"
 
 import { Collapsible } from "../components/Collapsible"
@@ -140,15 +141,17 @@ const Workstation = ({ workstation }: WorkstationProps) => (
                 <PrincipleIconGroup principles={getPrinciples(workstation)} />
             }
         />
-        <Stack spacing={2}>
+        <Stack>
             {workstation.workstation_slots
                 .toSorted((a, b) => a.index - b.index)
                 .map((slot) => (
-                    <WorkstationSlot
-                        key={slot.id}
-                        workstationSlot={slot}
-                        principles={getPrinciples(workstation)}
-                    />
+                    <Fragment key={slot.id}>
+                        <Divider variant="middle" />
+                        <WorkstationSlot
+                            workstationSlot={slot}
+                            principles={getPrinciples(workstation)}
+                        />
+                    </Fragment>
                 ))}
         </Stack>
     </Card>
