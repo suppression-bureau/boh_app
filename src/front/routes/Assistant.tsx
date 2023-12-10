@@ -1,5 +1,5 @@
 import { PropsOf } from "@emotion/react"
-import { Suspense, useCallback, useMemo, useState } from "react"
+import { Suspense, useCallback, useState } from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
