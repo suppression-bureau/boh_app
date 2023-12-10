@@ -24,7 +24,10 @@ import {
     ExaltationIcon,
     PrincipleIcon,
 } from "../components/Icon"
-import { ItemsDrawerContextProvider } from "../components/ItemsDrawer/context"
+import {
+    ItemsDrawerContextProvider,
+    useItemsDrawer,
+} from "../components/ItemsDrawer/context"
 import LoadingIndicator from "../components/LoadingIndicator"
 import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { graphql } from "../gql"
@@ -154,10 +157,15 @@ const AssistantPrincipleSelector = ({
 }: AssistantPrincipleSelectorProps) => {
     const theme = useTheme()
     const s = `calc(40px + ${theme.spacing(3)})`
+    const { setBaseCounts } = useItemsDrawer()
     const handleSelectAssistant = useCallback(
-        (_: unknown, a: AssistantFromQuery | undefined | null) =>
-            onSelectAssistant?.(a ?? undefined),
-        [onSelectAssistant],
+        (_: unknown, a: AssistantFromQuery | undefined | null) => {
+            onSelectAssistant?.(a ?? undefined)
+            if (a) {
+                setBaseCounts(a.base_principles)
+            }
+        },
+        [onSelectAssistant, setBaseCounts],
     )
     const handleSelectPrinciple = useCallback(
         (_: unknown, p: PrincipleFromQuery | undefined) =>
@@ -248,27 +256,27 @@ const AssistantView = () => {
     )
 
     return (
-        <Container maxWidth="sm">
-            <Stack spacing={2}>
-                <AssistantPrincipleSelector
-                    assistants={data!.assistant}
-                    selectedAssistant={selectedAssistant}
-                    onSelectAssistant={handleNewAssistant}
-                    selectedPrinciple={selectedPrinciple}
-                    onSelectPrinciple={setPrinciple}
-                />
-                <Suspense fallback={<LoadingIndicator />}>
-                    {selectedAssistant && selectedPrinciple && (
-                        <ItemsDrawerContextProvider>
+        <ItemsDrawerContextProvider>
+            <Container maxWidth="sm">
+                <Stack spacing={2}>
+                    <AssistantPrincipleSelector
+                        assistants={data!.assistant}
+                        selectedAssistant={selectedAssistant}
+                        onSelectAssistant={handleNewAssistant}
+                        selectedPrinciple={selectedPrinciple}
+                        onSelectPrinciple={setPrinciple}
+                    />
+                    <Suspense fallback={<LoadingIndicator />}>
+                        {selectedAssistant && selectedPrinciple && (
                             <AssistantItems
                                 principle={selectedPrinciple}
                                 assistant={selectedAssistant}
                             />
-                        </ItemsDrawerContextProvider>
-                    )}
-                </Suspense>
-            </Stack>
-        </Container>
+                        )}
+                    </Suspense>
+                </Stack>
+            </Container>
+        </ItemsDrawerContextProvider>
     )
 }
 export default AssistantView

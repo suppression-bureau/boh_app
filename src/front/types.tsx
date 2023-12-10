@@ -1,4 +1,4 @@
-import { Item, ItemsQuery, Skill, Wisdom } from "./gql/graphql"
+import { Item, ItemsQuery, Principle, Skill, Wisdom } from "./gql/graphql"
 
 export type ItemFromQuery = ItemsQuery["item"][number]
 
@@ -26,4 +26,9 @@ export interface UserData {
     items: ItemRef[]
     skills: KnownSkill[]
     recipes: KnownRecipe[]
+}
+
+export interface PrincipleCount {
+    principle: Principle
+    count: number
 }
