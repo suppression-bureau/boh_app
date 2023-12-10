@@ -91,42 +91,35 @@ interface WorkstationSlotProps {
     principles: Principle[]
 }
 
-const WorkstationSlotInfoCard = ({
-    name,
-    accepts,
-}: WorkstationSlotFromQuery) => {
-    return (
-        <Card sx={{ boxShadow: "none" }}>
-            <CardHeader
-                title={name}
-                titleTypographyProps={{ variant: "h6" }}
-                avatar={<AspectIconGroup aspects={accepts} />}
-            />
-        </Card>
-    )
-}
+const WorkstationSlotInfo = ({ name, accepts }: WorkstationSlotFromQuery) => (
+    <CardHeader
+        title={name}
+        titleTypographyProps={{ variant: "h6" }}
+        avatar={<AspectIconGroup aspects={accepts} />}
+    />
+)
 
 const WorkstationSlot = ({
     workstationSlot,
     principles,
-}: WorkstationSlotProps) => {
-    const header = <WorkstationSlotInfoCard {...workstationSlot} />
-    return (
-        <Collapsible buttonShowHideText="Items" cardHeader={header}>
-            {workstationSlot.id === "Skill" ? (
-                <SkillsStack selectedPrinciples={principles} />
-            ) : (
-                <ItemsView
-                    filters={{
-                        aspects: workstationSlot.accepts,
-                        principles,
-                    }}
-                    group={workstationSlot.id}
-                />
-            )}
-        </Collapsible>
-    )
-}
+}: WorkstationSlotProps) => (
+    <Collapsible
+        buttonShowHideText="Items"
+        cardHeader={<WorkstationSlotInfo {...workstationSlot} />}
+    >
+        {workstationSlot.id === "Skill" ? (
+            <SkillsStack selectedPrinciples={principles} />
+        ) : (
+            <ItemsView
+                filters={{
+                    aspects: workstationSlot.accepts,
+                    principles,
+                }}
+                group={workstationSlot.id}
+            />
+        )}
+    </Collapsible>
+)
 
 interface WorkstationProps {
     workstation: WorkstationFromQuery

@@ -31,10 +31,8 @@ function PrincipleCounter({
 }: PrincipleCounterProps) {
     let total = items.reduce((total, item) => total + (item[principle] ?? 0), 0)
     if (baseCounts.length > 0) {
-        const baseCount: PrincipleCount = baseCounts.find(
-            ({ principle: p }) => p === principle,
-        ) ?? { principle, count: 0 }
-        total += baseCount.count
+        total +=
+            baseCounts.find(({ principle: p }) => p === principle)?.count ?? 0
     }
     return total ? (
         <Stack direction="row" alignItems="center">

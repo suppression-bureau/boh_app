@@ -18,17 +18,16 @@ const PrincipleFilterBar = ({
     exclude = [],
 }: PrincipleFilterProps) => (
     <Stack direction="row" spacing={2} flexWrap="wrap">
-        {Object.values(Principle).map((principle) => {
-            if (!exclude.includes(principle))
-                return (
-                    <PrincipleFilterButton
-                        key={principle}
-                        principle={principle}
-                        selectedPrinciple={selectedPrinciple}
-                        onPrincipleFilter={onSelectPrinciple}
-                    />
-                )
-        })}
+        {Object.values(Principle)
+            .filter((principle) => !exclude.includes(principle))
+            .map((principle) => (
+                <PrincipleFilterButton
+                    key={principle}
+                    principle={principle}
+                    selectedPrinciple={selectedPrinciple}
+                    onPrincipleFilter={onSelectPrinciple}
+                />
+            ))}
         <IconButton size="large" onClick={() => onSelectPrinciple()}>
             <ClearIcon />
         </IconButton>

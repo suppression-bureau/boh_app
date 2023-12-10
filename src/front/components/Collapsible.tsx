@@ -2,7 +2,6 @@ import { useCallback, useState } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
 import Button from "@mui/material/Button"
-import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
 import Collapse from "@mui/material/Collapse"
 
@@ -18,7 +17,7 @@ interface CollapsibleProps {
 }
 
 export const Collapsible = ({
-    buttonShowHideText,
+    buttonShowHideText = "",
     cardHeader,
     children,
 }: CollapsibleProps) => {

@@ -1,5 +1,5 @@
 import { PropsOf } from "@emotion/react"
-import { Suspense, useCallback, useState } from "react"
+import { Suspense, useCallback, useMemo, useState } from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
@@ -175,14 +175,6 @@ const AssistantPrincipleSelector = ({
     const excludedPrinciples = selectedAssistant?.base_principles.map(
         ({ principle }) => principle,
     )
-    const collapsibleHeader = (
-        <Card sx={{ boxShadow: "none" }}>
-            <CardHeader
-                title="Boost another principle"
-                titleTypographyProps={{ variant: "body1" }}
-            />
-        </Card>
-    )
     return (
         <Card sx={{ padding: 2 }}>
             <CardContent sx={{ padding: 1 }}>
@@ -219,8 +211,12 @@ const AssistantPrincipleSelector = ({
                         />
                     </CardActions>
                     <Collapsible
-                        cardHeader={collapsibleHeader}
-                        buttonShowHideText=""
+                        cardHeader={
+                            <CardHeader
+                                title="Boost another principle"
+                                titleTypographyProps={{ variant: "body1" }}
+                            />
+                        }
                     >
                         <PrincipleFilterBar
                             selectedPrinciple={selectedPrinciple}
