@@ -14,8 +14,7 @@ def gen_items_json():
     model_data = [item_handler.mk_model_data(item) for item in data]
     model_data += [item_handler.mk_model_data(item, inherits=False) for item in get_soul_data()]
     model_data = descrumpify(model_data)
-    book_handler = BookHandler({d["id"] for d in model_data})
-    model_data += [book_handler.mk_model_data(book) for book in get_steam_data(SteamFiles.TOMES)]
+    model_data += [mk_book_model(book) for book in get_steam_data(SteamFiles.TOMES)]
     write_gen_file("item", model_data)
 
 
@@ -99,11 +98,7 @@ def descrumpify(items: list[Item]) -> list[Item]:
     return [item for item in items if item["name"] not in seen and not seen.add(item["name"])]
 
 
-class BookHandler:
-    def __init__(self, valid_items: set[str]):
-        self.valid_items = valid_items
-
-    def mk_model_data(self, book: dict[str, Any]) -> None:
-        id = book["ID"]
-        name = book["Label"]
-        return Item(id=id, name=name)
+def mk_book_model(book: dict[str, Any]) -> Item:
+    id = book["ID"]
+    name = book["Label"]
+    return Item(id=id, name=name)
