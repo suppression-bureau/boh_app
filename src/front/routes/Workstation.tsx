@@ -1,18 +1,12 @@
-import { useCallback, useMemo, useReducer, useState } from "react"
-import { ErrorBoundary } from "react-error-boundary"
+import { Fragment, useCallback, useMemo, useReducer, useState } from "react"
 import { useQuery } from "urql"
 
-import Button from "@mui/material/Button"
 import Card from "@mui/material/Card"
-import CardActions from "@mui/material/CardActions"
 import CardHeader from "@mui/material/CardHeader"
-import Collapse from "@mui/material/Collapse"
+import Divider from "@mui/material/Divider"
 import Stack from "@mui/material/Stack"
 
-import ExpandLess from "@mui/icons-material/ExpandLess"
-import ExpandMore from "@mui/icons-material/ExpandMore"
-
-import ErrorDisplay from "../components/ErrorDisplay"
+import { Collapsible } from "../components/Collapsible"
 import {
     ItemsDrawerContextProvider,
     itemsQueryDocument,
@@ -97,66 +91,35 @@ interface WorkstationSlotProps {
     principles: Principle[]
 }
 
-const WorkstationSlotInfoCard = ({
-    name,
-    accepts,
-}: WorkstationSlotFromQuery) => {
-    return (
-        <Card sx={{ boxShadow: "none" }}>
-            <CardHeader
-                title={name}
-                titleTypographyProps={{ variant: "h6" }}
-                avatar={<AspectIconGroup aspects={accepts} />}
-            />
-        </Card>
-    )
-}
+const WorkstationSlotInfo = ({ name, accepts }: WorkstationSlotFromQuery) => (
+    <CardHeader
+        title={name}
+        titleTypographyProps={{ variant: "h6" }}
+        avatar={<AspectIconGroup aspects={accepts} />}
+    />
+)
 
 const WorkstationSlot = ({
     workstationSlot,
     principles,
-}: WorkstationSlotProps) => {
-    const [expanded, setExpanded] = useState(false)
-    const toggleExpanded = useCallback(
-        () => setExpanded(!expanded),
-        [expanded, setExpanded],
-    )
-    return (
-        <Card>
-            <CardActions>
-                <WorkstationSlotInfoCard {...workstationSlot} />
-                <Button
-                    onClick={toggleExpanded}
-                    endIcon={expanded ? <ExpandLess /> : <ExpandMore />}
-                    sx={{ ml: "auto" }}
-                >
-                    Show Items
-                </Button>
-            </CardActions>
-            {/* without the prefetching, the Collapse transition and urql have a bad interaction */}
-            <ErrorBoundary FallbackComponent={ErrorDisplay}>
-                <Collapse
-                    in={expanded}
-                    timeout="auto"
-                    mountOnEnter
-                    unmountOnExit
-                >
-                    {workstationSlot.id === "Skill" ? (
-                        <SkillsStack selectedPrinciples={principles} />
-                    ) : (
-                        <ItemsView
-                            filters={{
-                                aspects: workstationSlot.accepts,
-                                principles,
-                            }}
-                            group={workstationSlot.id}
-                        />
-                    )}
-                </Collapse>
-            </ErrorBoundary>
-        </Card>
-    )
-}
+}: WorkstationSlotProps) => (
+    <Collapsible
+        buttonShowHideText="Items"
+        cardHeader={<WorkstationSlotInfo {...workstationSlot} />}
+    >
+        {workstationSlot.id === "Skill" ? (
+            <SkillsStack selectedPrinciples={principles} />
+        ) : (
+            <ItemsView
+                filters={{
+                    aspects: workstationSlot.accepts,
+                    principles,
+                }}
+                group={workstationSlot.id}
+            />
+        )}
+    </Collapsible>
+)
 
 interface WorkstationProps {
     workstation: WorkstationFromQuery
@@ -171,15 +134,17 @@ const Workstation = ({ workstation }: WorkstationProps) => (
                 <PrincipleIconGroup principles={getPrinciples(workstation)} />
             }
         />
-        <Stack spacing={2}>
+        <Stack>
             {workstation.workstation_slots
                 .toSorted((a, b) => a.index - b.index)
                 .map((slot) => (
-                    <WorkstationSlot
-                        key={slot.id}
-                        workstationSlot={slot}
-                        principles={getPrinciples(workstation)}
-                    />
+                    <Fragment key={slot.id}>
+                        <Divider variant="middle" />
+                        <WorkstationSlot
+                            workstationSlot={slot}
+                            principles={getPrinciples(workstation)}
+                        />
+                    </Fragment>
                 ))}
         </Stack>
     </Card>

@@ -13,24 +13,27 @@ import Typography from "@mui/material/Typography"
 import Delete from "@mui/icons-material/Delete"
 
 import { Principle } from "../../gql/graphql"
-import { VisibleItem } from "../../types"
+import { PrincipleCount, VisibleItem } from "../../types"
 import { useDrawerContext } from "../Drawer"
 import { PrincipleIcon, PrincipleIconProps } from "../Icon"
 
 interface PrincipleCounterProps extends PrincipleIconProps {
     principle: Principle
     items: VisibleItem[]
+    baseCounts?: PrincipleCount[]
 }
 
 function PrincipleCounter({
     principle,
     items,
+    baseCounts = [],
     ...props
 }: PrincipleCounterProps) {
-    const total = items.reduce(
-        (total, item) => total + (item[principle] ?? 0),
-        0,
-    )
+    let total = items.reduce((total, item) => total + (item[principle] ?? 0), 0)
+    if (baseCounts.length > 0) {
+        total +=
+            baseCounts.find(({ principle: p }) => p === principle)?.count ?? 0
+    }
     return total ? (
         <Stack direction="row" alignItems="center">
             <PrincipleIcon principle={principle} {...props} />
@@ -43,10 +46,14 @@ function PrincipleCounter({
 
 interface PrincipleCounterStackProps {
     items: VisibleItem[]
+    baseCounts: PrincipleCount[]
 }
 
-const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
-    items.length > 0 ? (
+const PrincipleCounterStack = ({
+    items,
+    baseCounts = [],
+}: PrincipleCounterStackProps) =>
+    items.length > 0 || baseCounts.length > 0 ? (
         <>
             <Typography variant="h6" sx={{ margin: 2 }}>
                 Totals:
@@ -62,6 +69,7 @@ const PrincipleCounterStack = ({ items }: PrincipleCounterStackProps) =>
                         key={principle}
                         principle={principle}
                         items={items}
+                        baseCounts={baseCounts}
                         sx={{ width: "2rem", height: "2rem" }}
                     />
                 ))}
@@ -89,15 +97,25 @@ interface ItemsDrawerProps {
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
     selected: Set<string>
     onClear?(): void
+    baseCounts?: PrincipleCount[]
 }
 
-function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
+function ItemsDrawer({
+    items,
+    itemRefs,
+    selected,
+    onClear,
+    baseCounts = [],
+}: ItemsDrawerProps) {
     const selectedItems = useMemo(
         () => items.filter(({ id }) => selected.has(id)),
         [items, selected],
     )
     const { setOpen, ref } = useDrawerContext()
-    useEffect(() => setOpen(selectedItems.length > 0), [selectedItems, setOpen])
+    useEffect(
+        () => setOpen(selectedItems.length > 0 || baseCounts.length > 0),
+        [selectedItems, baseCounts, setOpen],
+    )
     return (
         <Portal container={ref.current}>
             <List sx={{ overflow: "auto", flexGrow: 1 }}>
@@ -119,7 +137,10 @@ function ItemsDrawer({ items, itemRefs, selected, onClear }: ItemsDrawerProps) {
             </List>
             <List sx={{ flexGrow: 0 }}>
                 <Divider />
-                <PrincipleCounterStack items={selectedItems} />
+                <PrincipleCounterStack
+                    items={selectedItems}
+                    baseCounts={baseCounts}
+                />
                 {onClear && (
                     <>
                         <Divider />

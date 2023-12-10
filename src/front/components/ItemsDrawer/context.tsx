@@ -8,13 +8,14 @@ import {
     useMemo,
     useReducer,
     useRef,
+    useState,
 } from "react"
 import { useQuery } from "urql"
 
 import ItemsDrawer from "."
 import { graphql } from "../../gql"
 import { setItemVisible } from "../../routes/Items"
-import { ItemFromQuery } from "../../types"
+import { ItemFromQuery, PrincipleCount } from "../../types"
 
 export const itemsQueryDocument = graphql(`
     query Items {
@@ -93,6 +94,8 @@ interface ItemsDrawerContextProps {
     itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
     selected: Set<string>
     dispatch: Dispatch<StringSetAction>
+    baseCounts: PrincipleCount[]
+    setBaseCounts(this: void, counts: PrincipleCount[]): void
 }
 
 const ItemsDrawerContext = createContext<ItemsDrawerContextProps>({
@@ -102,6 +105,9 @@ const ItemsDrawerContext = createContext<ItemsDrawerContextProps>({
     selected: new Set(),
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     dispatch() {},
+    baseCounts: [],
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    setBaseCounts() {},
 })
 
 export const useItemsDrawer = (): ItemsDrawerContextProps => {
@@ -133,9 +139,18 @@ export const ItemsDrawerContextProvider = ({
     )
     const clearSelected = useCallback(() => dispatch({ type: "clear" }), [])
 
+    const [baseCounts, setBaseCounts] = useState<PrincipleCount[]>([])
+
     return (
         <ItemsDrawerContext.Provider
-            value={{ items: data!.item, itemRefs, selected, dispatch }}
+            value={{
+                items: data!.item,
+                itemRefs,
+                selected,
+                dispatch,
+                baseCounts,
+                setBaseCounts,
+            }}
         >
             {children}
             <ItemsDrawer
@@ -143,6 +158,7 @@ export const ItemsDrawerContextProvider = ({
                 itemRefs={itemRefs}
                 selected={selected}
                 onClear={clearSelected}
+                baseCounts={baseCounts}
             />
         </ItemsDrawerContext.Provider>
     )

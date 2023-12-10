@@ -8,15 +8,15 @@
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.codeActionsOnSave": {
-      "source.fixAll": true,
-      "source.organizeImports": true,
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit",
     },
   },
   "search.exclude": {
     "**/.yarn": true,
     "**/.pnp.*": true,
   },
-  "editor.wordBasedSuggestions": false,
+  "editor.wordBasedSuggestions": "off",
   "python.analysis.typeCheckingMode": "basic",
   "python.terminal.activateEnvironment": false,
   "python.testing.pytestArgs": ["--color=yes"],
