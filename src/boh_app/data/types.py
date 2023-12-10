@@ -35,6 +35,11 @@ class Principle(StrEnum):
     winter = auto()
 
 
+class CraftingAction(StrEnum):
+    workstation = auto()
+    desk = auto()
+
+
 class Wisdom(TypedDict):
     id: str
 
@@ -96,6 +101,7 @@ class Recipe(TypedDict):
     principle_amount: int
     skills: NotRequired[list[SkillRef]]
     recipe_internals: NotRequired[list[RecipeInternal]]
+    crafting_action: CraftingAction
 
 
 class KnownSkill(TypedDict):
