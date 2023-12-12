@@ -36,8 +36,8 @@ class Principle(StrEnum):
 
 
 class CraftingAction(StrEnum):
-    workstation = auto()
-    desk = auto()
+    craft = auto()
+    read = auto()
 
 
 class Wisdom(TypedDict):

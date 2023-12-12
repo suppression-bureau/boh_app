@@ -66,7 +66,7 @@ class RecipeHandler:
         product = self._get_product(recipe)
         compound_id = f"{product['id']}_{principle}"
         model = Recipe(
-            id=compound_id, product=product, principle=principle, principle_amount=amount, crafting_action=CraftingAction("workstation")
+            id=compound_id, product=product, principle=principle, principle_amount=amount, crafting_action=CraftingAction("craft")
         )
         if source_aspect := self._get_source_aspect(recipe):
             model["source_aspect"] = source_aspect
@@ -111,7 +111,7 @@ class BookHandler:
         return Recipe(
             id=f"{book['ID']}.{product_id}",
             source_item=ItemRef(id=book["ID"]),
-            crafting_action=CraftingAction("desk"),
+            crafting_action=CraftingAction("read"),
             principle=Principle(principle_str),
             principle_amount=amount,
             product=ItemRef(id=product_id),

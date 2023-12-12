@@ -42,6 +42,7 @@ class AutosaveHandler:
         mapping = {}
         for recipe in self.recipes:
             if "recipe_internals" not in recipe:
+                # book "recipes" do not have internal representations
                 continue
             for internal_name in recipe["recipe_internals"]:
                 skill_id = next(v for k, v in self.skill_names_id_mapping.items() if k in internal_name["id"])

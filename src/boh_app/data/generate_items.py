@@ -99,6 +99,4 @@ def descrumpify(items: list[Item]) -> list[Item]:
 
 
 def mk_book_model(book: dict[str, Any]) -> Item:
-    id = book["ID"]
-    name = book["Label"]
-    return Item(id=id, name=name)
+    return Item(id=book["ID"], name=book["Label"])
