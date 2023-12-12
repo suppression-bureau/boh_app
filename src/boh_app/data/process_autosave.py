@@ -58,7 +58,8 @@ class AutosaveHandler:
 
     def get_items(self, data: dict[str, Any]) -> list[ItemRef]:
         known_elements = data["CharacterCreationCommands"][0]["UniqueElementsManifested"]
-        return [(ItemRef(id=ke)) for ke in known_elements if ke in self.valid_items]
+        # numens are filtered out here (as _all_ numens are "manifested") and then re-added in get_items_from_recipes
+        return [(ItemRef(id=ke)) for ke in known_elements if (ke in self.valid_items and not ke.startswith("numen."))]
 
     def get_souls(self, data: dict[str, Any]) -> list[ItemRef]:
         root_data = data["RootPopulationCommand"]["Spheres"][19]
