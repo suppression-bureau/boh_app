@@ -14,6 +14,7 @@ def gen_items_json():
     model_data = [item_handler.mk_model_data(item) for item in data]
     model_data += [item_handler.mk_model_data(item, inherits=False) for item in get_soul_data()]
     model_data = descrumpify(model_data)
+    model_data += [mk_book_model(book) for book in get_steam_data(SteamFiles.TOMES)]
     write_gen_file("item", model_data)
 
 
@@ -95,3 +96,7 @@ def descrumpify(items: list[Item]) -> list[Item]:
     # Scrumpy is only item that does not match conventions, i.e. distributable
     seen = set()
     return [item for item in items if item["name"] not in seen and not seen.add(item["name"])]
+
+
+def mk_book_model(book: dict[str, Any]) -> Item:
+    return Item(id=book["ID"], name=book["Label"])

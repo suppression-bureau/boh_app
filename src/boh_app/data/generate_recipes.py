@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from .types import Aspect, ItemRef, Principle, Recipe, RecipeInternal, SkillRef
+from .types import Aspect, CraftingAction, ItemRef, Principle, Recipe, RecipeInternal, SkillRef
 from .utils import SteamFiles, get_steam_data, get_valid_refs, write_gen_file
 
 HERE = Path(__file__).parent
@@ -14,6 +14,8 @@ def gen_recipes_json():
     handler = RecipeHandler()
     [handler.mk_model_data(d) for d in data]
     model_data = list(handler.recipe_map.values())
+    book_handler = BookHandler()
+    model_data += [book_handler.mk_model_data(d) for d in get_steam_data(SteamFiles.TOMES)]
     write_gen_file("recipe", model_data)
 
 
@@ -64,10 +66,7 @@ class RecipeHandler:
         product = self._get_product(recipe)
         compound_id = f"{product['id']}_{principle}"
         model = Recipe(
-            id=compound_id,
-            product=product,
-            principle=principle,
-            principle_amount=amount,
+            id=compound_id, product=product, principle=principle, principle_amount=amount, crafting_action=CraftingAction("craft")
         )
         if source_aspect := self._get_source_aspect(recipe):
             model["source_aspect"] = source_aspect
@@ -85,3 +84,35 @@ class RecipeHandler:
             model["skills"] = [self._get_skill(recipe)]
             model["recipe_internals"] = [internal_id]
             self.recipe_map[recipe_key] = model
+
+
+class BookHandler:
+    def __init__(self):
+        self.items = get_valid_refs("item")
+
+    def mk_model_data(self, book: dict[str, Any]) -> Recipe:
+        pref = "mystery."
+        try:
+            principle_str, amount = next(
+                (p.removeprefix(pref), a) for p, a in book["aspects"].items() if p.removeprefix(pref) in dir(Principle)
+            )
+        except StopIteration as exc:
+            raise RuntimeError(f"Book {book['ID']} has no principle") from exc
+        try:
+            product_id = next(
+                p["id"]
+                for name, products in book["xtriggers"].items()
+                if name.startswith("reading.")
+                for p in products
+                if p["id"] in self.items
+            )
+        except StopIteration as exc:
+            raise RuntimeError(f"Book {book['ID']} has no product") from exc
+        return Recipe(
+            id=f"{book['ID']}.{product_id}",
+            source_item=ItemRef(id=book["ID"]),
+            crafting_action=CraftingAction("read"),
+            principle=Principle(principle_str),
+            principle_amount=amount,
+            product=ItemRef(id=product_id),
+        )

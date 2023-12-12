@@ -9,7 +9,7 @@ from sqlalchemy import Enum as SqlaEnum
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, registry, relationship
 
-from .data.types import Principle
+from .data.types import CraftingAction, Principle
 from .data.types_sqla import JsonArray
 
 if TYPE_CHECKING:
@@ -174,7 +174,7 @@ class Item(Base, NameMixin):
 
     @hybrid_property
     def is_craftable(self) -> bool:
-        return len(self.product_recipe) > 0
+        return len(self.source_recipe) > 0
 
 
 class RecipeInternal(Base, NameMixin):
@@ -200,6 +200,7 @@ class Recipe(Base, NameMixin):
     principle_amount: Mapped[int]
 
     known: Mapped[bool] = mapped_column(default=False)
+    crafting_action: Mapped[CraftingAction]
 
     recipe_internals: Mapped[list[RecipeInternal]] = relationship(back_populates="recipe")
     skills: Mapped[list[Skill]] = relationship(back_populates="recipes", secondary=recipe_skill_association)

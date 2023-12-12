@@ -17,6 +17,7 @@ class SteamFiles(StrEnum):
     SOUL3 = "elements/abilities3.json"
     SOUL4 = "elements/abilities4.json"
     SKILL = "elements/skills.json"
+    TOMES = "elements/tomes.json"
     WORKSTATION = "verbs/workstations_library_world.json"
     RECIPE_KEEPER = "recipes/crafting_2_keeper.json"
     RECIPE_SCHOLAR = "recipes/crafting_3_scholar.json"
@@ -27,8 +28,8 @@ def get_steam_data(selection: SteamFiles) -> list[dict[str, Any]]:
     boh_data_dir = find_boh_dir() / "StreamingAssets/bhcontent/core"
     boh_file = boh_data_dir / selection.value
 
-    with boh_file.open("r") as a:
-        data = json.load(a)
+    content = boh_file.read_bytes().removeprefix(b"\xff\xfe")  # needed for TOMES
+    data = json.loads(content)
     inner = selection.value.split("/")[0]
     return data[inner]
 

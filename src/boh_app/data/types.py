@@ -35,6 +35,11 @@ class Principle(StrEnum):
     winter = auto()
 
 
+class CraftingAction(StrEnum):
+    craft = auto()
+    read = auto()
+
+
 class Wisdom(TypedDict):
     id: str
 
@@ -96,6 +101,7 @@ class Recipe(TypedDict):
     principle_amount: int
     skills: NotRequired[list[SkillRef]]
     recipe_internals: NotRequired[list[RecipeInternal]]
+    crafting_action: CraftingAction
 
 
 class KnownSkill(TypedDict):
@@ -107,7 +113,7 @@ class KnownSkill(TypedDict):
 
 class KnownRecipe(TypedDict):
     id: str
-    skills: list[SkillRef]
+    skills: NotRequired[list[SkillRef]]  # irrelevant for books, i.e. we're not tracking languages
 
 
 class ProcessedAutosave(TypedDict):

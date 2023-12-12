@@ -41,13 +41,16 @@ class AutosaveHandler:
     def internal_recipe_name_mapping(self) -> dict[str, tuple[str, str]]:
         mapping = {}
         for recipe in self.recipes:
+            if "recipe_internals" not in recipe:
+                # book "recipes" do not have internal representations
+                continue
             for internal_name in recipe["recipe_internals"]:
                 skill_id = next(v for k, v in self.skill_names_id_mapping.items() if k in internal_name["id"])
                 mapping[internal_name["id"]] = (recipe["id"], skill_id)
         return mapping
 
     def process_autosave(self, data: dict[str, Any]) -> ProcessedAutosave:
-        recipes = self.get_recipes(data)
+        recipes = self.get_recipes(data) + self.get_books(data)
         return ProcessedAutosave(
             items=self.get_items(data) + self.get_souls(data) + self.get_items_from_recipes(recipes),
             skills=self.get_skills(data),
@@ -56,7 +59,8 @@ class AutosaveHandler:
 
     def get_items(self, data: dict[str, Any]) -> list[ItemRef]:
         known_elements = data["CharacterCreationCommands"][0]["UniqueElementsManifested"]
-        return [(ItemRef(id=ke)) for ke in known_elements if ke in self.valid_items]
+        # numens are filtered out here (as _all_ numens are "manifested") and then re-added in get_items_from_recipes
+        return [(ItemRef(id=ke)) for ke in known_elements if (ke in self.valid_items and not ke.startswith("numen."))]
 
     def get_souls(self, data: dict[str, Any]) -> list[ItemRef]:
         root_data = data["RootPopulationCommand"]["Spheres"][19]
@@ -118,3 +122,18 @@ class AutosaveHandler:
                 else:
                     known_recipe_skills_mapping[recipe_id].append(SkillRef(id=skill_id))
         return [KnownRecipe(id=k, skills=v) for k, v in known_recipe_skills_mapping.items()]
+
+    def get_books(self, data: dict[str, Any]) -> list[KnownRecipe]:
+        root_data = data["RootPopulationCommand"]["Spheres"][3]
+        assert root_data["GoverningSphereSpec"]["Id"] == "Library"
+        books = [
+            bookshelf_token["Payload"]
+            for lib_token in root_data["Tokens"]
+            for dominion in lib_token["Payload"]["Dominions"]
+            for sphere in dominion["Spheres"]
+            if sphere["GoverningSphereSpec"]["Label"] == "BOOKSHELF"
+            for bookshelf_token in sphere["Tokens"]
+        ]
+        known_books = {book["EntityId"] for book in books if any(mut.startswith("mastery.") for mut in book["Mutations"])}
+        known_book_recipe_ids = [r["id"] for r in self.recipes if r.get("source_item", {}).get("id", None) in known_books]
+        return [KnownRecipe(id=id) for id in known_book_recipe_ids]
