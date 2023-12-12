@@ -124,14 +124,18 @@ class AutosaveHandler:
     def get_books(self, data: dict[str, Any]) -> list[KnownRecipe]:
         root_data = data["RootPopulationCommand"]["Spheres"][3]
         assert root_data["GoverningSphereSpec"]["Id"] == "Library"
-        known_books = set()
-        for lib_token in root_data["Tokens"]:
-            for dominion in lib_token["Payload"]["Dominions"]:
-                for sphere in dominion["Spheres"]:
-                    if sphere["GoverningSphereSpec"]["Label"] == "BOOKSHELF":
-                        for bookshelf_token in sphere["Tokens"]:
-                            payload = bookshelf_token["Payload"]
-                            if any(mut.startswith("mastery.") for mut in payload["Mutations"].keys()):
-                                known_books.add(payload["EntityId"])
+        books = [
+            bookshelf_token["Payload"]
+            for lib_token in root_data["Tokens"]
+            for dominion in lib_token["Payload"]["Dominions"]
+            for sphere in dominion["Spheres"]
+            if sphere["GoverningSphereSpec"]["Label"] == "BOOKSHELF"
+            for bookshelf_token in sphere["Tokens"]
+        ]
+        known_books = {
+            book["EntityId"]
+            for book in books
+            if any(mut.startswith("mastery.") for mut in payload["Mutations"])
+        }
         known_book_recipe_ids = [r["id"] for r in self.recipes if r.get("source_item", {}).get("id", None) in known_books]
         return [KnownRecipe(id=id) for id in known_book_recipe_ids]
