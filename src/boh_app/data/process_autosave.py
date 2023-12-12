@@ -132,6 +132,6 @@ class AutosaveHandler:
             if sphere["GoverningSphereSpec"]["Label"] == "BOOKSHELF"
             for bookshelf_token in sphere["Tokens"]
         ]
-        known_books = {book["EntityId"] for book in books if any(mut.startswith("mastery.") for mut in payload["Mutations"])}
+        known_books = {book["EntityId"] for book in books if any(mut.startswith("mastery.") for mut in book["Mutations"])}
         known_book_recipe_ids = [r["id"] for r in self.recipes if r.get("source_item", {}).get("id", None) in known_books]
         return [KnownRecipe(id=id) for id in known_book_recipe_ids]

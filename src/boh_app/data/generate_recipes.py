@@ -91,22 +91,28 @@ class BookHandler:
         self.items = get_valid_refs("item")
 
     def mk_model_data(self, book: dict[str, Any]) -> Recipe:
-        principle, amount, product = None, None, None
-        for aspect, value in book["aspects"].items():
-            aspect = aspect.removeprefix("mystery.")
-            if aspect in dir(Principle):
-                principle = Principle(aspect)
-                amount = value
-        for name, products in book["xtriggers"].items():
-            if name.startswith("reading."):
-                for p in products:
-                    if p["id"] in self.items:
-                        product = ItemRef(id=p["id"])
+        pref = "mystery."
+        try:
+            principle_str, amount = next(
+                (p.removeprefix(pref), a) for p, a in book["aspects"].items() if p.removeprefix(pref) in dir(Principle)
+            )
+        except StopIteration as exc:
+            raise RuntimeError(f"Book {book['ID']} has no principle") from exc
+        try:
+            product_id = next(
+                p["id"]
+                for name, products in book["xtriggers"].items()
+                if name.startswith("reading.")
+                for p in products
+                if p["id"] in self.items
+            )
+        except StopIteration as exc:
+            raise RuntimeError(f"Book {book['ID']} has no product") from exc
         return Recipe(
-            id=f"{book['ID']}.{product['id']}",
+            id=f"{book['ID']}.{product_id}",
             source_item=ItemRef(id=book["ID"]),
             crafting_action=CraftingAction("desk"),
-            principle=principle,
+            principle=Principle(principle_str),
             principle_amount=amount,
-            product=product,
+            product=ItemRef(id=product_id),
         )
