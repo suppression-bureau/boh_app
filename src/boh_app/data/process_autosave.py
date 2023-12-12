@@ -41,13 +41,15 @@ class AutosaveHandler:
     def internal_recipe_name_mapping(self) -> dict[str, tuple[str, str]]:
         mapping = {}
         for recipe in self.recipes:
+            if "recipe_internals" not in recipe:
+                continue
             for internal_name in recipe["recipe_internals"]:
                 skill_id = next(v for k, v in self.skill_names_id_mapping.items() if k in internal_name["id"])
                 mapping[internal_name["id"]] = (recipe["id"], skill_id)
         return mapping
 
     def process_autosave(self, data: dict[str, Any]) -> ProcessedAutosave:
-        recipes = self.get_recipes(data)
+        recipes = self.get_recipes(data) + self.get_books(data)
         return ProcessedAutosave(
             items=self.get_items(data) + self.get_souls(data) + self.get_items_from_recipes(recipes),
             skills=self.get_skills(data),
@@ -118,3 +120,18 @@ class AutosaveHandler:
                 else:
                     known_recipe_skills_mapping[recipe_id].append(SkillRef(id=skill_id))
         return [KnownRecipe(id=k, skills=v) for k, v in known_recipe_skills_mapping.items()]
+
+    def get_books(self, data: dict[str, Any]) -> list[KnownRecipe]:
+        root_data = data["RootPopulationCommand"]["Spheres"][3]
+        assert root_data["GoverningSphereSpec"]["Id"] == "Library"
+        known_books = set()
+        for lib_token in root_data["Tokens"]:
+            for dominion in lib_token["Payload"]["Dominions"]:
+                for sphere in dominion["Spheres"]:
+                    if sphere["GoverningSphereSpec"]["Label"] == "BOOKSHELF":
+                        for bookshelf_token in sphere["Tokens"]:
+                            payload = bookshelf_token["Payload"]
+                            if any(mut.startswith("mastery.") for mut in payload["Mutations"].keys()):
+                                known_books.add(payload["EntityId"])
+        known_book_recipe_ids = [r["id"] for r in self.recipes if r.get("source_item", {}).get("id", None) in known_books]
+        return [KnownRecipe(id=id) for id in known_book_recipe_ids]

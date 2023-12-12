@@ -104,7 +104,7 @@ class BookHandler:
                         product = ItemRef(id=p["id"])
         return Recipe(
             id=f"{book['ID']}.{product['id']}",
-            source_item=book["ID"],
+            source_item=ItemRef(id=book["ID"]),
             crafting_action=CraftingAction("desk"),
             principle=principle,
             principle_amount=amount,

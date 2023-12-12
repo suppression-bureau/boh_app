@@ -113,7 +113,7 @@ class KnownSkill(TypedDict):
 
 class KnownRecipe(TypedDict):
     id: str
-    skills: list[SkillRef]
+    skills: NotRequired[list[SkillRef]]  # irrelevant for books, i.e. we're not tracking languages
 
 
 class ProcessedAutosave(TypedDict):
