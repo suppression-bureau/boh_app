@@ -8,6 +8,8 @@ export interface VisibleItem extends ItemFromQuery {
 }
 
 export type ItemRef = Pick<Item, "id">
+export type ProductItem = Pick<Item, "id" | "name">
+
 type SkillRef = Pick<Skill, "id">
 
 export interface KnownSkill {
