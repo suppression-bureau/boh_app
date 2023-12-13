@@ -34,7 +34,7 @@ import AssistantView from "./routes/Assistant.tsx"
 import CraftView from "./routes/Craft.tsx"
 import Home from "./routes/Home"
 import SkillsView from "./routes/Skills"
-import WorkstationView from "./routes/Workstation.tsx"
+import WorkstationsView from "./routes/Workstation.tsx"
 
 const ROUTE_LINKS = [
     { label: "Home", href: "/", pattern: "/" },
@@ -176,7 +176,7 @@ function Content() {
                     <Route path="skills" element={<SkillsView />} />
                     <Route path="craft" element={<CraftView />} />
                     <Route path="assistance" element={<AssistantView />} />
-                    <Route path="workstations" element={<WorkstationView />} />
+                    <Route path="workstations" element={<WorkstationsView />} />
                     <Route path="*" element={<Navigate replace to="/" />} />
                 </SlideRoutes>
             </Suspense>

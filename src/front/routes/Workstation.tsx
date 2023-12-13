@@ -89,6 +89,7 @@ function workstationReducer(
 interface WorkstationSlotProps {
     workstationSlot: WorkstationSlotFromQuery
     principles: Principle[]
+    includeItems?: boolean
 }
 
 const WorkstationSlotInfo = ({ name, accepts }: WorkstationSlotFromQuery) => (
@@ -99,7 +100,7 @@ const WorkstationSlotInfo = ({ name, accepts }: WorkstationSlotFromQuery) => (
     />
 )
 
-const WorkstationSlot = ({
+const FullWorkstationSlot = ({
     workstationSlot,
     principles,
 }: WorkstationSlotProps) => (
@@ -121,11 +122,26 @@ const WorkstationSlot = ({
     </Collapsible>
 )
 
+const WorkstationSlot = ({
+    workstationSlot,
+    principles,
+    includeItems,
+}: WorkstationSlotProps) =>
+    includeItems ? (
+        <FullWorkstationSlot
+            workstationSlot={workstationSlot}
+            principles={principles}
+        />
+    ) : (
+        <WorkstationSlotInfo {...workstationSlot} />
+    )
+
 interface WorkstationProps {
-    workstation: WorkstationFromQuery
+    workstation: VisibleWorkstation | WorkstationFromQuery
+    includeItems?: boolean
 }
 
-const Workstation = ({ workstation }: WorkstationProps) => (
+const Workstation = ({ workstation, includeItems }: WorkstationProps) => (
     <Card sx={{ boxShadow: "none" }}>
         <CardHeader
             title={workstation.id}
@@ -143,6 +159,7 @@ const Workstation = ({ workstation }: WorkstationProps) => (
                         <WorkstationSlot
                             workstationSlot={slot}
                             principles={getPrinciples(workstation)}
+                            includeItems={includeItems}
                         />
                     </Fragment>
                 ))}
@@ -150,7 +167,30 @@ const Workstation = ({ workstation }: WorkstationProps) => (
     </Card>
 )
 
-export default function WorkstationView() {
+interface FilteredWorkstationsViewProps {
+    workstations: VisibleWorkstation[] | WorkstationFromQuery[]
+    includeItems?: boolean
+}
+// Displays a filtered set of workstations
+// includeItems default set here, and assumed to be set in children
+const FilteredWorkstationsView = ({
+    workstations,
+    includeItems = true,
+}: FilteredWorkstationsViewProps) => (
+    <Stack spacing={2}>
+        {workstations
+            .toSorted((a, b) => a.id.localeCompare(b.id))
+            .map((workstation) => (
+                <Workstation
+                    key={workstation.id}
+                    workstation={workstation}
+                    includeItems={includeItems}
+                />
+            ))}
+    </Stack>
+)
+
+export default function WorkstationsView() {
     const [{ data }] = useQuery({ query: workstationQueryDocument })
     // prefetch
     useQuery({ query: skillQueryDocument })
@@ -173,6 +213,7 @@ export default function WorkstationView() {
         },
         [dispatch, setPrinciple],
     )
+    const visibleWorkstations = state.filter(({ isVisible }) => isVisible)
     return (
         <Stack maxWidth="md" marginInline="auto" spacing={2}>
             <PrincipleFilterBar
@@ -180,14 +221,7 @@ export default function WorkstationView() {
                 onSelectPrinciple={handleSelectedPrinciple}
             />
             <ItemsDrawerContextProvider>
-                {state
-                    .filter(({ isVisible }) => isVisible)
-                    .map((workstation) => (
-                        <Workstation
-                            key={workstation.id}
-                            workstation={workstation}
-                        />
-                    ))}
+                <FilteredWorkstationsView workstations={visibleWorkstations} />
             </ItemsDrawerContextProvider>
         </Stack>
     )
