@@ -4,14 +4,20 @@ import { useQuery } from "urql"
 import Autocomplete from "@mui/material/Autocomplete"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
+import Typography from "@mui/material/Typography"
 
+import { ItemsDrawerContextProvider } from "../components/ItemsDrawer/context"
 import { graphql } from "../gql"
-import { RecipesQuery } from "../gql/graphql"
-import { ProductItem } from "../types"
+import { ProductsQuery } from "../gql/graphql"
+import { KnownRecipe } from "../types"
 import { useUserDataContext } from "../userContext"
+import { Aspect } from "./Aspects"
+import { SingleItemView } from "./Items"
+import { PrincipleCard } from "./Principles"
+import { SkillsStack } from "./Skills"
 
-export const recipeQueryDocument = graphql(`
-    query Recipes {
+export const productsQueryDocument = graphql(`
+    query Products {
         item {
             id
             name
@@ -33,10 +39,59 @@ export const recipeQueryDocument = graphql(`
     }
 `)
 
-type RecipeFromQuery = RecipesQuery["item"][number]
+type ProductItem = ProductsQuery["item"][number]
+
+interface RecipeProps {
+    recipe: KnownRecipe
+}
+
+const RecipeSource = ({ recipe }: RecipeProps) => (
+    <>
+        {recipe.source_aspect && <Aspect id={recipe.source_aspect} />}
+        {recipe.source_item && <SingleItemView itemId={recipe.source_item} />}
+    </>
+)
+
+const RecipeView = (recipe: KnownRecipe) => {
+    const skillIdSet = new Set(recipe.skills.map(({ id }) => id))
+    const hasSource =
+        recipe.source_item !== undefined || recipe.source_aspect !== undefined
+    return (
+        <Stack spacing={2} maxWidth="400px">
+            <Typography variant="h5"> Principle </Typography>
+            <PrincipleCard
+                id={recipe.principle}
+                title={recipe.principle_amount}
+            />
+            {hasSource && (
+                <>
+                    <Typography variant="h5"> Source </Typography>
+                    <RecipeSource recipe={recipe} />
+                </>
+            )}
+            <Typography variant="h5"> Skills </Typography>
+            <SkillsStack skillIdSet={skillIdSet}></SkillsStack>
+        </Stack>
+    )
+}
+
+const RecipesView = (recipeProduct: ProductItem) => {
+    const { knownRecipes } = useUserDataContext()
+    const productRecipes = knownRecipes.filter(
+        ({ product }) => product === recipeProduct.id,
+    )
+
+    return (
+        <Stack>
+            {productRecipes.map((recipe) => (
+                <RecipeView key={recipe.id} {...recipe} />
+            ))}
+        </Stack>
+    )
+}
 
 const CraftView = () => {
-    const [{ data }] = useQuery({ query: recipeQueryDocument })
+    const [{ data }] = useQuery({ query: productsQueryDocument })
     const [product, setProduct] = useState<ProductItem | undefined>()
     const { knownRecipes } = useUserDataContext()
 
@@ -45,7 +100,7 @@ const CraftView = () => {
         [knownRecipes],
     )
 
-    const userKnownRecipes: RecipeFromQuery[] = useMemo(
+    const userKnownRecipes: ProductItem[] = useMemo(
         () =>
             data!.item
                 .filter(({ source_recipe }) => source_recipe.length > 0)
@@ -60,24 +115,27 @@ const CraftView = () => {
         },
         [setProduct],
     )
+    // maybe try a query for the item instead of context provider
     return (
-        <Stack
-            maxWidth="md"
-            justifyContent="center"
-            marginInline="auto"
-            marginBlock={2}
-        >
-            <Autocomplete
-                options={userKnownRecipes}
-                getOptionLabel={({ name }) => name}
-                isOptionEqualToValue={(a, b) => a.name === b.name}
-                renderInput={(params) => (
-                    <TextField {...params} label="Select Item to Craft" />
-                )}
-                onChange={handleProductSelect}
-            />
-            Selected: {product?.name}
-        </Stack>
+        <ItemsDrawerContextProvider>
+            <Stack
+                maxWidth="md"
+                justifyContent="center"
+                marginInline="auto"
+                marginBlock={2}
+            >
+                <Autocomplete
+                    options={userKnownRecipes}
+                    getOptionLabel={({ name }) => name}
+                    isOptionEqualToValue={(a, b) => a.name === b.name}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Select Item to Craft" />
+                    )}
+                    onChange={handleProductSelect}
+                />
+                {product && <RecipesView {...product} />}
+            </Stack>
+        </ItemsDrawerContextProvider>
     )
 }
 

@@ -1,5 +1,7 @@
 import { RefObject, forwardRef, memo, useCallback, useMemo } from "react"
 
+import Card from "@mui/material/Card"
+import CardHeader from "@mui/material/CardHeader"
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
 import ListItemButton, {
@@ -98,7 +100,7 @@ const ItemPrincipleValue = ({ principle, value }: ItemPrincipleValueProps) => {
 }
 
 const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
-    <Stack direction="row" alignItems="center">
+    <Stack direction="row" alignItems="center" padding={1}>
         {Object.values(Principle)
             .filter((principle) => item[principle])
             .map((principle) => (
@@ -181,6 +183,23 @@ const ItemsList = memo(function ItemsList({
         </List>
     )
 })
+
+interface SingleItemProps {
+    itemId: string
+}
+
+export const SingleItemView = ({ itemId }: SingleItemProps) => {
+    const { items } = useItemsDrawer()
+    const item = items.find(({ id }) => id === itemId)
+    console.log("why am I not seeing this?", item)
+    if (item === undefined) return
+    return (
+        <Card>
+            <CardHeader title={item.name}></CardHeader>
+            <ItemValues {...item} />
+        </Card>
+    )
+}
 
 export const ItemsView = ({ filters, group }: ItemsProps) => {
     const { items, itemRefs } = useItemsDrawer()

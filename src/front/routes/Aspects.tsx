@@ -58,7 +58,7 @@ function Aspect({
                 title={nameAspect ? id : ""}
                 avatar={<AspectIcon aspect={id} />}
             />
-            <CardContent>
+            <CardContent style={{ padding: 0 }}>
                 {showAssistant && assistants.length > 0 && (
                     <List disablePadding>
                         {assistants.map(({ id }) => (

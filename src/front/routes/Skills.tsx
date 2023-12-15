@@ -218,12 +218,14 @@ const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
 
 interface SkillStackProps {
     skills?: SkillFromQuery[]
+    skillIdSet?: Set<string> | undefined
     selectedPrinciples?: Principle[] | undefined
     onSkillIncrement?(skill: SkillFromQuery): void
 }
 export const SkillsStack = ({
     skills,
-    selectedPrinciples,
+    skillIdSet = new Set(),
+    selectedPrinciples = [],
     onSkillIncrement,
 }: SkillStackProps) => {
     const [{ data }] = useQuery({ query: skillQueryDocument })
@@ -237,17 +239,20 @@ export const SkillsStack = ({
         () => new Set(selectedPrinciples ?? []),
         [selectedPrinciples],
     )
+
     const filteredSkills = useMemo(
         () =>
-            allSkills.filter(
-                (skill) =>
-                    skill.level > 0 &&
-                    (!selectedPrinciples ||
-                        getPrinciples(skill).some((principle) =>
-                            selectedPrincipleSet.has(principle),
-                        )),
-            ),
-        [selectedPrincipleSet, selectedPrinciples, allSkills],
+            allSkills
+                .filter(({ id }) => skillIdSet.has(id))
+                .filter(
+                    (skill) =>
+                        skill.level > 0 &&
+                        (selectedPrinciples.length === 0 ||
+                            getPrinciples(skill).some((principle) =>
+                                selectedPrincipleSet.has(principle),
+                            )),
+                ),
+        [allSkills, skillIdSet, selectedPrinciples, selectedPrincipleSet],
     )
     return (
         <Stack spacing={2}>

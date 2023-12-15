@@ -1,4 +1,4 @@
-import { Item, ItemsQuery, Principle, Skill, Wisdom } from "./gql/graphql"
+import { Item, ItemsQuery, Principle, Recipe, Wisdom } from "./gql/graphql"
 
 export type ItemFromQuery = ItemsQuery["item"][number]
 
@@ -8,9 +8,6 @@ export interface VisibleItem extends ItemFromQuery {
 }
 
 export type ItemRef = Pick<Item, "id">
-export type ProductItem = Pick<Item, "id" | "name">
-
-type SkillRef = Pick<Skill, "id">
 
 export interface KnownSkill {
     id: string
@@ -19,9 +16,11 @@ export interface KnownSkill {
     evolvable_soul?: ItemRef
 }
 
-export interface KnownRecipe {
-    id: string
-    skills: SkillRef[]
+export interface KnownRecipe
+    extends Omit<Recipe, "source_aspect" | "source_item" | "product"> {
+    product: string
+    source_aspect?: string
+    source_item?: string
 }
 
 export interface UserData {
