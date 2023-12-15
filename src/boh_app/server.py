@@ -33,10 +33,21 @@ async def root():
 
 
 @app.get("/user_data")
-def get_user_data():
+def get_user_data(session: Session = Depends(get_sess)):
     from boh_app.data.process_autosave import get_knowns
 
-    return get_knowns()
+    knowns = get_knowns()
+    known_recipes = [r["id"] for r in knowns["recipes"]]
+
+    recipe_model = table_name2model["recipe"]
+    recipe_model_data = session.query(recipe_model).filter(recipe_model.id.in_(known_recipes)).all()
+    recipe_data = recipe_model.__marshmallow__(session=session, many=True).dump(recipe_model_data)
+    for d in recipe_data:
+        user_recipe = next(r for r in knowns["recipes"] if r["id"] == d["id"])
+        if "skills" in user_recipe:
+            d["skills"] = user_recipe["skills"]
+    knowns["recipes"] = recipe_data
+    return knowns
 
 
 # See: https://ariadnegraphql.org/docs/fastapi-integration#graphql-routes
