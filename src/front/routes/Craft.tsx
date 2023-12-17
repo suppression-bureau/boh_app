@@ -70,7 +70,10 @@ const RecipeView = (recipe: KnownRecipe) => {
                 </>
             )}
             <Typography variant="h5"> Skills </Typography>
-            <SkillsStack skillIdSet={skillIdSet}></SkillsStack>
+            <SkillsStack
+                skillIdSet={skillIdSet}
+                selectedPrinciples={[recipe.principle]}
+            ></SkillsStack>
         </Stack>
     )
 }

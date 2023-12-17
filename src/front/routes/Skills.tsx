@@ -243,7 +243,8 @@ export const SkillsStack = ({
     const filteredSkills = useMemo(
         () =>
             allSkills
-                .filter(({ id }) => skillIdSet.has(id))
+                .filter(({ id }) => skillIdSet.has(id) || skillIdSet.size === 0)
+                .toSorted((a, b) => b.level - a.level)
                 .filter(
                     (skill) =>
                         skill.level > 0 &&
