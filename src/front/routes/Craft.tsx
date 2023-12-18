@@ -5,6 +5,7 @@ import Autocomplete from "@mui/material/Autocomplete"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
+import Grid from "@mui/material/Unstable_Grid2"
 
 import { ItemsDrawerContextProvider } from "../components/ItemsDrawer/context"
 import { graphql } from "../gql"
@@ -55,26 +56,53 @@ const RecipeSource = ({ recipe }: RecipeProps) => (
 const RecipeView = (recipe: KnownRecipe) => {
     const skillIdSet = new Set(recipe.skills.map(({ id }) => id))
     const hasSource =
-        recipe.source_item !== undefined || recipe.source_aspect !== undefined
+        Boolean(recipe.source_item) || Boolean(recipe.source_aspect)
     return (
-        <Stack spacing={2} maxWidth="400px">
-            <Typography variant="h5"> Principle </Typography>
-            <PrincipleCard
-                id={recipe.principle}
-                title={recipe.principle_amount}
-            />
+        <Grid
+            container
+            padding={4}
+            spacing={4}
+            sx={{
+                "--Grid-borderWidth": "1px",
+
+                "& > div": {
+                    borderTop: "var(--Grid-borderWidth) solid",
+                    borderLeft: "var(--Grid-borderWidth) solid",
+                    borderRight: "var(--Grid-borderWidth) solid",
+                    borderBottom: "var(--Grid-borderWidth) solid",
+                    borderColor: "divider",
+                },
+            }}
+        >
+            <Grid xs={4}>
+                <Typography variant="h5"> Principle </Typography>
+            </Grid>
+            <Grid xs={8}>
+                <PrincipleCard
+                    id={recipe.principle}
+                    title={recipe.principle_amount}
+                />
+            </Grid>
             {hasSource && (
                 <>
-                    <Typography variant="h5"> Source </Typography>
-                    <RecipeSource recipe={recipe} />
+                    <Grid xs={4}>
+                        <Typography variant="h5"> Source </Typography>
+                    </Grid>
+                    <Grid xs={8}>
+                        <RecipeSource recipe={recipe} />
+                    </Grid>
                 </>
             )}
-            <Typography variant="h5"> Skills </Typography>
-            <SkillsStack
-                skillIdSet={skillIdSet}
-                selectedPrinciples={[recipe.principle]}
-            ></SkillsStack>
-        </Stack>
+            <Grid xs={4}>
+                <Typography variant="h5"> Skills </Typography>
+            </Grid>
+            <Grid xs={8}>
+                <SkillsStack
+                    skillIdSet={skillIdSet}
+                    selectedPrinciples={[recipe.principle]}
+                />
+            </Grid>
+        </Grid>
     )
 }
 
@@ -126,6 +154,7 @@ const CraftView = () => {
                 justifyContent="center"
                 marginInline="auto"
                 marginBlock={2}
+                spacing={4}
             >
                 <Autocomplete
                     options={userKnownRecipes}
