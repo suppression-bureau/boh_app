@@ -2,6 +2,7 @@ import { SyntheticEvent, useCallback, useMemo, useState } from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
+import Card from "@mui/material/Card"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
@@ -14,7 +15,7 @@ import { KnownRecipe } from "../types"
 import { useUserDataContext } from "../userContext"
 import { Aspect } from "./Aspects"
 import { SingleItemView } from "./Items"
-import { PrincipleCard } from "./Principles"
+import { PrincipleCardHeader } from "./Principles"
 import { SkillsStack } from "./Skills"
 
 export const productsQueryDocument = graphql(`
@@ -58,55 +59,42 @@ const RecipeView = (recipe: KnownRecipe) => {
     const hasSource =
         Boolean(recipe.source_item) || Boolean(recipe.source_aspect)
     return (
-        <Grid
-            container
-            padding={4}
-            spacing={4}
-            sx={{
-                "--Grid-borderWidth": "1px",
-
-                "& > div": {
-                    borderTop: "var(--Grid-borderWidth) solid",
-                    borderLeft: "var(--Grid-borderWidth) solid",
-                    borderRight: "var(--Grid-borderWidth) solid",
-                    borderBottom: "var(--Grid-borderWidth) solid",
-                    borderColor: "divider",
-                },
-            }}
-        >
-            <Grid xs={4}>
-                <Typography variant="h5"> Principle </Typography>
+        <Card>
+            <Grid container padding={2} spacing={4}>
+                <Grid xs={4}>
+                    <Typography variant="h5"> Principle </Typography>
+                </Grid>
+                <Grid xs={8}>
+                    <PrincipleCardHeader
+                        id={recipe.principle}
+                        title={recipe.principle_amount}
+                    />
+                </Grid>
+                {hasSource && (
+                    <>
+                        <Grid xs={4}>
+                            <Typography variant="h5"> Source </Typography>
+                        </Grid>
+                        <Grid xs={8}>
+                            <RecipeSource recipe={recipe} />
+                        </Grid>
+                    </>
+                )}
+                {skillIdSet.size > 0 && (
+                    <>
+                        <Grid xs={4}>
+                            <Typography variant="h5"> Skills </Typography>
+                        </Grid>
+                        <Grid xs={8}>
+                            <SkillsStack
+                                skillIdSet={skillIdSet}
+                                selectedPrinciples={[recipe.principle]}
+                            />
+                        </Grid>
+                    </>
+                )}
             </Grid>
-            <Grid xs={8}>
-                <PrincipleCard
-                    id={recipe.principle}
-                    title={recipe.principle_amount}
-                />
-            </Grid>
-            {hasSource && (
-                <>
-                    <Grid xs={4}>
-                        <Typography variant="h5"> Source </Typography>
-                    </Grid>
-                    <Grid xs={8}>
-                        <RecipeSource recipe={recipe} />
-                    </Grid>
-                </>
-            )}
-            {skillIdSet.size > 0 && (
-                <>
-                    <Grid xs={4}>
-                        <Typography variant="h5"> Skills </Typography>
-                    </Grid>
-                    <Grid xs={8}>
-                        <SkillsStack
-                            skillIdSet={skillIdSet}
-                            selectedPrinciples={[recipe.principle]}
-                        />
-                    </Grid>
-                </>
-            )}
-        </Grid>
+        </Card>
     )
 }
 
@@ -117,7 +105,7 @@ const RecipesView = (recipeProduct: ProductItem) => {
     )
 
     return (
-        <Stack>
+        <Stack spacing={2}>
             {productRecipes.map((recipe) => (
                 <RecipeView key={recipe.id} {...recipe} />
             ))}

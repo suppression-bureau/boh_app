@@ -5,7 +5,6 @@ import { AsyncActionHandlers, useReducerAsync } from "use-reducer-async"
 
 import Autocomplete from "@mui/material/Autocomplete"
 import Button from "@mui/material/Button"
-import Card from "@mui/material/Card"
 import CardActions from "@mui/material/CardActions"
 import CardHeader from "@mui/material/CardHeader"
 import Dialog from "@mui/material/Dialog"
@@ -21,7 +20,7 @@ import PrincipleFilterBar from "../components/PrincipleFilterBar"
 import { getPrinciples } from "../filters"
 import { graphql } from "../gql"
 import { Principle, SkillsQuery } from "../gql/graphql"
-import { PrincipleCard } from "../routes/Principles"
+import { PrincipleCardHeader } from "../routes/Principles"
 import { KnownSkill } from "../types"
 import { useUserDataContext } from "../userContext"
 
@@ -120,17 +119,17 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
         onIncrement?.(skill)
     }, [skill, onIncrement])
     return (
-        <Card>
-            <CardHeader title={skill.name} />
+        <div>
+            <CardHeader title={skill.name} sx={{ p: 1 }} />
             <CardActions sx={{ gap: 2 }}>
-                <PrincipleCard
+                <PrincipleCardHeader
                     id={skill.primary_principle}
                     title={skill.level + 1}
                     sx={{ boxShadow: "none" }}
                     disablePadding
                 />
                 <Divider orientation="vertical" variant="middle" flexItem />
-                <PrincipleCard
+                <PrincipleCardHeader
                     id={skill.secondary_principle}
                     title={skill.level}
                     sx={{ boxShadow: "none" }}
@@ -151,7 +150,7 @@ function Skill({ onIncrement, ...skill }: SkillProps) {
                     </Button>
                 )}
             </CardActions>
-        </Card>
+        </div>
     )
 }
 
@@ -256,7 +255,7 @@ export const SkillsStack = ({
         [allSkills, skillIdSet, selectedPrinciples, selectedPrincipleSet],
     )
     return (
-        <Stack spacing={2}>
+        <Stack spacing={2} sx={{ p: 2 }}>
             {filteredSkills.map((skill) => (
                 <Skill
                     key={skill.id}

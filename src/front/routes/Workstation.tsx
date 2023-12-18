@@ -96,7 +96,8 @@ const WorkstationSlotInfo = ({ name, accepts }: WorkstationSlotFromQuery) => (
     <CardHeader
         title={name}
         titleTypographyProps={{ variant: "h6" }}
-        avatar={<AspectIconGroup aspects={accepts} />}
+        avatar={accepts.length > 0 && <AspectIconGroup aspects={accepts} />}
+        sx={{ p: 1 }}
     />
 )
 
