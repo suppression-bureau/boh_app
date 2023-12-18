@@ -93,15 +93,19 @@ const RecipeView = (recipe: KnownRecipe) => {
                     </Grid>
                 </>
             )}
-            <Grid xs={4}>
-                <Typography variant="h5"> Skills </Typography>
-            </Grid>
-            <Grid xs={8}>
-                <SkillsStack
-                    skillIdSet={skillIdSet}
-                    selectedPrinciples={[recipe.principle]}
-                />
-            </Grid>
+            {skillIdSet.size > 0 && (
+                <>
+                    <Grid xs={4}>
+                        <Typography variant="h5"> Skills </Typography>
+                    </Grid>
+                    <Grid xs={8}>
+                        <SkillsStack
+                            skillIdSet={skillIdSet}
+                            selectedPrinciples={[recipe.principle]}
+                        />
+                    </Grid>
+                </>
+            )}
         </Grid>
     )
 }
