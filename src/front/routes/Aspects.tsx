@@ -53,10 +53,11 @@ function Aspect({
     assistants = [],
 }: AspectProps) {
     return (
-        <Card>
+        <div>
             <CardHeader
                 title={nameAspect ? id : ""}
                 avatar={<AspectIcon aspect={id} />}
+                titleTypographyProps={{ variant: "h6" }}
             />
             <CardContent style={{ padding: 0 }}>
                 {showAssistant && assistants.length > 0 && (
@@ -69,7 +70,7 @@ function Aspect({
                     </List>
                 )}
             </CardContent>
-        </Card>
+        </div>
     )
 }
 
