@@ -49,8 +49,10 @@ interface RecipeProps {
 
 const RecipeSource = ({ recipe }: RecipeProps) => (
     <>
-        {recipe.source_aspect && <Aspect id={recipe.source_aspect} />}
-        {recipe.source_item && <SingleItemView itemId={recipe.source_item} />}
+        {recipe.source_aspect && <Aspect id={recipe.source_aspect.id} />}
+        {recipe.source_item && (
+            <SingleItemView itemId={recipe.source_item.id} />
+        )}
     </>
 )
 
@@ -101,9 +103,8 @@ const RecipeView = (recipe: KnownRecipe) => {
 const RecipesView = (recipeProduct: ProductItem) => {
     const { knownRecipes } = useUserDataContext()
     const productRecipes = knownRecipes.filter(
-        ({ product }) => product === recipeProduct.id,
+        ({ product }) => product.id === recipeProduct.id,
     )
-
     return (
         <Stack spacing={2}>
             {productRecipes.map((recipe) => (

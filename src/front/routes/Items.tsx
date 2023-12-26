@@ -100,7 +100,7 @@ const ItemPrincipleValue = ({ principle, value }: ItemPrincipleValueProps) => {
 }
 
 const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
-    <Stack direction="row" alignItems="center" padding={1}>
+    <Stack direction="row" alignItems="center" padding={2}>
         {Object.values(Principle)
             .filter((principle) => item[principle])
             .map((principle) => (
@@ -191,13 +191,12 @@ interface SingleItemProps {
 export const SingleItemView = ({ itemId }: SingleItemProps) => {
     const { items } = useItemsDrawer()
     const item = items.find(({ id }) => id === itemId)
-    console.log("why am I not seeing this?", item)
     if (item === undefined) return
     return (
-        <Card>
+        <div>
             <CardHeader title={item.name}></CardHeader>
             <ItemValues {...item} />
-        </Card>
+        </div>
     )
 }
 

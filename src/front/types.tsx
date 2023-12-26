@@ -1,4 +1,12 @@
-import { Item, ItemsQuery, Principle, Recipe, Wisdom } from "./gql/graphql"
+import {
+    Aspect,
+    Item,
+    ItemsQuery,
+    Principle,
+    Recipe,
+    RecipesQuery,
+    Wisdom,
+} from "./gql/graphql"
 
 export type ItemFromQuery = ItemsQuery["item"][number]
 
@@ -19,8 +27,8 @@ export interface KnownSkill {
 export interface KnownRecipe
     extends Omit<Recipe, "source_aspect" | "source_item" | "product"> {
     product: string
-    source_aspect?: string
-    source_item?: string
+    source_aspect?: Aspect
+    source_item?: ItemRef
 }
 
 export interface UserData {
@@ -33,3 +41,5 @@ export interface PrincipleCount {
     principle: Principle
     count: number
 }
+
+export type RecipeFromQuery = RecipesQuery["recipe"][number]
