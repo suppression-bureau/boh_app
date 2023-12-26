@@ -33,7 +33,7 @@ async def root():
 
 
 @app.get("/user_data")
-def get_user_data(session: Session = Depends(get_sess)):
+def get_user_data():
     from boh_app.data.process_autosave import get_knowns
 
     return get_knowns()
