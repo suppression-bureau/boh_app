@@ -16,7 +16,7 @@ import { ProductsQuery } from "../gql/graphql"
 import { KnownRecipe } from "../types"
 import { useUserDataContext } from "../userContext"
 import { Aspect } from "./Aspects"
-import { SingleItemView } from "./Items"
+import { ItemsView, SingleItemView } from "./Items"
 import { PrincipleCardHeader } from "./Principles"
 import { SkillsStack } from "./Skills"
 import WorkstationsView from "./Workstation"
@@ -50,9 +50,23 @@ interface RecipeProps {
     recipe: KnownRecipe
 }
 
+const RecipeAspect = ({ recipe }: RecipeProps) => (
+    <Collapsible
+        cardHeader={<Aspect id={recipe.source_aspect.id} />}
+        buttonShowHideText="Possible Items"
+    >
+        <ItemsView
+            filters={{
+                // principles: [recipe.principle], // TODO: add sort by principle, filter removes valid items
+                aspects: [recipe.source_aspect],
+            }}
+        />
+    </Collapsible>
+)
+
 const RecipeSource = ({ recipe }: RecipeProps) => (
     <>
-        {recipe.source_aspect && <Aspect id={recipe.source_aspect.id} />}
+        {recipe.source_aspect && <RecipeAspect recipe={recipe} />}
         {recipe.source_item && (
             <SingleItemView itemId={recipe.source_item.id} />
         )}
