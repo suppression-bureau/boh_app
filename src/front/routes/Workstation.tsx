@@ -191,7 +191,15 @@ const FilteredWorkstationsView = ({
     </Stack>
 )
 
-export default function WorkstationsView() {
+interface WorkstationsViewProps {
+    filterPrinciple?: Principle | undefined
+    includeItems?: boolean
+}
+
+export default function WorkstationsView({
+    filterPrinciple,
+    includeItems = true,
+}: WorkstationsViewProps) {
     const [{ data }] = useQuery({ query: workstationQueryDocument })
     // prefetch
     useQuery({ query: skillQueryDocument })
@@ -201,12 +209,17 @@ export default function WorkstationsView() {
         () =>
             data!.workstation.map((workstation) => ({
                 ...workstation,
-                isVisible: true,
+                isVisible:
+                    filterPrinciple === undefined ||
+                    workstation.principles.includes(filterPrinciple),
             })),
-        [data],
+        [data, filterPrinciple],
     )
     const [state, dispatch] = useReducer(workstationReducer, initialState)
-    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>()
+
+    const [selectedPrinciple, setPrinciple] = useState<Principle | undefined>(
+        filterPrinciple,
+    )
     const handleSelectedPrinciple = useCallback(
         (principle: Principle | undefined) => {
             dispatch({ type: "filter", principle })
@@ -214,15 +227,29 @@ export default function WorkstationsView() {
         },
         [dispatch, setPrinciple],
     )
+
     const visibleWorkstations = state.filter(({ isVisible }) => isVisible)
+
     return (
         <Stack maxWidth="md" marginInline="auto" spacing={2}>
-            <PrincipleFilterBar
-                selectedPrinciple={selectedPrinciple}
-                onSelectPrinciple={handleSelectedPrinciple}
-            />
+            <Collapsible
+                cardHeader={
+                    <CardHeader
+                        title="Filters"
+                        titleTypographyProps={{ variant: "h5" }}
+                    />
+                }
+            >
+                <PrincipleFilterBar
+                    selectedPrinciple={selectedPrinciple}
+                    onSelectPrinciple={handleSelectedPrinciple}
+                />
+            </Collapsible>
             <ItemsDrawerContextProvider>
-                <FilteredWorkstationsView workstations={visibleWorkstations} />
+                <FilteredWorkstationsView
+                    workstations={visibleWorkstations}
+                    includeItems={includeItems}
+                />
             </ItemsDrawerContextProvider>
         </Stack>
     )

@@ -3,11 +3,13 @@ import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
 import Card from "@mui/material/Card"
+import CardHeader from "@mui/material/CardHeader"
 import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 import Grid from "@mui/material/Unstable_Grid2"
 
+import { Collapsible } from "../components/Collapsible"
 import { ItemsDrawerContextProvider } from "../components/ItemsDrawer/context"
 import { graphql } from "../gql"
 import { ProductsQuery } from "../gql/graphql"
@@ -17,6 +19,7 @@ import { Aspect } from "./Aspects"
 import { SingleItemView } from "./Items"
 import { PrincipleCardHeader } from "./Principles"
 import { SkillsStack } from "./Skills"
+import WorkstationsView from "./Workstation"
 
 export const productsQueryDocument = graphql(`
     query Products {
@@ -56,7 +59,7 @@ const RecipeSource = ({ recipe }: RecipeProps) => (
     </>
 )
 
-const RecipeView = (recipe: KnownRecipe) => {
+const RecipeDetails = (recipe: KnownRecipe) => {
     const skillIdSet = new Set(recipe.skills.map(({ id }) => id))
     const hasSource =
         Boolean(recipe.source_item) || Boolean(recipe.source_aspect)
@@ -100,6 +103,28 @@ const RecipeView = (recipe: KnownRecipe) => {
     )
 }
 
+const RecipeView = ({ recipe }: { recipe: KnownRecipe }) => {
+    return (
+        <Stack spacing={2}>
+            <RecipeDetails key={recipe.id} {...recipe} />
+            <Collapsible
+                cardHeader={
+                    <CardHeader
+                        title="Workstations"
+                        titleTypographyProps={{ variant: "h5" }}
+                    />
+                }
+            >
+                <WorkstationsView
+                    key={recipe.principle}
+                    filterPrinciple={recipe.principle}
+                    includeItems={false}
+                />
+            </Collapsible>
+        </Stack>
+    )
+}
+
 const RecipesView = (recipeProduct: ProductItem) => {
     const { knownRecipes } = useUserDataContext()
     const productRecipes = knownRecipes.filter(
@@ -108,7 +133,7 @@ const RecipesView = (recipeProduct: ProductItem) => {
     return (
         <Stack spacing={2}>
             {productRecipes.map((recipe) => (
-                <RecipeView key={recipe.id} {...recipe} />
+                <RecipeView key={recipe.id} recipe={recipe} />
             ))}
         </Stack>
     )
