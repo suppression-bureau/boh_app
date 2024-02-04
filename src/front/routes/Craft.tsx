@@ -74,7 +74,10 @@ const RecipeSource = ({ recipe }: RecipeProps) => (
 )
 
 const RecipeDetails = (recipe: KnownRecipe) => {
-    const skillIdSet = new Set(recipe.skills.map(({ id }) => id))
+    const skillIdSet = useMemo(
+        () => new Set(recipe.skills.map(({ id }) => id)),
+        [recipe],
+    )
     const hasSource =
         Boolean(recipe.source_item) || Boolean(recipe.source_aspect)
     return (
@@ -120,7 +123,7 @@ const RecipeDetails = (recipe: KnownRecipe) => {
 const RecipeView = ({ recipe }: { recipe: KnownRecipe }) => {
     return (
         <Stack spacing={2}>
-            <RecipeDetails key={recipe.id} {...recipe} />
+            <RecipeDetails {...recipe} />
             <Collapsible
                 cardHeader={
                     <CardHeader
@@ -130,7 +133,6 @@ const RecipeView = ({ recipe }: { recipe: KnownRecipe }) => {
                 }
             >
                 <WorkstationsView
-                    key={recipe.principle}
                     filterPrinciple={recipe.principle}
                     includeItems={false}
                 />
