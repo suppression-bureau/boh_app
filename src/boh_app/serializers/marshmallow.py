@@ -69,7 +69,7 @@ def sqlalchemy_to_marshmallow(class_: type[DeclarativeBase], *, session: Session
     # default fields defined by model.mapper.attrs:
     # https://docs.sqlalchemy.org/en/20/orm/mapping_api.html#sqlalchemy.orm.Mapper.attrs
     # TODO: make it work loop order independent
-    additional_fields = getattr(class_, "_additional_fields", lambda: {})()
+    additional_fields = getattr(class_, "_additional_fields", dict)()
     schema_class = type(schema_class_name, (SQLAlchemyAutoSchema,), {"Meta": Meta, **additional_fields})
 
     return schema_class
