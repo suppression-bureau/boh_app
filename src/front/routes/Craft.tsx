@@ -1,4 +1,10 @@
-import { SyntheticEvent, useCallback, useMemo, useState } from "react"
+import {
+    ReactNode,
+    SyntheticEvent,
+    useCallback,
+    useMemo,
+    useState,
+} from "react"
 import { useQuery } from "urql"
 
 import Autocomplete from "@mui/material/Autocomplete"
@@ -73,6 +79,20 @@ const RecipeSource = ({ recipe }: RecipeProps) => (
     </>
 )
 
+interface DetailsRowProps {
+    label: string
+    children: ReactNode
+}
+
+const DetailsRow = ({ label, children }: DetailsRowProps) => (
+    <>
+        <Grid>
+            <Typography variant="h5">{label}</Typography>
+        </Grid>
+        <Grid>{children}</Grid>
+    </>
+)
+
 const RecipeDetails = (recipe: KnownRecipe) => {
     const skillIdSet = useMemo(
         () => new Set(recipe.skills.map(({ id }) => id)),
@@ -82,38 +102,30 @@ const RecipeDetails = (recipe: KnownRecipe) => {
         Boolean(recipe.source_item) || Boolean(recipe.source_aspect)
     return (
         <Card>
-            <Grid container padding={2} spacing={4}>
-                <Grid xs={4}>
-                    <Typography variant="h5"> Principle </Typography>
-                </Grid>
-                <Grid xs={8}>
+            <Grid
+                container
+                padding={2}
+                spacing={4}
+                sx={{ display: "grid", gridTemplateColumns: "min-content 1fr" }}
+            >
+                <DetailsRow label="Principle">
                     <PrincipleCardHeader
                         id={recipe.principle}
                         title={recipe.principle_amount}
                     />
-                </Grid>
+                </DetailsRow>
                 {hasSource && (
-                    <>
-                        <Grid xs={4}>
-                            <Typography variant="h5"> Source </Typography>
-                        </Grid>
-                        <Grid xs={8}>
-                            <RecipeSource recipe={recipe} />
-                        </Grid>
-                    </>
+                    <DetailsRow label="Source">
+                        <RecipeSource recipe={recipe} />
+                    </DetailsRow>
                 )}
                 {skillIdSet.size > 0 && (
-                    <>
-                        <Grid xs={4}>
-                            <Typography variant="h5"> Skills </Typography>
-                        </Grid>
-                        <Grid xs={8}>
-                            <SkillsStack
-                                skillIdSet={skillIdSet}
-                                selectedPrinciples={[recipe.principle]}
-                            />
-                        </Grid>
-                    </>
+                    <DetailsRow label="Skills">
+                        <SkillsStack
+                            skillIdSet={skillIdSet}
+                            selectedPrinciples={[recipe.principle]}
+                        />
+                    </DetailsRow>
                 )}
             </Grid>
         </Card>
