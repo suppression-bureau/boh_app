@@ -1,6 +1,7 @@
 """
 sqlalchemy_to_marshmallow is modified from https://marshmallow-sqlalchemy.readthedocs.io/en/latest/recipes.html#automatically-generating-schemas-for-sqlalchemy-models
 """
+
 import sys
 import warnings
 from types import ModuleType
