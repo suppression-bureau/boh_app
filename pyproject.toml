@@ -33,7 +33,7 @@ dependencies = [
     "sqlalchemy>=2",
     "rich",        # better tracebacks
     "typer>=0.9",  # cli
-    "fastapi",     # router
+    "fastapi>=0.110.1",     # router
     "uvicorn",     # server
     "watchfiles",  # uvicorn and schema reload
     "vdf",         # steam vdf file parser
