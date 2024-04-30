@@ -12,9 +12,9 @@ from ..data.types_sqla import JsonArray
 def find_table_mapper(tbl: Table) -> Mapper:
     mappers = [mapper for reg in mapperlib._all_registries() for mapper in reg.mappers if tbl in mapper.tables]
     if len(mappers) > 1:
-        raise ValueError("Multiple mappers found for table '%s'." % tbl.name)
+        raise ValueError(f"Multiple mappers found for table {tbl.name!r}.")
     if not mappers:
-        raise ValueError("Could not get mapper for table '%s'." % tbl.name)
+        raise ValueError(f"Could not get mapper for table {tbl.name!r}.")
     return mappers[0]
 
 
