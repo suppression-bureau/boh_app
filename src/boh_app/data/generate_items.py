@@ -73,7 +73,7 @@ class ItemHandler:
         id = "ID" if inherits else "id"
         name = item[label].split(" (")[0]  # e.g. "{drink} (Bottle)" | "{drink} (Half-Full)"
         if name == "Wire":
-            name = f'{item[id].split(".")[1].capitalize()} {name}'
+            name = f"{item[id].split('.')[1].capitalize()} {name}"
         model = Item(id=item[id], name=name)
         model_aspects = []
 
