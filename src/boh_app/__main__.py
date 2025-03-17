@@ -56,8 +56,8 @@ async def schema(
 
     from .utils import gql_query
 
-    query = cast(LiteralString, get_introspection_query(descriptions=True))
-    data = cast(IntrospectionQuery, gql_query(query))
+    query = cast("LiteralString", get_introspection_query(descriptions=True))
+    data = cast("IntrospectionQuery", gql_query(query))
     client_schema = build_client_schema(data)
     schema_src = print_schema(client_schema)
 
