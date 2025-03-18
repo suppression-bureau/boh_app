@@ -29,7 +29,7 @@ class Base(DeclarativeBase):
 
 def get_tablename_model_mapping() -> dict[str, type[Base]]:
     registry = Base.registry._class_registry
-    models = [cast(type[Base], m) for k, m in registry.items() if not k.startswith("_")]
+    models = [cast("type[Base]", m) for k, m in registry.items() if not k.startswith("_")]
     tablename_model_mapping = {m.__tablename__: m for m in models}
     return tablename_model_mapping
 
