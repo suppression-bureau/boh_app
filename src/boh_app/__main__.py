@@ -48,7 +48,7 @@ def api(
 @app.command()
 @run_async
 async def schema(
-    out_path: Annotated[Optional[Path], typer.Argument()] = None,
+    out_path: Annotated[Path | None, typer.Argument()] = None,
     watch: Annotated[bool, typer.Option("-w", "--watch", help="Watch for changes")] = False,
 ) -> None:
     """Serialize generated schema to GraphQL schema language."""
