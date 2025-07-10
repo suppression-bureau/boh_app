@@ -3,7 +3,7 @@ import sys
 from asyncio.subprocess import create_subprocess_exec
 from functools import wraps
 from pathlib import Path
-from typing import Annotated, LiteralString, Optional, cast
+from typing import Annotated, LiteralString, cast
 
 import anyio
 import typer
