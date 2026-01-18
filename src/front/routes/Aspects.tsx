@@ -98,4 +98,5 @@ const AspectsView = () => {
     )
 }
 
-export { Aspect, AspectIconGroup, AspectsView as default }
+export default AspectsView
+export { Aspect, AspectIconGroup }

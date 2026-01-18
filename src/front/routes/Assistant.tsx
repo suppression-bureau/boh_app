@@ -114,7 +114,7 @@ const AssistantOption = ({
 
 interface BasePrincipleButtonGroupProps {
     selectedPrinciple?: Principle | undefined
-    onSelectPrinciple: (_: unknown, principle?: Principle | undefined) => void
+    onSelectPrinciple: (this: void, _: unknown, principle?: Principle) => void
     selectedAssistant: AssistantFromQuery
 }
 
@@ -144,8 +144,8 @@ interface AssistantPrincipleSelectorProps {
     assistants: AssistantFromQuery[]
     selectedPrinciple?: Principle | undefined
     selectedAssistant?: AssistantFromQuery | undefined
-    onSelectAssistant?(assistant?: AssistantFromQuery | undefined): void
-    onSelectPrinciple?(principle?: Principle | undefined): void
+    onSelectAssistant?(this: void, assistant?: AssistantFromQuery): void
+    onSelectPrinciple?(this: void, principle?: Principle): void
 }
 
 const AssistantPrincipleSelector = ({
@@ -241,10 +241,9 @@ const AssistantView = () => {
     >()
 
     const handleNewAssistant = useCallback(
-        (assistant?: AssistantFromQuery | undefined) => {
+        (assistant?: AssistantFromQuery) => {
             setAssistant(assistant)
             if (selectedPrinciple) {
-                // eslint-disable-next-line unicorn/no-useless-undefined
                 setPrinciple(undefined)
             }
         },
