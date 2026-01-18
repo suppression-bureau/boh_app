@@ -56,7 +56,11 @@
     "typescript": "^5.2.2",
     "vite": "^4.4.11"
   },
-  "packageManager": "yarn@3.6.4",
+  "packageManager": "yarn@4.12.0",
+  "//": "https://github.com/yarnpkg/berry/issues/3366",
+  "resolutions": {
+    "node-gyp": "npm:optional-pkg@1"
+  },
   "dependenciesMeta": {
     "@trivago/prettier-plugin-sort-imports@4.2.0": {
       "unplugged": true
