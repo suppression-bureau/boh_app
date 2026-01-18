@@ -78,7 +78,7 @@ const PrincipleCounterStack = ({
     ) : undefined
 
 interface ClearButtonProps {
-    onClear(): void
+    onClear(this: void): void
 }
 
 const ClearButton = ({ onClear }: ClearButtonProps) => (
@@ -94,9 +94,9 @@ const ClearButton = ({ onClear }: ClearButtonProps) => (
 
 interface ItemsDrawerProps {
     items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement | null>> | null>
     selected: Set<string>
-    onClear?(): void
+    onClear?(this: void): void
     baseCounts?: PrincipleCount[]
 }
 
@@ -117,6 +117,7 @@ function ItemsDrawer({
         [selectedItems, baseCounts, setOpen],
     )
     return (
+        // eslint-disable-next-line react-hooks/refs
         <Portal container={ref.current}>
             <List sx={{ overflow: "auto", flexGrow: 1 }}>
                 {selectedItems.map((item) => (

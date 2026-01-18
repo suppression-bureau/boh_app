@@ -5,6 +5,10 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
   },
-  "include": ["./*.ts"],
+  "include": ["./*.ts", "./.*.ts", "./*.mjs", "./.*.cjs", ".*.mjs"],
+  "exclude": ["./.pnp.*"],
 }

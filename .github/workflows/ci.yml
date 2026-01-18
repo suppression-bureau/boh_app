@@ -12,10 +12,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-defaults:
-  run:
-    shell: bash -e {0} # -e to fail on error
-
 jobs:
   run_tester:
     name: Run tests
@@ -30,7 +26,7 @@ jobs:
 
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           filter: blob:none
@@ -38,7 +34,7 @@ jobs:
       # Backend
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.config.python }}
           cache: pip
@@ -56,9 +52,6 @@ jobs:
     name: Run lints on installed project
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-
     steps:
       - name: Get bot token
         id: create_token
@@ -68,7 +61,7 @@ jobs:
           private_key: ${{ secrets.SPENCER_PRIVATE_KEY }}
 
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ steps.create_token.outputs.token }}
           fetch-depth: 0
@@ -77,7 +70,7 @@ jobs:
       # Backend
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: pip
@@ -88,7 +81,7 @@ jobs:
       # Frontend
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
 
@@ -102,7 +95,7 @@ jobs:
         run: yarn run lint --fix
 
       - name: Commit autofixes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         if: failure()
         with:
           commit_message: "chore: auto-fix eslint errors"

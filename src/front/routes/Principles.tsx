@@ -22,7 +22,7 @@ function PrincipleIconGroup({ principles }: PrincipleIconGroupProps) {
 
 interface PrincipleCardProps extends Omit<CardProps, "title"> {
     id: Principle
-    title?: object | string | number
+    title?: string | number
     disablePadding?: boolean
 }
 
@@ -61,4 +61,5 @@ const Principles = () => (
     </Box>
 )
 
-export { PrincipleIconGroup, PrincipleCard, Principles as default }
+export default Principles
+export { PrincipleIconGroup, PrincipleCard }

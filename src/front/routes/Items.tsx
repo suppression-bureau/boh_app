@@ -105,7 +105,7 @@ const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
                 <ItemPrincipleValue
                     key={principle}
                     principle={principle}
-                    value={item[principle]!}
+                    value={item[principle]}
                 />
             ))}
         <AspectIconGroup aspects={aspects} />
@@ -113,7 +113,7 @@ const ItemValues = ({ aspects, ...item }: ItemFromQuery) => (
 )
 
 export interface ItemProps extends ItemFromQuery {
-    onToggleSelect?(id: string, selected: boolean): void
+    onToggleSelect?(this: void, id: string, selected: boolean): void
     sx?: ListItemButtonProps["sx"] | undefined
     group?: string
 }
@@ -149,7 +149,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 
 interface ItemsListProps {
     items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement | null>> | null>
     group?: string
 }
 

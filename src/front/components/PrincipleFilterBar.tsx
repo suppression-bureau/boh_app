@@ -8,7 +8,7 @@ import PrincipleFilterButton from "./PrincipleFilterButton"
 
 interface PrincipleFilterProps {
     selectedPrinciple: Principle | undefined
-    onSelectPrinciple(principle?: Principle | undefined): void
+    onSelectPrinciple(this: void, principle?: Principle): void
     exclude?: Principle[]
 }
 

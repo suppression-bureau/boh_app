@@ -112,7 +112,7 @@ const skillHandlers: AsyncActionHandlers<
 }
 
 interface SkillProps extends SkillFromQuery {
-    onIncrement?(skill: SkillFromQuery): void
+    onIncrement?(this: void, skill: SkillFromQuery): void
 }
 
 function Skill({ onIncrement, ...skill }: SkillProps) {
@@ -166,16 +166,12 @@ const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
 
     const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
     const handleClose = useCallback(() => {
-        // eslint-disable-next-line unicorn/no-useless-undefined
         setNewSkill(undefined) // de-select newSkill to reset Dialog to initial state
         setOpen(false)
     }, [setOpen, setNewSkill])
 
     const handleNewSkill = useCallback(
-        (
-            _event: React.SyntheticEvent,
-            skill?: SkillFromQuery | undefined | null,
-        ) => {
+        (_event: React.SyntheticEvent, skill?: SkillFromQuery | null) => {
             setNewSkill(skill ?? undefined)
         },
         [setNewSkill],
@@ -219,7 +215,7 @@ const NewSkillDialog = ({ state, dispatch }: NewSkillDialogProps) => {
 interface SkillStackProps {
     skills?: SkillFromQuery[]
     selectedPrinciples?: Principle[] | undefined
-    onSkillIncrement?(skill: SkillFromQuery): void
+    onSkillIncrement?(this: void, skill: SkillFromQuery): void
 }
 export const SkillsStack = ({
     skills,
@@ -234,7 +230,7 @@ export const SkillsStack = ({
         [data, skills, knownSkills],
     )
     const selectedPrincipleSet = useMemo(
-        () => new Set(selectedPrinciples ?? []),
+        () => new Set(selectedPrinciples),
         [selectedPrinciples],
     )
     const filteredSkills = useMemo(

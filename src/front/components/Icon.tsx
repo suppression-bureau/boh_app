@@ -10,10 +10,9 @@ type BaseIconProps<T extends IconType, ID extends string = string> = Omit<
 > & {
     // set to "priciple" | ...
     idKey: T
-} & {
+} &
     // a property called "principle" | ... with string value
-    [id in T]: ID
-}
+    Record<T, ID>
 
 const BaseIcon = <T extends IconType>({
     idKey,

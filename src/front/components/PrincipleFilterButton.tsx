@@ -8,7 +8,7 @@ import { PrincipleIcon } from "./Icon"
 interface PrincipleFilterButtonProps {
     principle: Principle
     selectedPrinciple?: Principle | undefined
-    onPrincipleFilter(principle: Principle): void
+    onPrincipleFilter(this: void, principle: Principle): void
 }
 
 const PrincipleFilterButton = ({
