@@ -149,7 +149,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(function Item(
 
 interface ItemsListProps {
     items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement | null>> | null>
     group?: string
 }
 

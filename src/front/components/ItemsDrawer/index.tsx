@@ -94,7 +94,7 @@ const ClearButton = ({ onClear }: ClearButtonProps) => (
 
 interface ItemsDrawerProps {
     items: VisibleItem[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement | null>> | null>
     selected: Set<string>
     onClear?(): void
     baseCounts?: PrincipleCount[]

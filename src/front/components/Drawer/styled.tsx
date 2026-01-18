@@ -35,7 +35,7 @@ interface MainProps {
     drawerWidth: number
 }
 
-export const Main = styled(Box, {
+export const Main = styled(Box<"main">, {
     shouldForwardProp: (prop) => prop !== "open" && prop !== "drawerWidth",
 })<MainProps>(({ theme, open, drawerWidth }) => ({
     transition: makeLeaveTransition(theme, "margin"),

@@ -3,14 +3,15 @@ import AlertTitle from "@mui/material/AlertTitle"
 import Button from "@mui/material/Button"
 
 export interface ErrorDisplayProps {
-    error: Error
+    error: unknown
     resetErrorBoundary: () => void
 }
 
 export default function ErrorDisplay({
-    error,
+    error: e,
     resetErrorBoundary,
 }: ErrorDisplayProps) {
+    const error = e instanceof Error ? e : new Error(String(e))
     return (
         <Alert
             severity="error"

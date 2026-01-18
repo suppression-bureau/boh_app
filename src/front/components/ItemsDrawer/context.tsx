@@ -1,7 +1,7 @@
 import {
-    Dispatch,
-    ReactNode,
-    RefObject,
+    type Dispatch,
+    type ReactNode,
+    type RefObject,
     createContext,
     useCallback,
     useContext,
@@ -15,7 +15,7 @@ import { useQuery } from "urql"
 import ItemsDrawer from "."
 import { graphql } from "../../gql"
 import { setItemVisible } from "../../routes/Items"
-import { ItemFromQuery, PrincipleCount } from "../../types"
+import type { ItemFromQuery, PrincipleCount } from "../../types"
 
 export const itemsQueryDocument = graphql(`
     query Items {
@@ -91,7 +91,7 @@ function reduceItemSelection(
 
 interface ItemsDrawerContextProps {
     items: ItemFromQuery[]
-    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement>>>
+    itemRefs: RefObject<Map<string, RefObject<HTMLDivElement | null>> | null>
     selected: Set<string>
     dispatch: Dispatch<StringSetAction>
     baseCounts: PrincipleCount[]
@@ -132,7 +132,7 @@ export const ItemsDrawerContextProvider = ({
 
     // all possible item refs have a key, even if they’re filtered out
     const itemRefs = useRef(
-        new Map<string, RefObject<HTMLDivElement>>(
+        new Map<string, RefObject<HTMLDivElement | null>>(
             // eslint-disable-next-line unicorn/no-null
             data!.item.map(({ id }) => [id, { current: null }]),
         ),

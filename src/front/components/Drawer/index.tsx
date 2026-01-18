@@ -4,7 +4,7 @@ export interface DrawerContextProps {
     open: boolean
     setOpen(this: void, open: boolean): void
     width: number
-    ref: RefObject<HTMLDivElement>
+    ref: RefObject<HTMLDivElement | null>
 }
 
 const DrawerContext = createContext<DrawerContextProps>({
