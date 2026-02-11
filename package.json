@@ -23,7 +23,7 @@
     "@graphql-typed-document-node/core": "^3.2.0",
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "graphql": "^16.12.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
