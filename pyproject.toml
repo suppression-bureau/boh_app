@@ -44,7 +44,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest", "pytest-cov", "httpx"]
+test = ["pytest", "pytest-cov", "httpx2"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
