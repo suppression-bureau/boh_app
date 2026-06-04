@@ -28,8 +28,7 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-error-boundary": "^6.1.0",
-    "react-router": "^7.15.0",
-    "react-router-dom": "^7.12.0",
+    "react-router": "^7.17.0",
     "react-slide-routes": "^3.1.0",
     "urql": "^5.0.1",
     "use-reducer-async": "^2.1.2"
@@ -59,7 +58,7 @@
     "typescript-eslint": "^8.53.0",
     "vite": "^7.3.1"
   },
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.16.0",
   "//": "https://github.com/yarnpkg/berry/issues/3366",
   "resolutions": {
     "node-gyp": "npm:optional-pkg@1"
