@@ -6,7 +6,7 @@ import {
     Route,
     matchPath,
     useLocation,
-} from "react-router-dom"
+} from "react-router"
 import SlideRoutes from "react-slide-routes"
 
 import CssBaseline from "@mui/material/CssBaseline"
