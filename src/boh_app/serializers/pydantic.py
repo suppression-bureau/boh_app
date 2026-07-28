@@ -120,7 +120,7 @@ def get_python_type_inner(sqla_type: type | None) -> ForwardRef | type[Enum] | N
     return ForwardRef(f"{sqla_type.__name__}FlatModel", module=SYNTH_MODULE)
 
 
-def get_default(typ: type, *, nullable: bool) -> EllipsisType | None | FieldInfo:
+def get_default(typ: type, *, nullable: bool) -> EllipsisType | FieldInfo | None:
     if nullable:
         return None
     if get_origin(typ) is list:
