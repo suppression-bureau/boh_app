@@ -4,14 +4,14 @@ from functools import reduce
 from inspect import get_annotations, signature
 from operator import or_
 from types import EllipsisType, UnionType
-from typing import ForwardRef, TypeAlias, get_args, get_origin
+from typing import ForwardRef, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict, Field, create_model
 from pydantic.fields import FieldInfo
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped
 
-PydanticFieldDecl: TypeAlias = tuple[type | UnionType | ForwardRef | None, EllipsisType | None]
+type PydanticFieldDecl = tuple[type | UnionType | ForwardRef | None, EllipsisType | None]
 
 SYNTH_MODULE = "_boh_app_synth"
 
