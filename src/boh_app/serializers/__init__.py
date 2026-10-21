@@ -3,11 +3,9 @@ sqlalchemy_to_marshmallow is modified from https://marshmallow-sqlalchemy.readth
 """
 
 import sys
-import warnings
 from types import ModuleType
 
 from sqlalchemy.orm import DeclarativeBase, Session
-from sqlalchemy.orm.clsregistry import ClsRegistryToken, _ModuleMarker
 
 from ..models import Base, IdMixin
 from .marshmallow import sqlalchemy_to_marshmallow
@@ -17,14 +15,9 @@ from .pydantic import SYNTH_MODULE, sqlalchemy_to_pydantic
 def setup_schema(decl_base: type[DeclarativeBase], *, session: Session) -> None:
     mod = sys.modules[SYNTH_MODULE] = ModuleType(SYNTH_MODULE)
 
-    classes: list[type[Base]] = []
-    for class_ in decl_base.registry._class_registry.values():
-        if isinstance(class_, ClsRegistryToken):
-            if not isinstance(class_, _ModuleMarker):
-                warnings.warn(f"setup_schema does not work with ClsRegistryToken {class_}", stacklevel=2)
-            continue
-        assert issubclass(class_, Base), class_.mro()
-        classes.append(class_)
+    # sorted because `mappers` is a frozenset
+    classes: list[type[Base]] = sorted((m.class_ for m in decl_base.registry.mappers), key=lambda c: c.__name__)
+    assert all(issubclass(c, Base) for c in classes), classes
 
     for class_ in classes:
         pydantic_model = sqlalchemy_to_pydantic(class_, flat=True)

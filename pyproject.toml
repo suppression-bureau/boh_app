@@ -21,19 +21,22 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
 keywords = []
-requires-python =  ">=3.11"
+requires-python =  ">=3.12"
 dependencies = [
-    "sqlalchemy>=2",
+    "sqlalchemy[asyncio]>=2.1",
     "rich",        # better tracebacks
     "typer>=0.9",  # cli
-    "fastapi>=0.110.1",     # router
+    "fastapi[standard-no-fastapi-cloud-cli]>=0.143.4",     # router
     "uvicorn",     # server
     "watchfiles",  # uvicorn and schema reload
     "vdf",         # steam vdf file parser
@@ -43,14 +46,12 @@ dependencies = [
     "platformdirs",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 test = ["pytest", "pytest-cov", "httpx2"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
-[tool.hatch.envs.default]
-python = "3.11"
 [tool.hatch.envs.default.scripts]
 boh = "python -m boh_app {args}"
 

@@ -21,6 +21,7 @@ def db_session(tmp_path: Path) -> Generator[Session, None, None]:
         yield db_session
     finally:
         db_session.close()
+        test_engine.dispose()
 
 
 @pytest.fixture
