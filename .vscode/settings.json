@@ -26,4 +26,6 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
   "eslint.nodePath": ".yarn/sdks",
+  "python-envs.defaultEnvManager": "pypa.hatch:hatch",
+  "python-envs.defaultPackageManager": "pypa.hatch:hatch",
 }
